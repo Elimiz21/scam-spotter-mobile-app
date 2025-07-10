@@ -108,51 +108,146 @@
   }
   
   body {
-    @apply bg-background text-foreground font-inter;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', sans-serif;
   }
   
   /* Mobile-first responsive typography */
   h1 {
-    @apply text-2xl md:text-3xl font-semibold tracking-tight text-foreground;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
   }
   h2 {
-    @apply text-xl md:text-2xl font-semibold tracking-tight text-foreground;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
   }
   h3 {
-    @apply text-lg md:text-xl font-medium tracking-tight text-foreground;
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+    color: hsl(var(--foreground));
+  }
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 1.875rem;
+    }
+    h2 {
+      font-size: 1.5rem;
+    }
+    h3 {
+      font-size: 1.25rem;
+    }
   }
 }
 
 @layer components {
   /* Financial Risk Level Indicators */
   .risk-low {
-    @apply bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800;
+    background-color: rgb(240 253 244);
+    color: rgb(21 128 61);
+    border-color: rgb(187 247 208);
   }
+  .dark .risk-low {
+    background-color: rgb(20 83 45);
+    color: rgb(134 239 172);
+    border-color: rgb(22 101 52);
+  }
+  
   .risk-medium {
-    @apply bg-yellow-50 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800;
+    background-color: rgb(254 252 232);
+    color: rgb(161 98 7);
+    border-color: rgb(254 240 138);
   }
+  .dark .risk-medium {
+    background-color: rgb(133 77 14);
+    color: rgb(254 240 138);
+    border-color: rgb(161 98 7);
+  }
+  
   .risk-high {
-    @apply bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800;
+    background-color: rgb(255 247 237);
+    color: rgb(194 65 12);
+    border-color: rgb(254 215 170);
   }
+  .dark .risk-high {
+    background-color: rgb(154 52 18);
+    color: rgb(254 215 170);
+    border-color: rgb(194 65 12);
+  }
+  
   .risk-critical {
-    @apply bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800;
+    background-color: rgb(254 242 242);
+    color: rgb(185 28 28);
+    border-color: rgb(254 202 202);
+  }
+  .dark .risk-critical {
+    background-color: rgb(153 27 27);
+    color: rgb(254 202 202);
+    border-color: rgb(185 28 28);
   }
   
   /* Professional Button Variants */
   .btn-financial {
-    @apply bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium px-6 py-3 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl;
+    background: linear-gradient(to right, rgb(37 99 235), rgb(29 78 216));
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+  }
+  .btn-financial:hover {
+    background: linear-gradient(to right, rgb(29 78 216), rgb(30 58 138));
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
   .btn-danger {
-    @apply bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-medium px-6 py-3 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl;
+    background: linear-gradient(to right, rgb(220 38 38), rgb(185 28 28));
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+  }
+  .btn-danger:hover {
+    background: linear-gradient(to right, rgb(185 28 28), rgb(153 27 27));
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   }
   
   /* Card Variants */
   .card-financial {
-    @apply bg-white dark:bg-card border border-gray-200 dark:border-gray-800 rounded-xl p-6;
+    background-color: white;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+  }
+  .dark .card-financial {
+    background-color: hsl(var(--card));
+    border-color: rgb(55 65 81);
   }
   
   .card-elevated {
-    @apply bg-white dark:bg-card border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:shadow-xl transition-shadow duration-200;
+    background-color: white;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: box-shadow 0.2s;
+  }
+  .card-elevated:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+  .dark .card-elevated {
+    background-color: hsl(var(--card));
+    border-color: rgb(55 65 81);
   }
 }
