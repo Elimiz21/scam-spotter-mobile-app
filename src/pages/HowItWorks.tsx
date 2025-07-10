@@ -1,11 +1,6 @@
 import { ArrowLeft, Shield, Database, Users, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
 
 const HowItWorks = () => {
-  const navigate = useNavigate();
-
   const analysisVectors = [
     {
       icon: Database,
@@ -85,76 +80,123 @@ const HowItWorks = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/')}
-              className="rounded-full"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Shield className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold">How Our Analysis Works</h1>
-                <p className="text-sm text-muted-foreground">Understanding our scam detection methodology</p>
-              </div>
+      <header style={{ 
+        borderBottom: '1px solid #e2e8f0', 
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+        backdropFilter: 'blur(8px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        padding: '1rem'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button 
+            onClick={() => window.location.href = '/'}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: 'none',
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ArrowLeft style={{ width: '20px', height: '20px' }} />
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ 
+              width: '32px', 
+              height: '32px', 
+              backgroundColor: '#3b82f6', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
+            </div>
+            <div>
+              <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>How Our Analysis Works</h1>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Understanding our scam detection methodology</p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' }}>
         
         {/* Introduction */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Multi-Vector Scam Detection</h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '1rem' }}>Multi-Vector Scam Detection</h2>
+          <p style={{ fontSize: '1.25rem', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
             Our comprehensive analysis system examines investment groups across four critical dimensions 
             to identify potential scams and protect your investments.
           </p>
         </div>
 
         {/* Analysis Vectors */}
-        <div className="space-y-12">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
           {analysisVectors.map((vector, index) => {
             const IconComponent = vector.icon;
             return (
-              <Card key={index} className="card-financial">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-3 text-xl">
-                    <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                      <IconComponent className="w-6 h-6 text-primary" />
+              <div key={index} style={{ 
+                backgroundColor: 'white', 
+                border: '1px solid #e2e8f0',
+                borderRadius: '12px',
+                padding: '1.5rem'
+              }}>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.25rem', fontWeight: '600', margin: '0 0 8px' }}>
+                    <div style={{ 
+                      width: '48px', 
+                      height: '48px', 
+                      backgroundColor: 'rgba(59, 130, 246, 0.1)', 
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <IconComponent style={{ width: '24px', height: '24px', color: '#3b82f6' }} />
                     </div>
                     <span>{vector.title}</span>
-                  </CardTitle>
-                  <CardDescription className="text-base">
+                  </h3>
+                  <p style={{ fontSize: '1rem', color: '#64748b', margin: 0 }}>
                     {vector.description}
-                  </CardDescription>
-                </CardHeader>
+                  </p>
+                </div>
                 
-                <CardContent className="space-y-6">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   
                   {/* Analysis Process */}
                   <div>
-                    <h4 className="font-semibold mb-3 flex items-center space-x-2">
-                      <CheckCircle className="w-4 h-4 text-green-600" />
+                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', margin: '0 0 12px' }}>
+                      <CheckCircle style={{ width: '16px', height: '16px', color: '#16a34a' }} />
                       <span>How We Analyze</span>
                     </h4>
-                    <ul className="space-y-2">
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                       {vector.process.map((step, stepIndex) => (
-                        <li key={stepIndex} className="flex items-start space-x-3">
-                          <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center mt-0.5">
-                            <span className="text-xs font-medium text-primary">{stepIndex + 1}</span>
+                        <li key={stepIndex} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '8px' }}>
+                          <div style={{ 
+                            width: '24px', 
+                            height: '24px', 
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)', 
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginTop: '2px',
+                            fontSize: '0.75rem',
+                            fontWeight: '500',
+                            color: '#3b82f6'
+                          }}>
+                            {stepIndex + 1}
                           </div>
-                          <span className="text-sm text-muted-foreground">{step}</span>
+                          <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>{step}</span>
                         </li>
                       ))}
                     </ul>
@@ -162,73 +204,88 @@ const HowItWorks = () => {
 
                   {/* Red Flags */}
                   <div>
-                    <h4 className="font-semibold mb-3 flex items-center space-x-2">
-                      <AlertTriangle className="w-4 h-4 text-red-600" />
+                    <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', margin: '0 0 12px' }}>
+                      <AlertTriangle style={{ width: '16px', height: '16px', color: '#dc2626' }} />
                       <span>Red Flags We Detect</span>
                     </h4>
-                    <ul className="space-y-2">
+                    <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                       {vector.indicators.map((indicator, indicatorIndex) => (
-                        <li key={indicatorIndex} className="flex items-start space-x-3">
-                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2" />
-                          <span className="text-sm text-muted-foreground">{indicator}</span>
+                        <li key={indicatorIndex} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '8px' }}>
+                          <div style={{ width: '6px', height: '6px', backgroundColor: '#dc2626', borderRadius: '50%', marginTop: '8px' }} />
+                          <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>{indicator}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             );
           })}
         </div>
 
         {/* Risk Scoring */}
-        <Card className="mt-12 card-financial">
-          <CardHeader>
-            <CardTitle className="text-xl">Risk Score Calculation</CardTitle>
-            <CardDescription>
-              How we combine multiple analysis vectors into a comprehensive risk assessment
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-4 gap-4">
-              <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">0-39</div>
-                <div className="text-sm font-medium text-green-700 dark:text-green-300">LOW RISK</div>
-                <div className="text-xs text-green-600 dark:text-green-400 mt-1">Generally safe</div>
-              </div>
-              <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-950/20 rounded-lg">
-                <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">40-59</div>
-                <div className="text-sm font-medium text-yellow-700 dark:text-yellow-300">MEDIUM RISK</div>
-                <div className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">Proceed with caution</div>
-              </div>
-              <div className="text-center p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">60-79</div>
-                <div className="text-sm font-medium text-orange-700 dark:text-orange-300">HIGH RISK</div>
-                <div className="text-xs text-orange-600 dark:text-orange-400 mt-1">Exercise extreme caution</div>
-              </div>
-              <div className="text-center p-4 bg-red-50 dark:bg-red-950/20 rounded-lg">
-                <div className="text-2xl font-bold text-red-600 dark:text-red-400">80-100</div>
-                <div className="text-sm font-medium text-red-700 dark:text-red-300">CRITICAL RISK</div>
-                <div className="text-xs text-red-600 dark:text-red-400 mt-1">Avoid immediately</div>
-              </div>
+        <div style={{ 
+          backgroundColor: 'white', 
+          border: '1px solid #e2e8f0',
+          borderRadius: '12px',
+          padding: '1.5rem',
+          marginTop: '3rem'
+        }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '600', margin: '0 0 8px' }}>Risk Score Calculation</h3>
+          <p style={{ fontSize: '0.875rem', color: '#64748b', marginBottom: '1rem' }}>
+            How we combine multiple analysis vectors into a comprehensive risk assessment
+          </p>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
+            gap: '1rem'
+          }}>
+            <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#f0fdf4', borderRadius: '8px' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#16a34a' }}>0-39</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#15803d' }}>LOW RISK</div>
+              <div style={{ fontSize: '0.75rem', color: '#16a34a', marginTop: '4px' }}>Generally safe</div>
             </div>
-            <p className="text-sm text-muted-foreground mt-4">
-              Our algorithm weighs each analysis vector based on severity and combines them into a final risk score. 
-              Multiple high-risk indicators compound to create higher overall scores.
-            </p>
-          </CardContent>
-        </Card>
+            <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#fefce8', borderRadius: '8px' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ca8a04' }}>40-59</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#a16207' }}>MEDIUM RISK</div>
+              <div style={{ fontSize: '0.75rem', color: '#ca8a04', marginTop: '4px' }}>Proceed with caution</div>
+            </div>
+            <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#fff7ed', borderRadius: '8px' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#ea580c' }}>60-79</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#c2410c' }}>HIGH RISK</div>
+              <div style={{ fontSize: '0.75rem', color: '#ea580c', marginTop: '4px' }}>Exercise extreme caution</div>
+            </div>
+            <div style={{ textAlign: 'center', padding: '1rem', backgroundColor: '#fef2f2', borderRadius: '8px' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#dc2626' }}>80-100</div>
+              <div style={{ fontSize: '0.875rem', fontWeight: '500', color: '#b91c1c' }}>CRITICAL RISK</div>
+              <div style={{ fontSize: '0.75rem', color: '#dc2626', marginTop: '4px' }}>Avoid immediately</div>
+            </div>
+          </div>
+          <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '1rem' }}>
+            Our algorithm weighs each analysis vector based on severity and combines them into a final risk score. 
+            Multiple high-risk indicators compound to create higher overall scores.
+          </p>
+        </div>
 
         {/* CTA */}
-        <div className="text-center mt-12">
-          <h3 className="text-xl font-semibold mb-4">Ready to Analyze a Group?</h3>
-          <Button 
-            onClick={() => navigate('/analyze')}
-            className="btn-financial text-lg px-8 py-4"
+        <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>Ready to Analyze a Group?</h3>
+          <button 
+            onClick={() => window.location.href = '/analyze'}
+            style={{
+              background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+              color: 'white',
+              padding: '1rem 2rem',
+              fontSize: '1.125rem',
+              fontWeight: '500',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
           >
             Start Analysis Now
-          </Button>
+          </button>
         </div>
 
       </div>

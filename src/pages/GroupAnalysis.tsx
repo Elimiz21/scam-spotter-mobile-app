@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, Upload, AlertCircle, Shield } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useNavigate } from "react-router-dom";
 
 const GroupAnalysis = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     platform: "",
     groupName: "",
@@ -24,7 +16,7 @@ const GroupAnalysis = () => {
     // Simulate analysis time
     setTimeout(() => {
       setIsAnalyzing(false);
-      navigate('/results', { state: { analysisData: formData } });
+      window.location.href = '/results';
     }, 3000);
   };
 
@@ -39,198 +31,307 @@ const GroupAnalysis = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/')}
-              className="rounded-full"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Shield className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold">Group Analysis</h1>
-                <p className="text-sm text-muted-foreground">Analyze investment group for scam indicators</p>
-              </div>
+      <header style={{ 
+        borderBottom: '1px solid #e2e8f0', 
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+        backdropFilter: 'blur(8px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        padding: '1rem'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button 
+            onClick={() => window.location.href = '/'}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: 'none',
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ArrowLeft style={{ width: '20px', height: '20px' }} />
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ 
+              width: '32px', 
+              height: '32px', 
+              backgroundColor: '#3b82f6', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
+            </div>
+            <div>
+              <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>Group Analysis</h1>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Analyze investment group for scam indicators</p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem 1rem' }}>
         
         {/* Warning Notice */}
-        <Card className="mb-8 border-yellow-200 dark:border-yellow-800 bg-yellow-50/50 dark:bg-yellow-950/20">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-3">
-              <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-              <div>
-                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                  Security Notice
-                </p>
-                <p className="text-sm text-yellow-700 dark:text-yellow-300 mt-1">
-                  All data is processed securely and deleted after analysis. We do not store personal information or group content.
-                </p>
-              </div>
+        <div style={{ 
+          backgroundColor: '#fefce8', 
+          border: '1px solid #facc15',
+          borderRadius: '8px',
+          padding: '1rem',
+          marginBottom: '2rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+            <AlertCircle style={{ width: '20px', height: '20px', color: '#ca8a04', marginTop: '2px' }} />
+            <div>
+              <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#92400e', margin: '0 0 4px' }}>
+                Security Notice
+              </p>
+              <p style={{ fontSize: '0.875rem', color: '#92400e', margin: 0 }}>
+                All data is processed securely and deleted after analysis. We do not store personal information or group content.
+              </p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Analysis Form */}
-        <Card className="card-financial">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Upload className="w-5 h-5" />
+        <div style={{ 
+          backgroundColor: 'white', 
+          border: '1px solid #e2e8f0',
+          borderRadius: '12px',
+          padding: '1.5rem'
+        }}>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25rem', fontWeight: '600', margin: '0 0 8px' }}>
+              <Upload style={{ width: '20px', height: '20px' }} />
               <span>Group Information</span>
-            </CardTitle>
-            <CardDescription>
+            </h2>
+            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
               Provide details about the investment group you want to analyze
-            </CardDescription>
-          </CardHeader>
+            </p>
+          </div>
           
-          <CardContent className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             
             {/* Platform Selection */}
-            <div className="space-y-2">
-              <Label htmlFor="platform" className="text-sm font-medium">
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '8px' }}>
                 Platform *
-              </Label>
-              <Select value={formData.platform} onValueChange={(value) => 
-                setFormData(prev => ({ ...prev, platform: value }))
-              }>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select the messaging platform" />
-                </SelectTrigger>
-                <SelectContent>
-                  {platforms.map((platform) => (
-                    <SelectItem key={platform} value={platform}>
-                      {platform}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              </label>
+              <select 
+                value={formData.platform} 
+                onChange={(e) => setFormData(prev => ({ ...prev, platform: e.target.value }))}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem',
+                  backgroundColor: 'white'
+                }}
+              >
+                <option value="">Select the messaging platform</option>
+                {platforms.map((platform) => (
+                  <option key={platform} value={platform}>
+                    {platform}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Group Name */}
-            <div className="space-y-2">
-              <Label htmlFor="groupName" className="text-sm font-medium">
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '8px' }}>
                 Group Name *
-              </Label>
-              <Input
-                id="groupName"
+              </label>
+              <input
+                type="text"
                 placeholder="Enter the investment group name"
                 value={formData.groupName}
                 onChange={(e) => setFormData(prev => ({ ...prev, groupName: e.target.value }))}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem'
+                }}
               />
             </div>
 
             {/* Members */}
-            <div className="space-y-2">
-              <Label htmlFor="members" className="text-sm font-medium">
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '8px' }}>
                 Group Members
-              </Label>
-              <Textarea
-                id="members"
+              </label>
+              <textarea
                 placeholder="Enter member names (comma-separated)&#10;Example: John Smith, Maria Garcia, @crypto_expert123"
                 value={formData.members}
                 onChange={(e) => setFormData(prev => ({ ...prev, members: e.target.value }))}
-                className="min-h-[100px]"
+                style={{
+                  width: '100%',
+                  minHeight: '100px',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem',
+                  resize: 'vertical'
+                }}
               />
-              <p className="text-xs text-muted-foreground">
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px' }}>
                 Include usernames, display names, or phone numbers if available
               </p>
             </div>
 
             {/* Chat Content */}
-            <div className="space-y-2">
-              <Label htmlFor="chatText" className="text-sm font-medium">
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '8px' }}>
                 Group Chat Messages *
-              </Label>
-              <Textarea
-                id="chatText"
+              </label>
+              <textarea
                 placeholder="Paste recent group chat messages here...&#10;&#10;Example:&#10;[10:30] @expert_trader: Big announcement coming! 🚀&#10;[10:31] @expert_trader: This coin will 10x next week guaranteed!&#10;[10:32] Member1: How do you know?&#10;[10:33] @expert_trader: Inside information, but act fast!"
                 value={formData.chatText}
                 onChange={(e) => setFormData(prev => ({ ...prev, chatText: e.target.value }))}
-                className="min-h-[200px] font-mono text-sm"
+                style={{
+                  width: '100%',
+                  minHeight: '200px',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem',
+                  fontFamily: 'monospace',
+                  resize: 'vertical'
+                }}
               />
-              <p className="text-xs text-muted-foreground">
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px' }}>
                 Include timestamps and usernames if possible. More content = better analysis.
               </p>
             </div>
 
             {/* Asset Symbol */}
-            <div className="space-y-2">
-              <Label htmlFor="assetSymbol" className="text-sm font-medium">
+            <div>
+              <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '500', marginBottom: '8px' }}>
                 Asset/Stock Symbol
-              </Label>
-              <Input
-                id="assetSymbol"
+              </label>
+              <input
+                type="text"
                 placeholder="e.g., BTC, AAPL, SAFEMOON, etc."
                 value={formData.assetSymbol}
                 onChange={(e) => setFormData(prev => ({ ...prev, assetSymbol: e.target.value }))}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  fontSize: '0.875rem'
+                }}
               />
-              <p className="text-xs text-muted-foreground">
+              <p style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '4px' }}>
                 The cryptocurrency, stock, or asset being promoted in the group
               </p>
             </div>
 
             {/* Analyze Button */}
-            <Button 
+            <button 
               onClick={handleAnalyze}
               disabled={!formData.platform || !formData.groupName || !formData.chatText || isAnalyzing}
-              className="w-full btn-financial mt-8"
-              size="lg"
+              style={{
+                width: '100%',
+                background: (!formData.platform || !formData.groupName || !formData.chatText || isAnalyzing) 
+                  ? '#9ca3af' 
+                  : 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+                color: 'white',
+                padding: '1rem 2rem',
+                fontSize: '1rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: (!formData.platform || !formData.groupName || !formData.chatText || isAnalyzing) ? 'not-allowed' : 'pointer',
+                marginTop: '2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
             >
               {isAnalyzing ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <>
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid white',
+                    borderTop: '2px solid transparent',
+                    borderRadius: '50%',
+                    animation: 'spin 1s linear infinite'
+                  }} />
                   <span>Analyzing Group...</span>
-                </div>
+                </>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <Shield className="w-5 h-5" />
+                <>
+                  <Shield style={{ width: '20px', height: '20px' }} />
                   <span>Analyze for Scam Indicators</span>
-                </div>
+                </>
               )}
-            </Button>
+            </button>
 
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Analysis Progress */}
         {isAnalyzing && (
-          <Card className="mt-6 card-financial">
-            <CardContent className="pt-6">
-              <div className="space-y-4">
-                <h3 className="font-medium text-center">Analysis in Progress</h3>
-                <div className="space-y-3">
-                  {[
-                    "Checking members against scammer databases...",
-                    "Analyzing language patterns for manipulation...",
-                    "Verifying asset information...",
-                    "Detecting price manipulation signals...",
-                    "Generating risk assessment report..."
-                  ].map((step, index) => (
-                    <div key={index} className="flex items-center space-x-3">
-                      <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                      <span className="text-sm text-muted-foreground">{step}</span>
-                    </div>
-                  ))}
-                </div>
+          <div style={{ 
+            backgroundColor: 'white', 
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '1.5rem',
+            marginTop: '1.5rem'
+          }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <h3 style={{ fontWeight: '500', textAlign: 'center', margin: 0 }}>Analysis in Progress</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {[
+                  "Checking members against scammer databases...",
+                  "Analyzing language patterns for manipulation...",
+                  "Verifying asset information...",
+                  "Detecting price manipulation signals...",
+                  "Generating risk assessment report..."
+                ].map((step, index) => (
+                  <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{
+                      width: '8px',
+                      height: '8px',
+                      backgroundColor: '#3b82f6',
+                      borderRadius: '50%',
+                      animation: 'pulse 2s infinite'
+                    }} />
+                    <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{step}</span>
+                  </div>
+                ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         )}
 
       </div>
+
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 };

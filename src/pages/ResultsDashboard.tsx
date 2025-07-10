@@ -1,11 +1,5 @@
 import { useState } from "react";
 import { ArrowLeft, AlertTriangle, Shield, Info, TrendingUp, Users, Database, ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useNavigate, useLocation } from "react-router-dom";
 
 interface RiskVector {
   id: string;
@@ -19,8 +13,6 @@ interface RiskVector {
 }
 
 const ResultsDashboard = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
   const [selectedVector, setSelectedVector] = useState<RiskVector | null>(null);
   
   // Mock analysis results - in real app this would come from API
@@ -95,191 +87,344 @@ const ResultsDashboard = () => {
   );
 
   const getRiskColor = (score: number) => {
-    if (score >= 80) return "risk-critical";
-    if (score >= 60) return "risk-high"; 
-    if (score >= 40) return "risk-medium";
-    return "risk-low";
+    if (score >= 80) return { bg: '#fef2f2', border: '#f87171', text: '#dc2626' };
+    if (score >= 60) return { bg: '#fff7ed', border: '#fb923c', text: '#ea580c' };
+    if (score >= 40) return { bg: '#fefce8', border: '#facc15', text: '#ca8a04' };
+    return { bg: '#f0fdf4', border: '#4ade80', text: '#16a34a' };
   };
 
   const getRiskBadgeColor = (status: string) => {
     switch (status) {
-      case 'critical': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300';
-      case 'high': return 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300';
-      case 'low': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300';
+      case 'critical': return { bg: '#fef2f2', text: '#dc2626' };
+      case 'high': return { bg: '#fff7ed', text: '#ea580c' };
+      case 'medium': return { bg: '#fefce8', text: '#ca8a04' };
+      case 'low': return { bg: '#f0fdf4', text: '#16a34a' };
+      default: return { bg: '#f9fafb', text: '#374151' };
     }
   };
 
+  const overallColors = getRiskColor(overallRiskScore);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon"
-              onClick={() => navigate('/analyze')}
-              className="rounded-full"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Button>
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Shield className="w-4 h-4 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold">Risk Analysis Results</h1>
-                <p className="text-sm text-muted-foreground">Comprehensive scam detection report</p>
-              </div>
+      <header style={{ 
+        borderBottom: '1px solid #e2e8f0', 
+        backgroundColor: 'rgba(255, 255, 255, 0.8)', 
+        backdropFilter: 'blur(8px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        padding: '1rem'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <button 
+            onClick={() => window.location.href = '/analyze'}
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '50%',
+              border: 'none',
+              backgroundColor: 'transparent',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <ArrowLeft style={{ width: '20px', height: '20px' }} />
+          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ 
+              width: '32px', 
+              height: '32px', 
+              backgroundColor: '#3b82f6', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
+            </div>
+            <div>
+              <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>Risk Analysis Results</h1>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Comprehensive scam detection report</p>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' }}>
         
         {/* Overall Risk Score */}
-        <Card className={`mb-8 ${getRiskColor(overallRiskScore)} border-2`}>
-          <CardHeader className="text-center">
-            <div className="flex items-center justify-center mb-4">
-              {overallRiskScore >= 70 ? (
-                <AlertTriangle className="w-12 h-12 text-current" />
-              ) : (
-                <Shield className="w-12 h-12 text-current" />
-              )}
-            </div>
-            <CardTitle className="text-2xl">
-              Overall Risk Score: {overallRiskScore}/100
-            </CardTitle>
-            <CardDescription className="text-current/80">
-              {overallRiskScore >= 80 && "CRITICAL RISK - Avoid this group immediately"}
-              {overallRiskScore >= 60 && overallRiskScore < 80 && "HIGH RISK - Exercise extreme caution"}
-              {overallRiskScore >= 40 && overallRiskScore < 60 && "MEDIUM RISK - Proceed with caution"}
-              {overallRiskScore < 40 && "LOW RISK - Group appears relatively safe"}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={overallRiskScore} className="h-3" />
-          </CardContent>
-        </Card>
+        <div style={{ 
+          backgroundColor: overallColors.bg,
+          border: `2px solid ${overallColors.border}`,
+          borderRadius: '12px',
+          padding: '2rem',
+          textAlign: 'center',
+          marginBottom: '2rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+            {overallRiskScore >= 70 ? (
+              <AlertTriangle style={{ width: '48px', height: '48px', color: overallColors.text }} />
+            ) : (
+              <Shield style={{ width: '48px', height: '48px', color: overallColors.text }} />
+            )}
+          </div>
+          <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: overallColors.text, margin: '0 0 8px' }}>
+            Overall Risk Score: {overallRiskScore}/100
+          </h2>
+          <p style={{ color: overallColors.text, marginBottom: '1rem' }}>
+            {overallRiskScore >= 80 && "CRITICAL RISK - Avoid this group immediately"}
+            {overallRiskScore >= 60 && overallRiskScore < 80 && "HIGH RISK - Exercise extreme caution"}
+            {overallRiskScore >= 40 && overallRiskScore < 60 && "MEDIUM RISK - Proceed with caution"}
+            {overallRiskScore < 40 && "LOW RISK - Group appears relatively safe"}
+          </p>
+          <div style={{ 
+            width: '100%', 
+            height: '12px', 
+            backgroundColor: 'rgba(0,0,0,0.1)', 
+            borderRadius: '6px',
+            overflow: 'hidden'
+          }}>
+            <div style={{ 
+              width: `${overallRiskScore}%`, 
+              height: '100%', 
+              backgroundColor: overallColors.text,
+              transition: 'width 1s ease'
+            }} />
+          </div>
+        </div>
 
         {/* Risk Vectors Grid */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+          gap: '1.5rem',
+          marginBottom: '2rem'
+        }}>
           {analysisResults.map((vector) => {
             const IconComponent = vector.icon;
+            const badgeColors = getRiskBadgeColor(vector.status);
+            const iconColors = getRiskColor(vector.riskScore);
+            
             return (
-              <Card 
+              <div 
                 key={vector.id}
-                className="card-elevated cursor-pointer hover:shadow-xl transition-all duration-200"
+                style={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  padding: '1.5rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                }}
                 onClick={() => setSelectedVector(vector)}
+                onMouseOver={(e) => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1)';
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(-2px)';
+                }}
+                onMouseOut={(e) => {
+                  (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                  (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                }}
               >
-                <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-                  <div className="flex items-center space-x-3 flex-1">
-                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                      vector.status === 'critical' ? 'bg-red-100 dark:bg-red-900/20' :
-                      vector.status === 'high' ? 'bg-orange-100 dark:bg-orange-900/20' :
-                      vector.status === 'medium' ? 'bg-yellow-100 dark:bg-yellow-900/20' :
-                      'bg-green-100 dark:bg-green-900/20'
-                    }`}>
-                      <IconComponent className={`w-5 h-5 ${
-                        vector.status === 'critical' ? 'text-red-600 dark:text-red-400' :
-                        vector.status === 'high' ? 'text-orange-600 dark:text-orange-400' :
-                        vector.status === 'medium' ? 'text-yellow-600 dark:text-yellow-400' :
-                        'text-green-600 dark:text-green-400'
-                      }`} />
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+                    <div style={{ 
+                      width: '40px', 
+                      height: '40px', 
+                      backgroundColor: iconColors.bg,
+                      borderRadius: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <IconComponent style={{ width: '20px', height: '20px', color: iconColors.text }} />
                     </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-lg">{vector.name}</CardTitle>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <Badge className={getRiskBadgeColor(vector.status)}>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ fontSize: '1.125rem', fontWeight: '600', margin: '0 0 8px' }}>{vector.name}</h3>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ 
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          backgroundColor: badgeColors.bg,
+                          color: badgeColors.text,
+                          padding: '2px 8px',
+                          borderRadius: '4px'
+                        }}>
                           {vector.status.toUpperCase()}
-                        </Badge>
-                        <span className="text-2xl font-bold text-foreground">
+                        </span>
+                        <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
                           {vector.riskScore}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    {vector.summary}
-                  </p>
-                  <Progress value={vector.riskScore} className="h-2" />
-                </CardContent>
-              </Card>
+                  <ExternalLink style={{ width: '16px', height: '16px', color: '#6b7280' }} />
+                </div>
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '12px' }}>
+                  {vector.summary}
+                </p>
+                <div style={{ 
+                  width: '100%', 
+                  height: '8px', 
+                  backgroundColor: '#f3f4f6', 
+                  borderRadius: '4px',
+                  overflow: 'hidden'
+                }}>
+                  <div style={{ 
+                    width: `${vector.riskScore}%`, 
+                    height: '100%', 
+                    backgroundColor: iconColors.text,
+                    transition: 'width 1s ease'
+                  }} />
+                </div>
+              </div>
             );
           })}
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button 
-            onClick={() => navigate('/analyze')}
-            className="btn-financial"
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+          <button 
+            onClick={() => window.location.href = '/analyze'}
+            style={{
+              background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+              color: 'white',
+              padding: '1rem 2rem',
+              fontSize: '1rem',
+              fontWeight: '500',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
           >
             Analyze Another Group
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/how-it-works')}
-            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+          </button>
+          <button 
+            onClick={() => window.location.href = '/how-it-works'}
+            style={{
+              backgroundColor: 'transparent',
+              color: '#3b82f6',
+              padding: '1rem 2rem',
+              fontSize: '1rem',
+              fontWeight: '500',
+              border: '1px solid #3b82f6',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
           >
             Learn About Our Analysis
-          </Button>
+          </button>
         </div>
 
       </div>
 
       {/* Detailed Analysis Modal */}
-      <Dialog open={!!selectedVector} onOpenChange={() => setSelectedVector(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          {selectedVector && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center space-x-3">
-                  <selectedVector.icon className="w-6 h-6" />
-                  <span>{selectedVector.name} Analysis</span>
-                  <Badge className={getRiskBadgeColor(selectedVector.status)}>
-                    {selectedVector.status.toUpperCase()} RISK
-                  </Badge>
-                </DialogTitle>
-                <DialogDescription>
-                  {selectedVector.details}
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-2 flex items-center space-x-2">
-                    <Info className="w-4 h-4" />
-                    <span>Detailed Findings</span>
-                  </h4>
-                  <ul className="space-y-2">
-                    {selectedVector.findings.map((finding, index) => (
-                      <li key={index} className="flex items-start space-x-2">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mt-2" />
-                        <span className="text-sm text-muted-foreground">{finding}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+      {selectedVector && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          padding: '1rem'
+        }}
+        onClick={() => setSelectedVector(null)}
+        >
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            padding: '2rem',
+            maxWidth: '600px',
+            width: '100%',
+            maxHeight: '80vh',
+            overflowY: 'auto'
+          }}
+          onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.5rem', fontWeight: '600', margin: '0 0 8px' }}>
+                <selectedVector.icon style={{ width: '24px', height: '24px' }} />
+                <span>{selectedVector.name} Analysis</span>
+                <span style={{ 
+                  fontSize: '0.75rem',
+                  fontWeight: '600',
+                  backgroundColor: getRiskBadgeColor(selectedVector.status).bg,
+                  color: getRiskBadgeColor(selectedVector.status).text,
+                  padding: '4px 8px',
+                  borderRadius: '4px'
+                }}>
+                  {selectedVector.status.toUpperCase()} RISK
+                </span>
+              </h3>
+              <p style={{ color: '#6b7280', margin: 0 }}>
+                {selectedVector.details}
+              </p>
+            </div>
+            
+            <div style={{ marginBottom: '1.5rem' }}>
+              <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '600', margin: '0 0 12px' }}>
+                <Info style={{ width: '16px', height: '16px' }} />
+                <span>Detailed Findings</span>
+              </h4>
+              <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                {selectedVector.findings.map((finding, index) => (
+                  <li key={index} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '8px' }}>
+                    <div style={{ width: '6px', height: '6px', backgroundColor: '#3b82f6', borderRadius: '50%', marginTop: '8px' }} />
+                    <span style={{ fontSize: '0.875rem', color: '#6b7280' }}>{finding}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-                <div className="pt-4 border-t">
-                  <h4 className="font-semibold mb-2">Risk Score Breakdown</h4>
-                  <Progress value={selectedVector.riskScore} className="h-3 mb-2" />
-                  <p className="text-sm text-muted-foreground">
-                    Score: {selectedVector.riskScore}/100 - {selectedVector.status.toUpperCase()} risk level
-                  </p>
-                </div>
+            <div style={{ paddingTop: '1rem', borderTop: '1px solid #e5e7eb' }}>
+              <h4 style={{ fontWeight: '600', marginBottom: '8px' }}>Risk Score Breakdown</h4>
+              <div style={{ 
+                width: '100%', 
+                height: '12px', 
+                backgroundColor: '#f3f4f6', 
+                borderRadius: '6px',
+                overflow: 'hidden',
+                marginBottom: '8px'
+              }}>
+                <div style={{ 
+                  width: `${selectedVector.riskScore}%`, 
+                  height: '100%', 
+                  backgroundColor: getRiskColor(selectedVector.riskScore).text
+                }} />
               </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+              <p style={{ fontSize: '0.875rem', color: '#6b7280', margin: 0 }}>
+                Score: {selectedVector.riskScore}/100 - {selectedVector.status.toUpperCase()} risk level
+              </p>
+            </div>
+            
+            <button 
+              onClick={() => setSelectedVector(null)}
+              style={{
+                backgroundColor: '#f3f4f6',
+                color: '#374151',
+                padding: '0.5rem 1rem',
+                fontSize: '0.875rem',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                marginTop: '1rem'
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
