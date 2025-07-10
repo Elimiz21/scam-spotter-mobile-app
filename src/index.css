@@ -1,6 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Professional Financial Color Palette */
+    --background: 218 27% 94%;           /* Light gray-blue */
+    --foreground: 220 39% 11%;           /* Deep navy text */
+    
+    --card: 0 0% 100%;                   /* Pure white cards */
+    --card-foreground: 220 39% 11%;     
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 39% 11%;
+    
+    --primary: 221 83% 53%;              /* Professional blue */
+    --primary-foreground: 0 0% 98%;     /* White text on blue */
+    
+    --secondary: 214 32% 91%;            /* Light blue-gray */
+    --secondary-foreground: 220 39% 11%;
+    
+    --muted: 214 32% 91%;
+    --muted-foreground: 215 16% 46%;
+    
+    --accent: 214 32% 91%;
+    --accent-foreground: 220 39% 11%;
+    
+    --destructive: 0 84% 60%;            /* Warning red */
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
+    
+    --radius: 0.75rem;
+    
+    /* Custom Financial Theme Colors */
+    --financial-primary: 221 83% 53%;    /* Professional blue */
+    --financial-secondary: 214 32% 91%;   /* Light gray-blue */
+    --financial-accent: 142 76% 36%;      /* Success green */
+    --financial-warning: 45 93% 47%;      /* Warning amber */
+    --financial-danger: 0 84% 60%;        /* Alert red */
+    --financial-dark: 220 39% 11%;        /* Deep navy */
+    --financial-light: 218 27% 94%;       /* Light background */
+    
+    /* Risk Level Colors */
+    --risk-low: 142 76% 36%;              /* Green */
+    --risk-medium: 45 93% 47%;            /* Amber */
+    --risk-high: 25 95% 53%;              /* Orange */
+    --risk-critical: 0 84% 60%;           /* Red */
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--financial-primary)), hsl(var(--financial-accent)));
+    --gradient-danger: linear-gradient(135deg, hsl(var(--financial-danger)), hsl(var(--risk-high)));
+    
+    /* Shadows */
+    --shadow-financial: 0 4px 6px -1px hsl(var(--financial-dark) / 0.1), 0 2px 4px -1px hsl(var(--financial-dark) / 0.06);
+    --shadow-elevated: 0 10px 15px -3px hsl(var(--financial-dark) / 0.1), 0 4px 6px -2px hsl(var(--financial-dark) / 0.05);
+  }
+
+  .dark {
+    --background: 220 39% 11%;            /* Deep navy background */
+    --foreground: 0 0% 98%;               /* White text */
+    
+    --card: 224 36% 15%;                  /* Dark blue cards */
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 224 36% 15%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 221 83% 53%;               /* Same professional blue */
+    --primary-foreground: 0 0% 98%;
+    
+    --secondary: 215 28% 17%;             /* Dark blue-gray */
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 215 28% 17%;
+    --muted-foreground: 217 10% 64%;
+    
+    --accent: 215 28% 17%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --border: 215 28% 17%;
+    --input: 215 28% 17%;
+    --ring: 221 83% 53%;
+    
+    /* Dark mode financial colors */
+    --financial-light: 220 39% 11%;
+    --financial-secondary: 215 28% 17%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-inter;
+  }
+  
+  /* Mobile-first responsive typography */
+  h1 {
+    @apply text-2xl md:text-3xl font-semibold tracking-tight text-financial-dark dark:text-white;
+  }
+  h2 {
+    @apply text-xl md:text-2xl font-semibold tracking-tight text-financial-dark dark:text-white;
+  }
+  h3 {
+    @apply text-lg md:text-xl font-medium tracking-tight text-financial-dark dark:text-white;
+  }
+}
+
+@layer components {
+  /* Financial Risk Level Indicators */
+  .risk-low {
+    @apply bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800;
+  }
+  .risk-medium {
+    @apply bg-yellow-50 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300 border-yellow-200 dark:border-yellow-800;
+  }
+  .risk-high {
+    @apply bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 border-orange-200 dark:border-orange-800;
+  }
+  .risk-critical {
+    @apply bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800;
+  }
+  
+  /* Professional Button Variants */
+  .btn-financial {
+    @apply bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium px-6 py-3 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl;
+  }
+  
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-medium px-6 py-3 rounded-lg shadow-lg transition-all duration-200 hover:shadow-xl;
+  }
+  
+  /* Card Variants */
+  .card-financial {
+    @apply bg-white dark:bg-card border border-gray-200 dark:border-gray-800 rounded-xl shadow-financial p-6;
+  }
+  
+  .card-elevated {
+    @apply bg-white dark:bg-card border border-gray-200 dark:border-gray-800 rounded-xl shadow-elevated p-6 hover:shadow-xl transition-shadow duration-200;
+  }
+}
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
