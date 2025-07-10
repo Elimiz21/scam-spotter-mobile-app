@@ -1,8 +1,10 @@
 import { Shield } from "lucide-react";
+import Navigation from "../components/Navigation";
 
 const Home = () => {
   return (
     <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f8fafc' }}>
+      <Navigation />
       {/* Simple Header */}
       <header style={{ 
         borderBottom: '1px solid #e2e8f0', 
@@ -80,13 +82,20 @@ const Home = () => {
           margin: '0 auto'
         }}>
           
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '1.5rem', 
-            borderRadius: '12px',
-            textAlign: 'center',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-          }}>
+          <div 
+            onClick={() => window.location.href = '/analyze?type=scammer-database'}
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
             <div style={{ 
               width: '48px', 
               height: '48px', 
@@ -105,13 +114,20 @@ const Home = () => {
             </p>
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '1.5rem', 
-            borderRadius: '12px',
-            textAlign: 'center',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-          }}>
+          <div 
+            onClick={() => window.location.href = '/analyze?type=language-analysis'}
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
             <div style={{ 
               width: '48px', 
               height: '48px', 
@@ -130,13 +146,20 @@ const Home = () => {
             </p>
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '1.5rem', 
-            borderRadius: '12px',
-            textAlign: 'center',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-          }}>
+          <div 
+            onClick={() => window.location.href = '/analyze?type=price-manipulation'}
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
             <div style={{ 
               width: '48px', 
               height: '48px', 
@@ -155,13 +178,20 @@ const Home = () => {
             </p>
           </div>
 
-          <div style={{ 
-            backgroundColor: 'white', 
-            padding: '1.5rem', 
-            borderRadius: '12px',
-            textAlign: 'center',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-          }}>
+          <div 
+            onClick={() => window.location.href = '/analyze?type=asset-verification'}
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+          >
             <div style={{ 
               width: '48px', 
               height: '48px', 

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, Upload, AlertCircle, Shield } from "lucide-react";
+import Navigation from "../components/Navigation";
 
 const GroupAnalysis = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,15 @@ const GroupAnalysis = () => {
     assetSymbol: ""
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisType, setAnalysisType] = useState<string>("");
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type');
+    if (type) {
+      setAnalysisType(type);
+    }
+  }, []);
 
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
@@ -30,8 +40,29 @@ const GroupAnalysis = () => {
     "Other"
   ];
 
+  const getAnalysisTitle = () => {
+    switch (analysisType) {
+      case 'scammer-database': return 'Scammer Database Check';
+      case 'language-analysis': return 'Language Pattern Analysis';
+      case 'price-manipulation': return 'Price Manipulation Detection';
+      case 'asset-verification': return 'Asset Verification';
+      default: return 'Group Analysis';
+    }
+  };
+
+  const getAnalysisDescription = () => {
+    switch (analysisType) {
+      case 'scammer-database': return 'Check group members against known scammer databases';
+      case 'language-analysis': return 'Analyze chat messages for manipulation tactics';
+      case 'price-manipulation': return 'Detect artificial price pumps and suspicious trading activity';
+      case 'asset-verification': return 'Verify the legitimacy of promoted assets';
+      default: return 'Analyze investment group for scam indicators';
+    }
+  };
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      <Navigation />
       {/* Header */}
       <header style={{ 
         borderBottom: '1px solid #e2e8f0', 
@@ -72,8 +103,8 @@ const GroupAnalysis = () => {
               <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
             </div>
             <div>
-              <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>Group Analysis</h1>
-              <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Analyze investment group for scam indicators</p>
+              <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>{getAnalysisTitle()}</h1>
+              <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>{getAnalysisDescription()}</p>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 import { ArrowLeft, Shield, Database, Users, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
+import Navigation from "../components/Navigation";
 
 const HowItWorks = () => {
   const analysisVectors = [
@@ -81,6 +82,7 @@ const HowItWorks = () => {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      <Navigation />
       {/* Header */}
       <header style={{ 
         borderBottom: '1px solid #e2e8f0', 

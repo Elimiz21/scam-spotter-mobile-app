@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, AlertTriangle, Shield, Info, TrendingUp, Users, Database, ExternalLink } from "lucide-react";
+import Navigation from "../components/Navigation";
 
 interface RiskVector {
   id: string;
@@ -107,6 +108,7 @@ const ResultsDashboard = () => {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+      <Navigation />
       {/* Header */}
       <header style={{ 
         borderBottom: '1px solid #e2e8f0', 
