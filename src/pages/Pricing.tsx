@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, X, Star, Shield, Zap } from "lucide-react";
+import { CheckCircle, X, Star, Shield, Zap, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import Navigation from "@/components/Navigation";
@@ -195,75 +195,106 @@ const Pricing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-financial-secondary/10">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
+      <main className="container mx-auto px-4 py-24">
+        {/* Header Section */}
+        <div className="text-center mb-20 animate-fade-in">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+            <Shield className="w-4 h-4 mr-2" />
+            Investment Protection Plans
+          </div>
+          <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6 bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent">
             Choose Your Protection Level
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             From basic scam detection to comprehensive business protection, 
-            we have a plan that fits your needs.
+            we have a plan that fits your investment security needs.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
-          {pricingPlans.map((plan) => (
+        {/* Pricing Cards Grid */}
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-8 max-w-7xl mx-auto mb-20">
+          {pricingPlans.map((plan, index) => (
             <Card 
               key={plan.name}
-              className={`relative ${
+              className={`relative group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 ${
                 plan.current 
-                  ? "border-primary ring-2 ring-primary/20" 
+                  ? "border-primary ring-2 ring-primary/20 shadow-xl bg-gradient-to-br from-card to-primary/5" 
                   : plan.popular 
-                    ? "border-primary" 
-                    : "border-border"
+                    ? "border-primary shadow-lg bg-gradient-to-br from-card to-primary/5 scale-105" 
+                    : "border-border hover:border-primary/50 bg-card"
               }`}
+              style={{ animationDelay: `${index * 100}ms` }}
             >
+              {/* Popular Badge */}
               {plan.popular && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
-                  <Star className="w-3 h-3 mr-1" />
-                  Most Popular
-                </Badge>
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                  <Badge className="bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-4 py-1 text-sm font-semibold shadow-lg">
+                    <Star className="w-3 h-3 mr-1 fill-current" />
+                    Most Popular
+                  </Badge>
+                </div>
               )}
               
+              {/* Current Plan Badge */}
               {plan.current && (
-                <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-secondary text-secondary-foreground">
-                  <Shield className="w-3 h-3 mr-1" />
-                  Current Plan
-                </Badge>
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
+                  <Badge className="bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground px-4 py-1 text-sm font-semibold shadow-lg">
+                    <Shield className="w-3 h-3 mr-1 fill-current" />
+                    Current Plan
+                  </Badge>
+                </div>
               )}
 
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <div className="text-3xl font-bold text-primary">
-                  {plan.price}
-                  {plan.period && <span className="text-lg text-muted-foreground">{plan.period}</span>}
+              <CardHeader className="text-center pb-8 pt-8">
+                <CardTitle className="text-2xl font-bold mb-2">{plan.name}</CardTitle>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-primary">{plan.price}</span>
+                  {plan.period && (
+                    <span className="text-lg text-muted-foreground ml-1">{plan.period}</span>
+                  )}
                 </div>
-                <CardDescription>{plan.description}</CardDescription>
+                <CardDescription className="text-base leading-relaxed">
+                  {plan.description}
+                </CardDescription>
               </CardHeader>
 
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  {plan.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-primary" />
-                      <span className="text-sm">{feature}</span>
+              <CardContent className="space-y-6 px-6">
+                <div className="space-y-3">
+                  {plan.features.map((feature, idx) => (
+                    <div 
+                      key={feature} 
+                      className="flex items-start gap-3 group-hover:translate-x-1 transition-transform duration-200"
+                      style={{ animationDelay: `${(index * 100) + (idx * 50)}ms` }}
+                    >
+                      <CheckCircle className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span className="text-sm leading-relaxed">{feature}</span>
                     </div>
                   ))}
-                  {plan.limitations.map((limitation) => (
-                    <div key={limitation} className="flex items-center gap-2 opacity-60">
-                      <X className="w-4 h-4 text-muted-foreground" />
-                      <span className="text-sm text-muted-foreground">{limitation}</span>
+                  {plan.limitations.map((limitation, idx) => (
+                    <div 
+                      key={limitation} 
+                      className="flex items-start gap-3 opacity-60"
+                      style={{ animationDelay: `${(index * 100) + (idx * 50)}ms` }}
+                    >
+                      <X className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-muted-foreground leading-relaxed">{limitation}</span>
                     </div>
                   ))}
                 </div>
               </CardContent>
 
-              <CardFooter>
+              <CardFooter className="pt-6 pb-8 px-6">
                 <Button
-                  className="w-full"
+                  className={`w-full h-12 font-semibold transition-all duration-200 ${
+                    plan.current 
+                      ? "bg-secondary hover:bg-secondary/80" 
+                      : plan.popular 
+                        ? "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl" 
+                        : "border-2 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                  }`}
                   variant={plan.current ? "secondary" : plan.popular ? "default" : "outline"}
                   disabled={plan.disabled || plan.current || loading}
                   onClick={plan.action}
@@ -274,7 +305,12 @@ const Pricing = () => {
                       Processing...
                     </div>
                   ) : (
-                    plan.cta
+                    <span className="flex items-center gap-2">
+                      {plan.cta}
+                      {!plan.disabled && !plan.current && (
+                        <span className="ml-1 group-hover:translate-x-1 transition-transform duration-200">→</span>
+                      )}
+                    </span>
                   )}
                 </Button>
               </CardFooter>
@@ -282,41 +318,81 @@ const Pricing = () => {
           ))}
         </div>
 
+        {/* Account Status Section */}
         {user && (
-          <div className="mt-16 text-center">
-            <Card className="max-w-md mx-auto">
-              <CardHeader>
-                <CardTitle>Your Account Status</CardTitle>
+          <div className="flex justify-center animate-fade-in">
+            <Card className="w-full max-w-lg bg-gradient-to-br from-card to-secondary/10 border-secondary shadow-lg">
+              <CardHeader className="text-center pb-4">
+                <CardTitle className="flex items-center justify-center gap-2 text-xl">
+                  <User className="w-5 h-5 text-primary" />
+                  Your Account Status
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Free checks used:</span>
-                  <span>{profile?.free_checks_used || 0}/3</span>
-                </div>
-                {subscription && (
-                  <>
-                    <div className="flex justify-between">
-                      <span>Current plan:</span>
-                      <span className="capitalize">{subscription.plan_type}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Status:</span>
-                      <Badge variant={subscription.status === "active" ? "default" : "destructive"}>
-                        {subscription.status}
-                      </Badge>
-                    </div>
-                    {subscription.next_billing_date && (
-                      <div className="flex justify-between">
-                        <span>Next billing:</span>
-                        <span>{new Date(subscription.next_billing_date).toLocaleDateString()}</span>
+              <CardContent className="space-y-4">
+                <div className="bg-background/50 rounded-lg p-4 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium">Free checks used:</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-primary">{profile?.free_checks_used || 0}/3</span>
+                      <div className="w-16 h-2 bg-secondary rounded-full overflow-hidden">
+                        <div 
+                          className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full transition-all duration-500"
+                          style={{ width: `${((profile?.free_checks_used || 0) / 3) * 100}%` }}
+                        />
                       </div>
-                    )}
-                  </>
-                )}
+                    </div>
+                  </div>
+                  
+                  {subscription && (
+                    <>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Current plan:</span>
+                        <Badge className="capitalize bg-primary/10 text-primary">
+                          {subscription.plan_type}
+                        </Badge>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="font-medium">Status:</span>
+                        <Badge 
+                          variant={subscription.status === "active" ? "default" : "destructive"}
+                          className={subscription.status === "active" ? "bg-financial-accent text-white" : ""}
+                        >
+                          {subscription.status}
+                        </Badge>
+                      </div>
+                      {subscription.next_billing_date && (
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">Next billing:</span>
+                          <span className="font-medium text-foreground">
+                            {new Date(subscription.next_billing_date).toLocaleDateString()}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
         )}
+
+        {/* Trust Indicators */}
+        <div className="mt-20 text-center">
+          <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
+            <div className="flex items-center gap-2 text-sm">
+              <Shield className="w-4 h-4" />
+              <span>SSL Secured</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <CheckCircle className="w-4 h-4" />
+              <span>PayPal Protected</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <Star className="w-4 h-4" />
+              <span>Trusted by Investors</span>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );
