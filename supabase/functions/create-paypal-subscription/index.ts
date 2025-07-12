@@ -65,33 +65,48 @@ serve(async (req) => {
     // Get PayPal access token
     const accessToken = await getPayPalAccessToken();
 
-    // Create subscription
+    // Create subscription using checkout sessions instead of predefined plans
     const subscriptionData = {
-      plan_id: `${plan_type.toUpperCase()}_PLAN`, // You'll need to create these plans in PayPal dashboard
-      start_time: new Date().toISOString(),
-      quantity: "1",
-      shipping_amount: {
-        currency_code: "USD",
-        value: "0.00"
-      },
-      subscriber: {
-        email_address: user.email
-      },
-      application_context: {
-        brand_name: "Scam Detector",
-        locale: "en-US",
-        shipping_preference: "NO_SHIPPING",
-        user_action: "SUBSCRIBE_NOW",
-        payment_method: {
-          payer_selected: "PAYPAL",
-          payee_preferred: "IMMEDIATE_PAYMENT_REQUIRED"
+      intent: "SUBSCRIPTION",
+      purchase_units: [{
+        amount: {
+          currency_code: "USD",
+          value: plan.amount,
+          breakdown: {
+            item_total: {
+              currency_code: "USD",
+              value: plan.amount
+            }
+          }
         },
-        return_url: `${req.headers.get("origin")}/subscription-success`,
-        cancel_url: `${req.headers.get("origin")}/pricing`
+        items: [{
+          name: plan.name,
+          description: `${plan.name} monthly subscription`,
+          unit_amount: {
+            currency_code: "USD",
+            value: plan.amount
+          },
+          quantity: "1",
+          category: "DIGITAL_GOODS"
+        }]
+      }],
+      payment_source: {
+        paypal: {
+          experience_context: {
+            payment_method_preference: "IMMEDIATE_PAYMENT_REQUIRED",
+            brand_name: "ScamShield",
+            locale: "en-US",
+            landing_page: "LOGIN",
+            shipping_preference: "NO_SHIPPING",
+            user_action: "PAY_NOW",
+            return_url: `${req.headers.get("origin")}/payment-success`,
+            cancel_url: `${req.headers.get("origin")}/pricing`
+          }
+        }
       }
     };
 
-    const subscriptionResponse = await fetch(`${PAYPAL_BASE_URL}/v1/billing/subscriptions`, {
+    const subscriptionResponse = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${accessToken}`,
@@ -103,7 +118,7 @@ serve(async (req) => {
     const subscription = await subscriptionResponse.json();
 
     if (!subscriptionResponse.ok) {
-      throw new Error(`PayPal subscription creation failed: ${JSON.stringify(subscription)}`);
+      throw new Error(`PayPal order creation failed: ${JSON.stringify(subscription)}`);
     }
 
     // Store subscription record
@@ -116,7 +131,7 @@ serve(async (req) => {
       status: "active"
     });
 
-    const approveLink = subscription.links.find((link: any) => link.rel === "approve")?.href;
+    const approveLink = subscription.links?.find((link: any) => link.rel === "approve")?.href;
 
     return new Response(JSON.stringify({ 
       subscriptionId: subscription.id,
