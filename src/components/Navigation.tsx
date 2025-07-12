@@ -1,4 +1,4 @@
-import { Home, Search, BarChart3, HelpCircle, Menu, X, LogIn, LogOut, User } from "lucide-react";
+import { Home, Search, BarChart3, HelpCircle, Menu, X, LogIn, LogOut, User, CreditCard } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ const Navigation = () => {
     { name: "Home", href: "/", icon: Home },
     { name: "Analyze", href: "/analyze", icon: Search },
     { name: "Results", href: "/results", icon: BarChart3 },
+    { name: "Pricing", href: "/pricing", icon: CreditCard },
     { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
   ];
 
