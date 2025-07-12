@@ -223,7 +223,7 @@ const Pricing = () => {
                 <div className="mb-6">
                   {plan.features.map((feature) => (
                     <div key={feature} className="flex items-start gap-2 mb-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
                       <span className="text-sm text-foreground">{feature}</span>
                     </div>
                   ))}
