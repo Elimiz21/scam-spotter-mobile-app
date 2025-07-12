@@ -153,119 +153,233 @@ const Pricing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f8fafc' }}>
       <Navigation />
       
-      <main className="container mx-auto px-4 py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-foreground mb-6">
-            Choose Your Protection Level
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            From basic scam detection to comprehensive business protection, 
-            we have a plan that fits your investment security needs.
-          </p>
-        </div>
-
-        {/* Pricing Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
-          {pricingPlans.map((plan) => (
-            <div 
-              key={plan.name}
-              className={`relative bg-card rounded-2xl p-8 border transition-all duration-300 hover:shadow-xl ${
-                plan.isPopular 
-                  ? 'border-primary shadow-lg ring-2 ring-primary/20 scale-105' 
-                  : 'border-border hover:border-primary/50'
-              }`}
-            >
-              {/* Popular Badge */}
-              {plan.isPopular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-semibold flex items-center gap-2 shadow-lg">
-                    <Star className="w-4 h-4" />
-                    Most Popular
-                  </div>
-                </div>
-              )}
-
-              {/* Plan Header */}
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-foreground mb-3">
-                  {plan.name}
-                </h3>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-primary">
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span className="text-lg text-muted-foreground ml-1">{plan.period}</span>
-                  )}
-                </div>
-                <p className="text-muted-foreground">
-                  {plan.description}
-                </p>
-              </div>
-
-              {/* Features List */}
-              <div className="space-y-4 mb-8">
-                {plan.features.map((feature) => (
-                  <div key={feature} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                    <span className="text-foreground">{feature}</span>
-                  </div>
-                ))}
-                {plan.limitations.map((limitation) => (
-                  <div key={limitation} className="flex items-start gap-3 opacity-70">
-                    <X className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
-                    <span className="text-muted-foreground">{limitation}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA Button */}
-              <button
-                className={`w-full py-4 px-6 text-lg font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
-                  plan.disabled 
-                    ? 'bg-muted text-muted-foreground cursor-not-allowed' 
-                    : plan.isPopular 
-                      ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl' 
-                      : 'bg-background text-primary border-2 border-primary hover:bg-primary hover:text-primary-foreground'
-                }`}
-                disabled={plan.disabled || loading}
-                onClick={plan.action}
-              >
-                {loading && plan.action ? (
-                  <>
-                    <Zap className="w-5 h-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  plan.cta
-                )}
-              </button>
-            </div>
-          ))}
-        </div>
-
-        {/* Trust Indicators */}
-        <div className="text-center">
-          <div className="flex justify-center items-center gap-12 flex-wrap">
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <Shield className="w-6 h-6" />
-              <span className="font-medium">SSL Secured</span>
-            </div>
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <CheckCircle className="w-6 h-6" />
-              <span className="font-medium">PayPal Protected</span>
-            </div>
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <Star className="w-6 h-6" />
-              <span className="font-medium">Trusted by Investors</span>
-            </div>
+      {/* Header matching Home page */}
+      <header style={{ 
+        borderBottom: '1px solid #e2e8f0', 
+        backgroundColor: 'white', 
+        padding: '1rem',
+        borderRadius: '8px',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>ScamShield</h1>
+            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Choose Your Protection Level</p>
           </div>
         </div>
-      </main>
+      </header>
+
+      {/* Hero Section */}
+      <section style={{ textAlign: 'center', padding: '2rem 1rem', marginBottom: '3rem' }}>
+        <h2 style={{ 
+          fontSize: '2.5rem', 
+          fontWeight: 'bold', 
+          marginBottom: '1.5rem',
+          background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
+          Choose Your Protection Level
+        </h2>
+        <p style={{ fontSize: '1.25rem', color: '#64748b', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem' }}>
+          From basic scam detection to comprehensive business protection, 
+          we have a plan that fits your investment security needs.
+        </p>
+      </section>
+
+      {/* Pricing Grid */}
+      <section style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+        gap: '1.5rem',
+        maxWidth: '1200px',
+        margin: '0 auto 3rem'
+      }}>
+        {pricingPlans.map((plan) => (
+          <div 
+            key={plan.name}
+            style={{ 
+              position: 'relative',
+              backgroundColor: 'white', 
+              padding: '2rem', 
+              borderRadius: '12px',
+              boxShadow: plan.isPopular 
+                ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' 
+                : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              border: plan.isPopular ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+              transform: plan.isPopular ? 'scale(1.05)' : 'scale(1)',
+              transition: 'all 0.2s',
+              cursor: plan.disabled ? 'not-allowed' : 'pointer'
+            }}
+            onMouseOver={(e) => {
+              if (!plan.disabled) {
+                e.currentTarget.style.transform = plan.isPopular ? 'scale(1.07)' : 'scale(1.02)';
+                e.currentTarget.style.boxShadow = '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)';
+              }
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = plan.isPopular ? 'scale(1.05)' : 'scale(1)';
+              e.currentTarget.style.boxShadow = plan.isPopular 
+                ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' 
+                : '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+            }}
+          >
+            {/* Popular Badge */}
+            {plan.isPopular && (
+              <div style={{ 
+                position: 'absolute',
+                top: '-12px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontSize: '0.875rem',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+              }}>
+                <Star style={{ width: '16px', height: '16px' }} />
+                Most Popular
+              </div>
+            )}
+
+            {/* Plan Header */}
+            <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: '#1e293b' }}>
+                {plan.name}
+              </h3>
+              <div style={{ marginBottom: '1rem' }}>
+                <span style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#3b82f6' }}>
+                  {plan.price}
+                </span>
+                {plan.period && (
+                  <span style={{ fontSize: '1rem', color: '#64748b', marginLeft: '4px' }}>{plan.period}</span>
+                )}
+              </div>
+              <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
+                {plan.description}
+              </p>
+            </div>
+
+            {/* Features List */}
+            <div style={{ marginBottom: '2rem' }}>
+              {plan.features.map((feature) => (
+                <div key={feature} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px' }}>
+                  <CheckCircle style={{ width: '20px', height: '20px', color: '#10b981', marginTop: '2px', flexShrink: 0 }} />
+                  <span style={{ color: '#1e293b', fontSize: '0.875rem' }}>{feature}</span>
+                </div>
+              ))}
+              {plan.limitations.map((limitation) => (
+                <div key={limitation} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px', opacity: 0.7 }}>
+                  <X style={{ width: '20px', height: '20px', color: '#64748b', marginTop: '2px', flexShrink: 0 }} />
+                  <span style={{ color: '#64748b', fontSize: '0.875rem' }}>{limitation}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTA Button */}
+            <button
+              style={{
+                width: '100%',
+                padding: '1rem 1.5rem',
+                fontSize: '1rem',
+                fontWeight: '600',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: plan.disabled ? 'not-allowed' : 'pointer',
+                transition: 'all 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                ...(plan.disabled 
+                  ? {
+                      backgroundColor: '#f1f5f9',
+                      color: '#64748b'
+                    }
+                  : plan.isPopular 
+                    ? {
+                        background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+                        color: 'white',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }
+                    : {
+                        backgroundColor: 'white',
+                        color: '#3b82f6',
+                        border: '2px solid #3b82f6'
+                      }
+                )
+              }}
+              disabled={plan.disabled || loading}
+              onClick={plan.action}
+              onMouseOver={(e) => {
+                if (!plan.disabled && !plan.isPopular) {
+                  e.currentTarget.style.backgroundColor = '#3b82f6';
+                  e.currentTarget.style.color = 'white';
+                }
+              }}
+              onMouseOut={(e) => {
+                if (!plan.disabled && !plan.isPopular) {
+                  e.currentTarget.style.backgroundColor = 'white';
+                  e.currentTarget.style.color = '#3b82f6';
+                }
+              }}
+            >
+              {loading && plan.action ? (
+                <>
+                  <Zap style={{ width: '20px', height: '20px', animation: 'spin 1s linear infinite' }} />
+                  Processing...
+                </>
+              ) : (
+                plan.cta
+              )}
+            </button>
+          </div>
+        ))}
+      </section>
+
+      {/* Trust Indicators */}
+      <section style={{ 
+        textAlign: 'center', 
+        padding: '2rem 1rem', 
+        backgroundColor: '#f1f5f9', 
+        borderRadius: '12px',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '3rem', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#64748b' }}>
+            <Shield style={{ width: '24px', height: '24px' }} />
+            <span style={{ fontWeight: '500' }}>SSL Secured</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#64748b' }}>
+            <CheckCircle style={{ width: '24px', height: '24px' }} />
+            <span style={{ fontWeight: '500' }}>PayPal Protected</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#64748b' }}>
+            <Star style={{ width: '24px', height: '24px' }} />
+            <span style={{ fontWeight: '500' }}>Trusted by Investors</span>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
