@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Upload, AlertCircle, Shield } from "lucide-react";
 import Navigation from "../components/Navigation";
 import { ApiKeyDialog } from "../components/ApiKeyDialog";
+import LegalDisclaimer from "../components/LegalDisclaimer";
 
 const GroupAnalysis = () => {
   const [formData, setFormData] = useState({
@@ -149,7 +150,10 @@ const GroupAnalysis = () => {
 
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem 1rem' }}>
         
-        {/* Warning Notice */}
+        {/* Legal Disclaimer */}
+        <LegalDisclaimer variant="full" className="mb-6" />
+
+        {/* Security Notice */}
         <div style={{ 
           backgroundColor: '#fefce8', 
           border: '1px solid #facc15',

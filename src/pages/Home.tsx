@@ -1,5 +1,6 @@
 import { Shield } from "lucide-react";
 import Navigation from "../components/Navigation";
+import LegalDisclaimer from "../components/LegalDisclaimer";
 
 const Home = () => {
   return (
@@ -213,6 +214,11 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Legal Disclaimer */}
+      <div style={{ margin: '2rem 0' }}>
+        <LegalDisclaimer variant="full" />
+      </div>
+
       {/* Footer */}
       <footer style={{ textAlign: 'center', padding: '2rem 1rem', borderTop: '1px solid #e2e8f0', marginTop: '3rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
@@ -232,6 +238,7 @@ const Home = () => {
         <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
           Protecting investors from financial scams with advanced AI analysis
         </p>
+        <LegalDisclaimer variant="compact" className="mt-4" />
       </footer>
     </div>
   );

@@ -1,5 +1,6 @@
 import { ArrowLeft, Shield, Database, Users, TrendingUp, CheckCircle, AlertTriangle } from "lucide-react";
 import Navigation from "../components/Navigation";
+import LegalDisclaimer from "../components/LegalDisclaimer";
 
 const HowItWorks = () => {
   const analysisVectors = [
@@ -270,6 +271,11 @@ const HowItWorks = () => {
           </p>
         </div>
 
+        {/* Legal Disclaimer */}
+        <div style={{ margin: '2rem 0' }}>
+          <LegalDisclaimer variant="full" />
+        </div>
+
         {/* CTA */}
         <div style={{ textAlign: 'center', marginTop: '3rem' }}>
           <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '1rem' }}>Ready to Analyze a Group?</h3>
@@ -288,6 +294,7 @@ const HowItWorks = () => {
           >
             Start Analysis Now
           </button>
+          <LegalDisclaimer variant="compact" className="mt-4" />
         </div>
 
       </div>

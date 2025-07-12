@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, AlertTriangle, Shield, Info, TrendingUp, Users, Database, ExternalLink } from "lucide-react";
 import Navigation from "../components/Navigation";
+import LegalDisclaimer from "../components/LegalDisclaimer";
 import { AnalysisResult, RiskVector } from '../services/types';
 
 const ResultsDashboard = () => {
@@ -128,6 +129,12 @@ const ResultsDashboard = () => {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       <Navigation />
+      
+      {/* Critical Disclaimer */}
+      <div style={{ padding: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
+        <LegalDisclaimer variant="results" />
+      </div>
+      
       {/* Header */}
       <header style={{ 
         borderBottom: '1px solid #e2e8f0', 
