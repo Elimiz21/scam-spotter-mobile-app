@@ -45,7 +45,10 @@ const Pricing = () => {
   };
 
   const handleSubscription = async (planType: "premium" | "pro") => {
+    console.log("handleSubscription called with planType:", planType);
+    
     if (!user) {
+      console.log("No user found, redirecting to auth");
       toast({
         title: "Authentication Required",
         description: "Please log in to subscribe.",
@@ -55,16 +58,28 @@ const Pricing = () => {
       return;
     }
 
+    console.log("User found, proceeding with subscription:", user.id);
     setLoading(true);
+    
     try {
+      console.log("Calling create-paypal-subscription edge function...");
       const { data, error } = await supabase.functions.invoke("create-paypal-subscription", {
         body: { plan_type: planType },
       });
 
-      if (error) throw error;
+      console.log("Edge function response:", { data, error });
 
-      if (data.approveUrl) {
+      if (error) {
+        console.error("Edge function error:", error);
+        throw error;
+      }
+
+      if (data && data.approveUrl) {
+        console.log("Opening PayPal approval URL:", data.approveUrl);
         window.open(data.approveUrl, "_blank");
+      } else {
+        console.error("No approval URL received:", data);
+        throw new Error("No approval URL received from PayPal");
       }
     } catch (error) {
       console.error("Subscription error:", error);
@@ -74,6 +89,7 @@ const Pricing = () => {
         variant: "destructive",
       });
     } finally {
+      console.log("Setting loading to false");
       setLoading(false);
     }
   };
