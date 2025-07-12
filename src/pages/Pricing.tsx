@@ -153,263 +153,145 @@ const Pricing = () => {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f8fafc' }}>
+    <div className="min-h-screen bg-background">
       <Navigation />
       
-      {/* Header */}
-      <header style={{ 
-        borderBottom: '1px solid #e2e8f0', 
-        backgroundColor: 'white', 
-        padding: '1rem',
-        borderRadius: '8px',
-        marginBottom: '2rem'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            backgroundColor: '#3b82f6', 
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>Investment Protection Plans</h1>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Choose your level of protection</p>
-          </div>
-        </div>
-      </header>
-
-      {/* Hero Section */}
-      <section style={{ textAlign: 'center', padding: '2rem 1rem', marginBottom: '2rem' }}>
-        <h2 style={{ 
-          fontSize: '2.5rem', 
-          fontWeight: 'bold', 
-          marginBottom: '1rem',
-          background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-          backgroundClip: 'text'
-        }}>
-          Choose Your Protection Level
-        </h2>
-        <p style={{ fontSize: '1.25rem', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
-          From basic scam detection to comprehensive business protection, 
-          we have a plan that fits your investment security needs.
-        </p>
-      </section>
-
-      {/* Pricing Cards */}
-      <section style={{ padding: '2rem 1rem', backgroundColor: '#f1f5f9', borderRadius: '12px', marginBottom: '2rem' }}>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-          gap: '1.5rem',
-          maxWidth: '1400px',
-          margin: '0 auto'
-        }}>
-          {pricingPlans.map((plan) => (
-            <div 
-              key={plan.name}
-              style={{ 
-                backgroundColor: 'white', 
-                padding: '1.5rem', 
-                borderRadius: '12px',
-                boxShadow: plan.isPopular 
-                  ? '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -2px rgba(59, 130, 246, 0.1)' 
-                  : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                border: plan.isPopular ? '2px solid #3b82f6' : '1px solid #e2e8f0',
-                position: 'relative',
-                transition: 'all 0.2s'
-              }}
-              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
-            >
-              {/* Popular Badge */}
-              {plan.isPopular && (
-                <div style={{
-                  position: 'absolute',
-                  top: '-12px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
-                  padding: '6px 16px',
-                  borderRadius: '20px',
-                  fontSize: '0.875rem',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <Star style={{ width: '12px', height: '12px' }} />
-                  Most Popular
-                </div>
-              )}
-
-              {/* Plan Header */}
-              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                  {plan.name}
-                </h3>
-                <div style={{ marginBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#3b82f6' }}>
-                    {plan.price}
-                  </span>
-                  {plan.period && (
-                    <span style={{ fontSize: '1rem', color: '#64748b' }}>{plan.period}</span>
-                  )}
-                </div>
-                <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
-                  {plan.description}
-                </p>
-              </div>
-
-              {/* Features */}
-              <div style={{ marginBottom: '1.5rem' }}>
-                {plan.features.map((feature) => (
-                  <div 
-                    key={feature} 
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'flex-start', 
-                      gap: '8px',
-                      marginBottom: '8px'
-                    }}
-                  >
-                    <CheckCircle style={{ width: '16px', height: '16px', color: '#10b981', marginTop: '2px', flexShrink: 0 }} />
-                    <span style={{ fontSize: '0.875rem', color: '#374151' }}>{feature}</span>
-                  </div>
-                ))}
-                {plan.limitations.map((limitation) => (
-                  <div 
-                    key={limitation} 
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'flex-start', 
-                      gap: '8px',
-                      marginBottom: '8px',
-                      opacity: 0.6
-                    }}
-                  >
-                    <X style={{ width: '16px', height: '16px', color: '#64748b', marginTop: '2px', flexShrink: 0 }} />
-                    <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{limitation}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* CTA Button */}
-              <button
-                style={{
-                  width: '100%',
-                  background: plan.disabled 
-                    ? '#f1f5f9' 
-                    : plan.isPopular 
-                      ? 'linear-gradient(to right, #3b82f6, #1d4ed8)' 
-                      : 'white',
-                  color: plan.disabled 
-                    ? '#64748b' 
-                    : plan.isPopular 
-                      ? 'white' 
-                      : '#3b82f6',
-                  padding: '0.75rem 1.5rem',
-                  fontSize: '1rem',
-                  fontWeight: '500',
-                  border: plan.disabled 
-                    ? '1px solid #e2e8f0' 
-                    : plan.isPopular 
-                      ? 'none' 
-                      : '2px solid #3b82f6',
-                  borderRadius: '8px',
-                  cursor: (plan.disabled || loading) ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-                disabled={plan.disabled || loading}
-                onClick={plan.action}
-                onMouseOver={(e) => {
-                  if (!plan.disabled && !loading) {
-                    (e.target as HTMLElement).style.transform = 'translateY(-1px)';
-                    if (!plan.isPopular) {
-                      (e.target as HTMLElement).style.backgroundColor = '#3b82f6';
-                      (e.target as HTMLElement).style.color = 'white';
-                    }
-                  }
-                }}
-                onMouseOut={(e) => {
-                  if (!plan.disabled && !loading) {
-                    (e.target as HTMLElement).style.transform = 'translateY(0)';
-                    if (!plan.isPopular) {
-                      (e.target as HTMLElement).style.backgroundColor = 'white';
-                      (e.target as HTMLElement).style.color = '#3b82f6';
-                    }
-                  }
-                }}
-              >
-                {loading && plan.action ? (
-                  <>
-                    <Zap style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
-                    Processing...
-                  </>
-                ) : (
-                  plan.cta
-                )}
-              </button>
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <header className="bg-card border-b border-border rounded-lg p-6 mb-8">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+              <Shield className="w-6 h-6 text-primary-foreground" />
             </div>
-          ))}
-        </div>
-      </section>
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Investment Protection Plans</h1>
+              <p className="text-sm text-muted-foreground">Choose your level of protection</p>
+            </div>
+          </div>
+        </header>
 
-      {/* Trust Indicators */}
-      <section style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          gap: '2rem',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
-            <Shield style={{ width: '16px', height: '16px' }} />
-            <span style={{ fontSize: '0.875rem' }}>SSL Secured</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
-            <CheckCircle style={{ width: '16px', height: '16px' }} />
-            <span style={{ fontSize: '0.875rem' }}>PayPal Protected</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
-            <Star style={{ width: '16px', height: '16px' }} />
-            <span style={{ fontSize: '0.875rem' }}>Trusted by Investors</span>
-          </div>
-        </div>
-      </section>
+        {/* Hero Section */}
+        <section className="text-center py-8 mb-8">
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+            Choose Your Protection Level
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            From basic scam detection to comprehensive business protection, 
+            we have a plan that fits your investment security needs.
+          </p>
+        </section>
 
-      {/* Footer */}
-      <footer style={{ textAlign: 'center', padding: '2rem 1rem', borderTop: '1px solid #e2e8f0', marginTop: '2rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
-          <div style={{ 
-            width: '32px', 
-            height: '32px', 
-            backgroundColor: '#3b82f6', 
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
+        {/* Pricing Cards */}
+        <section className="bg-secondary/20 rounded-xl p-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+            {pricingPlans.map((plan) => (
+              <div 
+                key={plan.name}
+                className={`bg-card rounded-xl p-6 relative transition-all duration-200 hover:-translate-y-1 ${
+                  plan.isPopular 
+                    ? 'border-2 border-primary shadow-lg shadow-primary/20' 
+                    : 'border border-border shadow-md'
+                }`}
+              >
+                {/* Popular Badge */}
+                {plan.isPopular && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
+                    <Star className="w-3 h-3" />
+                    Most Popular
+                  </div>
+                )}
+
+                {/* Plan Header */}
+                <div className="text-center mb-6">
+                  <h3 className="text-xl font-bold mb-2 text-foreground">
+                    {plan.name}
+                  </h3>
+                  <div className="mb-2">
+                    <span className="text-3xl font-bold text-primary">
+                      {plan.price}
+                    </span>
+                    {plan.period && (
+                      <span className="text-base text-muted-foreground">{plan.period}</span>
+                    )}
+                  </div>
+                  <p className="text-muted-foreground text-sm">
+                    {plan.description}
+                  </p>
+                </div>
+
+                {/* Features */}
+                <div className="mb-6">
+                  {plan.features.map((feature) => (
+                    <div key={feature} className="flex items-start gap-2 mb-2">
+                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-foreground">{feature}</span>
+                    </div>
+                  ))}
+                  {plan.limitations.map((limitation) => (
+                    <div key={limitation} className="flex items-start gap-2 mb-2 opacity-60">
+                      <X className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-muted-foreground">{limitation}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* CTA Button */}
+                <button
+                  className={`w-full py-3 px-6 text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
+                    plan.disabled 
+                      ? 'bg-secondary text-muted-foreground cursor-not-allowed border border-border' 
+                      : plan.isPopular 
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg' 
+                        : 'bg-background text-primary border-2 border-primary hover:bg-primary hover:text-primary-foreground'
+                  }`}
+                  disabled={plan.disabled || loading}
+                  onClick={plan.action}
+                >
+                  {loading && plan.action ? (
+                    <>
+                      <Zap className="w-4 h-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    plan.cta
+                  )}
+                </button>
+              </div>
+            ))}
           </div>
-          <span style={{ fontWeight: '600' }}>ScamShield</span>
-        </div>
-        <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
-          Protecting investors from financial scams with advanced AI analysis
-        </p>
-      </footer>
+        </section>
+
+        {/* Trust Indicators */}
+        <section className="text-center py-8">
+          <div className="flex justify-center items-center gap-8 flex-wrap">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Shield className="w-4 h-4" />
+              <span className="text-sm">SSL Secured</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <CheckCircle className="w-4 h-4" />
+              <span className="text-sm">PayPal Protected</span>
+            </div>
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Star className="w-4 h-4" />
+              <span className="text-sm">Trusted by Investors</span>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="text-center py-8 border-t border-border mt-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+              <Shield className="w-4 h-4 text-primary-foreground" />
+            </div>
+            <span className="font-semibold text-foreground">ScamShield</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Protecting investors from financial scams with advanced AI analysis
+          </p>
+        </footer>
+      </div>
     </div>
   );
 };
