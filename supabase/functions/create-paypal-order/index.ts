@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const PAYPAL_CLIENT_ID = "AWjx87BfEed5z3v8YPlp7JT-UyT4RjXbyv2grFbxjDzzsT4_-tvxiEuLFONjisFzhZOLAIqfK7z-qO2T";
+const PAYPAL_CLIENT_ID = "AaZ9M2j7n6MCkQx0Oi8X0dpVeZkvDeiVhyyY7Iumx4CpWAUhCe56ULt-Tdtxab0xakVzONSMQ2ICz74N";
 const PAYPAL_BASE_URL = "https://api-m.sandbox.paypal.com"; // Change to https://api-m.paypal.com for live
 
 async function getPayPalAccessToken() {
