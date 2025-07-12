@@ -1,204 +1,323 @@
+import { Shield, Star, CheckCircle, X } from "lucide-react";
 import Navigation from "@/components/Navigation";
 
 const Pricing = () => {
+  const pricingPlans = [
+    {
+      name: "Free",
+      price: "$0",
+      description: "Perfect for trying out our service",
+      features: [
+        "3 lifetime scam checks",
+        "Basic scam detection",
+        "Email support",
+      ],
+      limitations: [
+        "Limited to 3 checks total",
+        "No advanced features",
+      ],
+      cta: "0/3 checks used",
+      disabled: true,
+      isPopular: false,
+    },
+    {
+      name: "Pay-Per-Check",
+      price: "$4.99",
+      description: "Pay only when you need it",
+      features: [
+        "1 comprehensive scam check",
+        "Advanced AI analysis",
+        "Detailed risk assessment",
+        "Priority support",
+      ],
+      limitations: [],
+      cta: "Buy 1 Check",
+      disabled: false,
+      isPopular: false,
+    },
+    {
+      name: "Premium",
+      price: "$9.99",
+      period: "/month",
+      description: "Best for regular users",
+      features: [
+        "Unlimited scam checks",
+        "Advanced AI analysis",
+        "Priority support",
+        "API access",
+        "Export reports",
+      ],
+      limitations: [],
+      cta: "Subscribe",
+      disabled: false,
+      isPopular: true,
+    },
+    {
+      name: "Pro",
+      price: "$29.99",
+      period: "/month",
+      description: "For power users and businesses",
+      features: [
+        "Everything in Premium",
+        "Bulk checking (up to 100)",
+        "White-label reports",
+        "Dedicated support",
+        "Custom integrations",
+        "Team management",
+      ],
+      limitations: [],
+      cta: "Subscribe",
+      disabled: false,
+      isPopular: false,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-white">
+    <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f8fafc' }}>
       <Navigation />
       
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Choose Your Protection Level
-          </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            From basic scam detection to comprehensive business protection
-          </p>
+      {/* Header */}
+      <header style={{ 
+        borderBottom: '1px solid #e2e8f0', 
+        backgroundColor: 'white', 
+        padding: '1rem',
+        borderRadius: '8px',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
+          </div>
+          <div>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>Investment Protection Plans</h1>
+            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Choose your level of protection</p>
+          </div>
         </div>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {/* Free Plan */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Free</h3>
-              <div className="text-3xl font-bold text-blue-600 mb-2">$0</div>
-              <p className="text-gray-600">Perfect for trying out our service</p>
-            </div>
-            
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">3 lifetime scam checks</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Basic scam detection</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Email support</span>
-              </li>
-            </ul>
-            
-            <button className="w-full bg-gray-200 text-gray-700 py-2 px-4 rounded-md font-medium" disabled>
-              0/3 checks used
-            </button>
-          </div>
+      {/* Hero Section */}
+      <section style={{ textAlign: 'center', padding: '2rem 1rem', marginBottom: '2rem' }}>
+        <h2 style={{ 
+          fontSize: '2.5rem', 
+          fontWeight: 'bold', 
+          marginBottom: '1rem',
+          background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
+          Choose Your Protection Level
+        </h2>
+        <p style={{ fontSize: '1.25rem', color: '#64748b', maxWidth: '600px', margin: '0 auto' }}>
+          From basic scam detection to comprehensive business protection, 
+          we have a plan that fits your investment security needs.
+        </p>
+      </section>
 
-          {/* Pay-Per-Check Plan */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Pay-Per-Check</h3>
-              <div className="text-3xl font-bold text-blue-600 mb-2">$4.99</div>
-              <p className="text-gray-600">Pay only when you need it</p>
-            </div>
-            
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">1 comprehensive scam check</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Advanced AI analysis</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Priority support</span>
-              </li>
-            </ul>
-            
-            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700">
-              Buy 1 Check
-            </button>
-          </div>
+      {/* Pricing Cards */}
+      <section style={{ padding: '2rem 1rem', backgroundColor: '#f1f5f9', borderRadius: '12px', marginBottom: '2rem' }}>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+          gap: '1.5rem',
+          maxWidth: '1400px',
+          margin: '0 auto'
+        }}>
+          {pricingPlans.map((plan) => (
+            <div 
+              key={plan.name}
+              style={{ 
+                backgroundColor: 'white', 
+                padding: '1.5rem', 
+                borderRadius: '12px',
+                boxShadow: plan.isPopular 
+                  ? '0 10px 15px -3px rgba(59, 130, 246, 0.2), 0 4px 6px -2px rgba(59, 130, 246, 0.1)' 
+                  : '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                border: plan.isPopular ? '2px solid #3b82f6' : '1px solid #e2e8f0',
+                position: 'relative',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              {/* Popular Badge */}
+              {plan.isPopular && (
+                <div style={{
+                  position: 'absolute',
+                  top: '-12px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  padding: '6px 16px',
+                  borderRadius: '20px',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <Star style={{ width: '12px', height: '12px' }} />
+                  Most Popular
+                </div>
+              )}
 
-          {/* Premium Plan */}
-          <div className="bg-white rounded-lg border-2 border-blue-500 p-6 shadow-lg relative">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                Most Popular
-              </span>
-            </div>
-            
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Premium</h3>
-              <div className="text-3xl font-bold text-blue-600 mb-2">
-                $9.99<span className="text-lg text-gray-600">/month</span>
+              {/* Plan Header */}
+              <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                  {plan.name}
+                </h3>
+                <div style={{ marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#3b82f6' }}>
+                    {plan.price}
+                  </span>
+                  {plan.period && (
+                    <span style={{ fontSize: '1rem', color: '#64748b' }}>{plan.period}</span>
+                  )}
+                </div>
+                <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
+                  {plan.description}
+                </p>
               </div>
-              <p className="text-gray-600">Best for regular users</p>
-            </div>
-            
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Unlimited scam checks</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Advanced AI analysis</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">API access</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Export reports</span>
-              </li>
-            </ul>
-            
-            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700">
-              Subscribe
-            </button>
-          </div>
 
-          {/* Pro Plan */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6 shadow-sm">
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">Pro</h3>
-              <div className="text-3xl font-bold text-blue-600 mb-2">
-                $29.99<span className="text-lg text-gray-600">/month</span>
+              {/* Features */}
+              <div style={{ marginBottom: '1.5rem' }}>
+                {plan.features.map((feature) => (
+                  <div 
+                    key={feature} 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start', 
+                      gap: '8px',
+                      marginBottom: '8px'
+                    }}
+                  >
+                    <CheckCircle style={{ width: '16px', height: '16px', color: '#10b981', marginTop: '2px', flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.875rem', color: '#374151' }}>{feature}</span>
+                  </div>
+                ))}
+                {plan.limitations.map((limitation) => (
+                  <div 
+                    key={limitation} 
+                    style={{ 
+                      display: 'flex', 
+                      alignItems: 'flex-start', 
+                      gap: '8px',
+                      marginBottom: '8px',
+                      opacity: 0.6
+                    }}
+                  >
+                    <X style={{ width: '16px', height: '16px', color: '#64748b', marginTop: '2px', flexShrink: 0 }} />
+                    <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{limitation}</span>
+                  </div>
+                ))}
               </div>
-              <p className="text-gray-600">For power users and businesses</p>
-            </div>
-            
-            <ul className="space-y-3 mb-6">
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Everything in Premium</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Bulk checking (up to 100)</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">White-label reports</span>
-              </li>
-              <li className="flex items-start">
-                <svg className="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-                <span className="text-sm">Team management</span>
-              </li>
-            </ul>
-            
-            <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md font-medium hover:bg-blue-700">
-              Subscribe
-            </button>
-          </div>
-        </div>
 
-        {/* Trust Indicators */}
-        <div className="mt-16 text-center">
-          <div className="flex justify-center items-center gap-8 text-sm text-gray-500">
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              SSL Secured
+              {/* CTA Button */}
+              <button
+                style={{
+                  width: '100%',
+                  background: plan.disabled 
+                    ? '#f1f5f9' 
+                    : plan.isPopular 
+                      ? 'linear-gradient(to right, #3b82f6, #1d4ed8)' 
+                      : 'white',
+                  color: plan.disabled 
+                    ? '#64748b' 
+                    : plan.isPopular 
+                      ? 'white' 
+                      : '#3b82f6',
+                  padding: '0.75rem 1.5rem',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  border: plan.disabled 
+                    ? '1px solid #e2e8f0' 
+                    : plan.isPopular 
+                      ? 'none' 
+                      : '2px solid #3b82f6',
+                  borderRadius: '8px',
+                  cursor: plan.disabled ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                disabled={plan.disabled}
+                onMouseOver={(e) => {
+                  if (!plan.disabled) {
+                    (e.target as HTMLElement).style.transform = 'translateY(-1px)';
+                    if (!plan.isPopular) {
+                      (e.target as HTMLElement).style.backgroundColor = '#3b82f6';
+                      (e.target as HTMLElement).style.color = 'white';
+                    }
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!plan.disabled) {
+                    (e.target as HTMLElement).style.transform = 'translateY(0)';
+                    if (!plan.isPopular) {
+                      (e.target as HTMLElement).style.backgroundColor = 'white';
+                      (e.target as HTMLElement).style.color = '#3b82f6';
+                    }
+                  }
+                }}
+              >
+                {plan.cta}
+              </button>
             </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              PayPal Protected
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              Trusted by Investors
-            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Trust Indicators */}
+      <section style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          alignItems: 'center', 
+          gap: '2rem',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
+            <Shield style={{ width: '16px', height: '16px' }} />
+            <span style={{ fontSize: '0.875rem' }}>SSL Secured</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
+            <CheckCircle style={{ width: '16px', height: '16px' }} />
+            <span style={{ fontSize: '0.875rem' }}>PayPal Protected</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b' }}>
+            <Star style={{ width: '16px', height: '16px' }} />
+            <span style={{ fontSize: '0.875rem' }}>Trusted by Investors</span>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ textAlign: 'center', padding: '2rem 1rem', borderTop: '1px solid #e2e8f0', marginTop: '2rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
+          <div style={{ 
+            width: '32px', 
+            height: '32px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
+          </div>
+          <span style={{ fontWeight: '600' }}>ScamShield</span>
+        </div>
+        <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
+          Protecting investors from financial scams with advanced AI analysis
+        </p>
+      </footer>
     </div>
   );
 };
