@@ -84,18 +84,14 @@ const Home = () => {
         }}>
           
           <div 
-            onClick={() => window.location.href = '/analyze?type=scammer-database'}
             style={{ 
               backgroundColor: 'white', 
               padding: '1.5rem', 
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
               transition: 'all 0.2s'
             }}
-            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
           >
             <div style={{ 
               width: '48px', 
@@ -110,24 +106,39 @@ const Home = () => {
               🚨
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Scammer Database</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
               Cross-reference group members against known scammer databases and blacklists
             </p>
+            <button
+              onClick={() => window.location.href = '/check?type=scammer-database'}
+              style={{
+                background: 'linear-gradient(to right, #dc2626, #b91c1c)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
           </div>
 
           <div 
-            onClick={() => window.location.href = '/analyze?type=language-analysis'}
             style={{ 
               backgroundColor: 'white', 
               padding: '1.5rem', 
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
               transition: 'all 0.2s'
             }}
-            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
           >
             <div style={{ 
               width: '48px', 
@@ -142,24 +153,39 @@ const Home = () => {
               👥
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Language Analysis</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
               AI analysis of group communications for manipulation tactics and scam language patterns
             </p>
+            <button
+              onClick={() => window.location.href = '/check?type=language-analysis'}
+              style={{
+                background: 'linear-gradient(to right, #2563eb, #1d4ed8)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
           </div>
 
           <div 
-            onClick={() => window.location.href = '/analyze?type=price-manipulation'}
             style={{ 
               backgroundColor: 'white', 
               padding: '1.5rem', 
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
               transition: 'all 0.2s'
             }}
-            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
           >
             <div style={{ 
               width: '48px', 
@@ -174,24 +200,39 @@ const Home = () => {
               📈
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Price Manipulation</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
               Detection of artificial price pumps and suspicious trading activity patterns
             </p>
+            <button
+              onClick={() => window.location.href = '/check?type=price-manipulation'}
+              style={{
+                background: 'linear-gradient(to right, #ca8a04, #a16207)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
           </div>
 
           <div 
-            onClick={() => window.location.href = '/analyze?type=asset-verification'}
             style={{ 
               backgroundColor: 'white', 
               padding: '1.5rem', 
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
               transition: 'all 0.2s'
             }}
-            onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-2px)')}
-            onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
           >
             <div style={{ 
               width: '48px', 
@@ -206,9 +247,28 @@ const Home = () => {
               🛡️
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Asset Verification</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
               Verify the existence and legitimacy of promoted assets and investment opportunities
             </p>
+            <button
+              onClick={() => window.location.href = '/check?type=asset-verification'}
+              style={{
+                background: 'linear-gradient(to right, #16a34a, #15803d)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
           </div>
 
         </div>

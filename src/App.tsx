@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import Home from "./pages/Home";
 import GroupAnalysis from "./pages/GroupAnalysis";
+import SingleCheck from "./pages/SingleCheck";
 import ResultsDashboard from "./pages/ResultsDashboard";
 import HowItWorks from "./pages/HowItWorks";
 import Auth from "./pages/Auth";
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/analyze" element={<GroupAnalysis />} />
+            <Route path="/check" element={<SingleCheck />} />
             <Route path="/results" element={<ResultsDashboard />} />
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/pricing" element={<Pricing />} />
