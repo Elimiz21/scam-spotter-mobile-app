@@ -50,6 +50,8 @@ export default function Auth() {
         title: "Welcome to ScamShield",
         description: "Check your email to confirm your account and start protecting your investments.",
       });
+      // Navigate to home after successful signup
+      navigate("/");
     }
     setLoading(false);
   };
