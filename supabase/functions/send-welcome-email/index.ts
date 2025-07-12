@@ -24,24 +24,31 @@ Deno.serve(async (req) => {
   try {
     const payload = await req.text()
     const headers = Object.fromEntries(req.headers)
-    const wh = new Webhook(hookSecret)
     
-    const {
-      user,
-      email_data: { token_hash, redirect_to, email_action_type },
-    } = wh.verify(payload, headers) as {
-      user: {
-        email: string
+    // For direct calls from our app, not webhook
+    let user, email_data
+    
+    try {
+      const body = JSON.parse(payload)
+      user = body.user
+      email_data = body.email_data
+    } catch {
+      // If JSON parsing fails, it might be a webhook format
+      const wh = new Webhook(hookSecret)
+      const webhookData = wh.verify(payload, headers) as {
+        user: { email: string }
+        email_data: {
+          token_hash: string
+          redirect_to: string
+          email_action_type: string
+        }
       }
-      email_data: {
-        token_hash: string
-        redirect_to: string
-        email_action_type: string
-      }
+      user = webhookData.user
+      email_data = webhookData.email_data
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
-    const confirmUrl = `${supabaseUrl}/auth/v1/verify?token=${token_hash}&type=${email_action_type}&redirect_to=${redirect_to}`
+    const confirmUrl = `${supabaseUrl}/auth/v1/verify?token=${email_data.token_hash}&type=${email_data.email_action_type}&redirect_to=${email_data.redirect_to}`
 
     const html = await renderAsync(
       React.createElement(WelcomeEmail, {
