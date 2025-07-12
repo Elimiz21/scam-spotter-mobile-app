@@ -1,8 +1,12 @@
-import { Home, Search, BarChart3, HelpCircle, Menu, X } from "lucide-react";
+import { Home, Search, BarChart3, HelpCircle, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const navItems = [
     { name: "Home", href: "/", icon: Home },
@@ -10,6 +14,12 @@ const Navigation = () => {
     { name: "Results", href: "/results", icon: BarChart3 },
     { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
   ];
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsOpen(false);
+    navigate("/");
+  };
 
   return (
     <>
@@ -110,9 +120,91 @@ const Navigation = () => {
           })}
         </div>
 
-        {/* Footer */}
+        {/* Auth Section */}
         <div style={{ 
           marginTop: 'auto', 
+          padding: '1rem', 
+          borderTop: '1px solid #e2e8f0'
+        }}>
+          {user ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                padding: '8px 12px',
+                backgroundColor: '#f8fafc',
+                borderRadius: '6px',
+                fontSize: '0.875rem'
+              }}>
+                <User size={16} />
+                <span style={{ color: '#374151', fontWeight: '500' }}>
+                  {user.email}
+                </span>
+              </div>
+              <button
+                onClick={handleSignOut}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 12px',
+                  backgroundColor: 'transparent',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '6px',
+                  color: '#dc2626',
+                  fontSize: '0.875rem',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  (e.target as HTMLElement).style.backgroundColor = '#fef2f2';
+                }}
+                onMouseOut={(e) => {
+                  (e.target as HTMLElement).style.backgroundColor = 'transparent';
+                }}
+              >
+                <LogOut size={16} />
+                <span>Sign Out</span>
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                navigate("/auth");
+                setIsOpen(false);
+              }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 16px',
+                backgroundColor: '#3b82f6',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                width: '100%',
+                justifyContent: 'center'
+              }}
+              onMouseOver={(e) => {
+                (e.target as HTMLElement).style.backgroundColor = '#2563eb';
+              }}
+              onMouseOut={(e) => {
+                (e.target as HTMLElement).style.backgroundColor = '#3b82f6';
+              }}
+            >
+              <LogIn size={16} />
+              <span>Sign In</span>
+            </button>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div style={{ 
           padding: '1rem', 
           borderTop: '1px solid #e2e8f0',
           textAlign: 'center'
