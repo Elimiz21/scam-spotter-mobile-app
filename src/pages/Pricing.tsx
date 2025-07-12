@@ -1,7 +1,83 @@
-import { Shield, Star, CheckCircle, X } from "lucide-react";
+import { Shield, Star, CheckCircle, X, Zap } from "lucide-react";
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Pricing = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+
+  const handlePayPerCheck = async () => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to purchase checks.",
+        variant: "destructive",
+      });
+      window.location.href = '/auth';
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-paypal-order", {
+        body: { payment_type: "pay_per_check" },
+      });
+
+      if (error) throw error;
+
+      if (data.approveUrl) {
+        window.open(data.approveUrl, "_blank");
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      toast({
+        title: "Payment Error", 
+        description: "Failed to create payment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubscription = async (planType: "premium" | "pro") => {
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to subscribe.",
+        variant: "destructive",
+      });
+      window.location.href = '/auth';
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-paypal-subscription", {
+        body: { plan_type: planType },
+      });
+
+      if (error) throw error;
+
+      if (data.approveUrl) {
+        window.open(data.approveUrl, "_blank");
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast({
+        title: "Subscription Error",
+        description: "Failed to create subscription. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const pricingPlans = [
     {
       name: "Free",
@@ -9,7 +85,7 @@ const Pricing = () => {
       description: "Perfect for trying out our service",
       features: [
         "3 lifetime scam checks",
-        "Basic scam detection",
+        "Basic scam detection", 
         "Email support",
       ],
       limitations: [
@@ -19,6 +95,7 @@ const Pricing = () => {
       cta: "0/3 checks used",
       disabled: true,
       isPopular: false,
+      action: null,
     },
     {
       name: "Pay-Per-Check",
@@ -34,6 +111,7 @@ const Pricing = () => {
       cta: "Buy 1 Check",
       disabled: false,
       isPopular: false,
+      action: handlePayPerCheck,
     },
     {
       name: "Premium",
@@ -51,6 +129,7 @@ const Pricing = () => {
       cta: "Subscribe",
       disabled: false,
       isPopular: true,
+      action: () => handleSubscription("premium"),
     },
     {
       name: "Pro",
@@ -69,6 +148,7 @@ const Pricing = () => {
       cta: "Subscribe",
       disabled: false,
       isPopular: false,
+      action: () => handleSubscription("pro"),
     },
   ];
 
@@ -244,12 +324,17 @@ const Pricing = () => {
                       ? 'none' 
                       : '2px solid #3b82f6',
                   borderRadius: '8px',
-                  cursor: plan.disabled ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s'
+                  cursor: (plan.disabled || loading) ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px'
                 }}
-                disabled={plan.disabled}
+                disabled={plan.disabled || loading}
+                onClick={plan.action}
                 onMouseOver={(e) => {
-                  if (!plan.disabled) {
+                  if (!plan.disabled && !loading) {
                     (e.target as HTMLElement).style.transform = 'translateY(-1px)';
                     if (!plan.isPopular) {
                       (e.target as HTMLElement).style.backgroundColor = '#3b82f6';
@@ -258,7 +343,7 @@ const Pricing = () => {
                   }
                 }}
                 onMouseOut={(e) => {
-                  if (!plan.disabled) {
+                  if (!plan.disabled && !loading) {
                     (e.target as HTMLElement).style.transform = 'translateY(0)';
                     if (!plan.isPopular) {
                       (e.target as HTMLElement).style.backgroundColor = 'white';
@@ -267,7 +352,14 @@ const Pricing = () => {
                   }
                 }}
               >
-                {plan.cta}
+                {loading && plan.action ? (
+                  <>
+                    <Zap style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} />
+                    Processing...
+                  </>
+                ) : (
+                  plan.cta
+                )}
               </button>
             </div>
           ))}
