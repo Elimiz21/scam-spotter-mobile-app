@@ -34,7 +34,6 @@ const Pricing = () => {
 
   const fetchUserData = async () => {
     try {
-      // Fetch user profile
       const { data: profileData } = await supabase
         .from("profiles")
         .select("*")
@@ -43,7 +42,6 @@ const Pricing = () => {
 
       setProfile(profileData);
 
-      // Fetch active subscription
       const { data: subscriptionData } = await supabase
         .from("subscriptions")
         .select("*")
@@ -75,7 +73,6 @@ const Pricing = () => {
 
       if (error) throw error;
 
-      // Open PayPal in new tab
       if (data.approveUrl) {
         window.open(data.approveUrl, "_blank");
       }
@@ -108,7 +105,6 @@ const Pricing = () => {
 
       if (error) throw error;
 
-      // Open PayPal in new tab
       if (data.approveUrl) {
         window.open(data.approveUrl, "_blank");
       }
@@ -198,139 +194,131 @@ const Pricing = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <main className="container mx-auto px-4 py-16">
-        {/* Header Section */}
+      <div className="container mx-auto px-4 py-16">
+        {/* Header */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
             <Shield className="w-4 h-4 mr-2" />
             Investment Protection Plans
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+          <h1 className="text-4xl font-bold text-foreground mb-4">
             Choose Your Protection Level
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
             From basic scam detection to comprehensive business protection, 
             we have a plan that fits your investment security needs.
           </p>
         </div>
 
-        {/* Pricing Cards */}
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6 max-w-7xl mx-auto mb-16">
+        {/* Pricing Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto mb-16">
           {pricingPlans.map((plan) => (
-            <Card 
-              key={plan.name}
-              className={`relative transition-all duration-300 hover:shadow-lg ${
+            <div key={plan.name} className="relative">
+              <Card className={`h-full ${
                 plan.current 
-                  ? "border-primary ring-2 ring-primary/20 shadow-md" 
+                  ? "border-primary ring-2 ring-primary/20" 
                   : plan.popular 
-                    ? "border-primary shadow-md scale-105" 
-                    : "border-border hover:border-primary/50"
-              }`}
-            >
-              {/* Badges */}
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-primary text-primary-foreground px-3 py-1">
-                    <Star className="w-3 h-3 mr-1" />
-                    Most Popular
-                  </Badge>
-                </div>
-              )}
-              
-              {plan.current && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-secondary text-secondary-foreground px-3 py-1">
-                    <Shield className="w-3 h-3 mr-1" />
-                    Current Plan
-                  </Badge>
-                </div>
-              )}
+                    ? "border-primary" 
+                    : ""
+              }`}>
+                {plan.popular && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-primary text-primary-foreground">
+                      <Star className="w-3 h-3 mr-1" />
+                      Most Popular
+                    </Badge>
+                  </div>
+                )}
+                
+                {plan.current && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                    <Badge className="bg-secondary text-secondary-foreground">
+                      <Shield className="w-3 h-3 mr-1" />
+                      Current Plan
+                    </Badge>
+                  </div>
+                )}
 
-              <CardHeader className="text-center pb-6">
-                <CardTitle className="text-2xl font-bold mb-3">{plan.name}</CardTitle>
-                <div className="mb-4">
-                  <span className="text-4xl font-bold text-primary">{plan.price}</span>
-                  {plan.period && (
-                    <span className="text-lg text-muted-foreground">{plan.period}</span>
-                  )}
-                </div>
-                <CardDescription className="text-base">
-                  {plan.description}
-                </CardDescription>
-              </CardHeader>
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl mb-2">{plan.name}</CardTitle>
+                  <div className="text-3xl font-bold text-primary mb-2">
+                    {plan.price}
+                    {plan.period && <span className="text-lg text-muted-foreground">{plan.period}</span>}
+                  </div>
+                  <CardDescription>{plan.description}</CardDescription>
+                </CardHeader>
 
-              <CardContent className="px-6 pb-6">
-                <div className="space-y-3">
-                  {plan.features.map((feature) => (
-                    <div key={feature} className="flex items-start gap-3">
-                      <CheckCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </div>
-                  ))}
-                  {plan.limitations.map((limitation) => (
-                    <div key={limitation} className="flex items-start gap-3 opacity-60">
-                      <X className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-muted-foreground">{limitation}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
+                <CardContent className="flex-1">
+                  <div className="space-y-3">
+                    {plan.features.map((feature) => (
+                      <div key={feature} className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                        <span className="text-sm">{feature}</span>
+                      </div>
+                    ))}
+                    {plan.limitations.map((limitation) => (
+                      <div key={limitation} className="flex items-start gap-2 opacity-60">
+                        <X className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                        <span className="text-sm text-muted-foreground">{limitation}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
 
-              <CardFooter className="px-6 pb-6">
-                <Button
-                  className="w-full h-11 font-medium"
-                  variant={plan.current ? "secondary" : plan.popular ? "default" : "outline"}
-                  disabled={plan.disabled || plan.current || loading}
-                  onClick={plan.action}
-                >
-                  {loading ? (
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 animate-spin" />
-                      Processing...
-                    </div>
-                  ) : (
-                    plan.cta
-                  )}
-                </Button>
-              </CardFooter>
-            </Card>
+                <CardFooter>
+                  <Button
+                    className="w-full"
+                    variant={plan.current ? "secondary" : plan.popular ? "default" : "outline"}
+                    disabled={plan.disabled || plan.current || loading}
+                    onClick={plan.action}
+                  >
+                    {loading ? (
+                      <>
+                        <Zap className="w-4 h-4 animate-spin mr-2" />
+                        Processing...
+                      </>
+                    ) : (
+                      plan.cta
+                    )}
+                  </Button>
+                </CardFooter>
+              </Card>
+            </div>
           ))}
         </div>
 
         {/* Account Status */}
         {user && (
-          <div className="flex justify-center">
-            <Card className="w-full max-w-md">
+          <div className="max-w-md mx-auto">
+            <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="w-5 h-5" />
                   Your Account Status
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
+              <CardContent className="space-y-3">
+                <div className="flex justify-between">
                   <span>Free checks used:</span>
                   <span className="font-medium">{profile?.free_checks_used || 0}/3</span>
                 </div>
                 
                 {subscription && (
                   <>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between">
                       <span>Current plan:</span>
                       <Badge className="capitalize">{subscription.plan_type}</Badge>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex justify-between">
                       <span>Status:</span>
                       <Badge variant={subscription.status === "active" ? "default" : "destructive"}>
                         {subscription.status}
                       </Badge>
                     </div>
                     {subscription.next_billing_date && (
-                      <div className="flex justify-between items-center">
+                      <div className="flex justify-between">
                         <span>Next billing:</span>
-                        <span className="font-medium">
-                          {new Date(subscription.next_billing_date).toLocaleDateString()}
-                        </span>
+                        <span>{new Date(subscription.next_billing_date).toLocaleDateString()}</span>
                       </div>
                     )}
                   </>
@@ -342,7 +330,7 @@ const Pricing = () => {
 
         {/* Trust Indicators */}
         <div className="mt-16 text-center">
-          <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-muted-foreground">
+          <div className="flex justify-center items-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
               SSL Secured
@@ -357,7 +345,7 @@ const Pricing = () => {
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 };
