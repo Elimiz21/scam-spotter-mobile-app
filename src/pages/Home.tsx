@@ -90,7 +90,10 @@ const Home = () => {
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
             }}
           >
             <div style={{ 
@@ -106,7 +109,7 @@ const Home = () => {
               🚨
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Scammer Database</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
               Cross-reference group members against known scammer databases and blacklists
             </p>
             <button
@@ -121,7 +124,8 @@ const Home = () => {
                 borderRadius: '6px',
                 cursor: 'pointer',
                 width: '100%',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                marginTop: 'auto'
               }}
               onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
               onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
@@ -137,7 +141,10 @@ const Home = () => {
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
             }}
           >
             <div style={{ 
@@ -153,7 +160,7 @@ const Home = () => {
               👥
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Language Analysis</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
               AI analysis of group communications for manipulation tactics and scam language patterns
             </p>
             <button
@@ -168,7 +175,8 @@ const Home = () => {
                 borderRadius: '6px',
                 cursor: 'pointer',
                 width: '100%',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                marginTop: 'auto'
               }}
               onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
               onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
@@ -184,7 +192,10 @@ const Home = () => {
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
             }}
           >
             <div style={{ 
@@ -200,7 +211,7 @@ const Home = () => {
               📈
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Price Manipulation</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
               Detection of artificial price pumps and suspicious trading activity patterns
             </p>
             <button
@@ -215,7 +226,8 @@ const Home = () => {
                 borderRadius: '6px',
                 cursor: 'pointer',
                 width: '100%',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                marginTop: 'auto'
               }}
               onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
               onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
@@ -231,7 +243,10 @@ const Home = () => {
               borderRadius: '12px',
               textAlign: 'center',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              transition: 'all 0.2s'
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
             }}
           >
             <div style={{ 
@@ -247,7 +262,7 @@ const Home = () => {
               🛡️
             </div>
             <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Asset Verification</h4>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem' }}>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
               Verify the existence and legitimacy of promoted assets and investment opportunities
             </p>
             <button
@@ -262,7 +277,8 @@ const Home = () => {
                 borderRadius: '6px',
                 cursor: 'pointer',
                 width: '100%',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                marginTop: 'auto'
               }}
               onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
               onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
