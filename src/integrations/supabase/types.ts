@@ -14,7 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      payments: {
+        Row: {
+          amount: number
+          checks_purchased: number | null
+          created_at: string
+          currency: string
+          id: string
+          payment_type: string
+          paypal_order_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          checks_purchased?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_type: string
+          paypal_order_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          checks_purchased?: number | null
+          created_at?: string
+          currency?: string
+          id?: string
+          payment_type?: string
+          paypal_order_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          free_checks_used: number
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          free_checks_used?: number
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          free_checks_used?: number
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          next_billing_date: string | null
+          paypal_subscription_id: string | null
+          plan_type: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          next_billing_date?: string | null
+          paypal_subscription_id?: string | null
+          plan_type: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          next_billing_date?: string | null
+          paypal_subscription_id?: string | null
+          plan_type?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_checks: {
+        Row: {
+          check_type: string
+          created_at: string
+          id: string
+          result: Json | null
+          user_id: string
+        }
+        Insert: {
+          check_type: string
+          created_at?: string
+          id?: string
+          result?: Json | null
+          user_id: string
+        }
+        Update: {
+          check_type?: string
+          created_at?: string
+          id?: string
+          result?: Json | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
