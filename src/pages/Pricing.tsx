@@ -156,142 +156,116 @@ const Pricing = () => {
     <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <header className="bg-card border-b border-border rounded-lg p-6 mb-8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <Shield className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Investment Protection Plans</h1>
-              <p className="text-sm text-muted-foreground">Choose your level of protection</p>
-            </div>
-          </div>
-        </header>
-
+      <main className="container mx-auto px-4 py-16">
         {/* Hero Section */}
-        <section className="text-center py-8 mb-8">
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-foreground mb-6">
             Choose Your Protection Level
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          </h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             From basic scam detection to comprehensive business protection, 
             we have a plan that fits your investment security needs.
           </p>
-        </section>
+        </div>
 
-        {/* Pricing Cards */}
-        <section className="bg-secondary/20 rounded-xl p-8 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {pricingPlans.map((plan) => (
-              <div 
-                key={plan.name}
-                className={`bg-card rounded-xl p-6 relative transition-all duration-200 hover:-translate-y-1 ${
-                  plan.isPopular 
-                    ? 'border-2 border-primary shadow-lg shadow-primary/20' 
-                    : 'border border-border shadow-md'
-                }`}
-              >
-                {/* Popular Badge */}
-                {plan.isPopular && (
-                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1.5 rounded-full text-sm font-medium flex items-center gap-1.5">
-                    <Star className="w-3 h-3" />
+        {/* Pricing Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto mb-16">
+          {pricingPlans.map((plan) => (
+            <div 
+              key={plan.name}
+              className={`relative bg-card rounded-2xl p-8 border transition-all duration-300 hover:shadow-xl ${
+                plan.isPopular 
+                  ? 'border-primary shadow-lg ring-2 ring-primary/20 scale-105' 
+                  : 'border-border hover:border-primary/50'
+              }`}
+            >
+              {/* Popular Badge */}
+              {plan.isPopular && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <div className="bg-primary text-primary-foreground px-6 py-2 rounded-full text-sm font-semibold flex items-center gap-2 shadow-lg">
+                    <Star className="w-4 h-4" />
                     Most Popular
                   </div>
-                )}
-
-                {/* Plan Header */}
-                <div className="text-center mb-6">
-                  <h3 className="text-xl font-bold mb-2 text-foreground">
-                    {plan.name}
-                  </h3>
-                  <div className="mb-2">
-                    <span className="text-3xl font-bold text-primary">
-                      {plan.price}
-                    </span>
-                    {plan.period && (
-                      <span className="text-base text-muted-foreground">{plan.period}</span>
-                    )}
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    {plan.description}
-                  </p>
                 </div>
+              )}
 
-                {/* Features */}
-                <div className="mb-6">
-                  {plan.features.map((feature) => (
-                    <div key={feature} className="flex items-start gap-2 mb-2">
-                      <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-foreground">{feature}</span>
-                    </div>
-                  ))}
-                  {plan.limitations.map((limitation) => (
-                    <div key={limitation} className="flex items-start gap-2 mb-2 opacity-60">
-                      <X className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                      <span className="text-sm text-muted-foreground">{limitation}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* CTA Button */}
-                <button
-                  className={`w-full py-3 px-6 text-base font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 ${
-                    plan.disabled 
-                      ? 'bg-secondary text-muted-foreground cursor-not-allowed border border-border' 
-                      : plan.isPopular 
-                        ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg' 
-                        : 'bg-background text-primary border-2 border-primary hover:bg-primary hover:text-primary-foreground'
-                  }`}
-                  disabled={plan.disabled || loading}
-                  onClick={plan.action}
-                >
-                  {loading && plan.action ? (
-                    <>
-                      <Zap className="w-4 h-4 animate-spin" />
-                      Processing...
-                    </>
-                  ) : (
-                    plan.cta
+              {/* Plan Header */}
+              <div className="text-center mb-8">
+                <h3 className="text-2xl font-bold text-foreground mb-3">
+                  {plan.name}
+                </h3>
+                <div className="mb-4">
+                  <span className="text-4xl font-bold text-primary">
+                    {plan.price}
+                  </span>
+                  {plan.period && (
+                    <span className="text-lg text-muted-foreground ml-1">{plan.period}</span>
                   )}
-                </button>
+                </div>
+                <p className="text-muted-foreground">
+                  {plan.description}
+                </p>
               </div>
-            ))}
-          </div>
-        </section>
+
+              {/* Features List */}
+              <div className="space-y-4 mb-8">
+                {plan.features.map((feature) => (
+                  <div key={feature} className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-foreground">{feature}</span>
+                  </div>
+                ))}
+                {plan.limitations.map((limitation) => (
+                  <div key={limitation} className="flex items-start gap-3 opacity-70">
+                    <X className="w-5 h-5 text-muted-foreground mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground">{limitation}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA Button */}
+              <button
+                className={`w-full py-4 px-6 text-lg font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 ${
+                  plan.disabled 
+                    ? 'bg-muted text-muted-foreground cursor-not-allowed' 
+                    : plan.isPopular 
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl' 
+                      : 'bg-background text-primary border-2 border-primary hover:bg-primary hover:text-primary-foreground'
+                }`}
+                disabled={plan.disabled || loading}
+                onClick={plan.action}
+              >
+                {loading && plan.action ? (
+                  <>
+                    <Zap className="w-5 h-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  plan.cta
+                )}
+              </button>
+            </div>
+          ))}
+        </div>
 
         {/* Trust Indicators */}
-        <section className="text-center py-8">
-          <div className="flex justify-center items-center gap-8 flex-wrap">
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Shield className="w-4 h-4" />
-              <span className="text-sm">SSL Secured</span>
+        <div className="text-center">
+          <div className="flex justify-center items-center gap-12 flex-wrap">
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <Shield className="w-6 h-6" />
+              <span className="font-medium">SSL Secured</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <CheckCircle className="w-4 h-4" />
-              <span className="text-sm">PayPal Protected</span>
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <CheckCircle className="w-6 h-6" />
+              <span className="font-medium">PayPal Protected</span>
             </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <Star className="w-4 h-4" />
-              <span className="text-sm">Trusted by Investors</span>
+            <div className="flex items-center gap-3 text-muted-foreground">
+              <Star className="w-6 h-6" />
+              <span className="font-medium">Trusted by Investors</span>
             </div>
           </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="text-center py-8 border-t border-border mt-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Shield className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <span className="font-semibold text-foreground">ScamShield</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Protecting investors from financial scams with advanced AI analysis
-          </p>
-        </footer>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
