@@ -1,17 +1,19 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Upload, AlertCircle, Shield } from "lucide-react";
 import Navigation from "../components/Navigation";
+import { ApiKeyDialog } from "../components/ApiKeyDialog";
 
 const GroupAnalysis = () => {
   const [formData, setFormData] = useState({
     platform: "",
     groupName: "",
     members: "",
-    chatText: "",
+    chatMessages: "",
     assetSymbol: ""
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisType, setAnalysisType] = useState<string>("");
+  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -22,12 +24,47 @@ const GroupAnalysis = () => {
   }, []);
 
   const handleAnalyze = async () => {
+    // Check if OpenAI API key is available for enhanced analysis
+    const savedApiKey = localStorage.getItem('openai_api_key');
+    if (!savedApiKey) {
+      setShowApiKeyDialog(true);
+      return;
+    }
+
+    performAnalysis(savedApiKey);
+  };
+
+  const performAnalysis = async (apiKey?: string) => {
     setIsAnalyzing(true);
-    // Simulate analysis time
-    setTimeout(() => {
+    
+    try {
+      const { riskAnalysisService } = await import('../services/riskAnalysisService');
+      
+      if (apiKey) {
+        riskAnalysisService.setOpenAiApiKey(apiKey);
+      }
+
+      const analysisResult = await riskAnalysisService.analyzeGroup(
+        formData,
+        (progress) => {
+          console.log(`Analysis progress: ${progress}%`);
+        }
+      );
+
+      localStorage.setItem('latest_analysis', JSON.stringify(analysisResult));
+      
       setIsAnalyzing(false);
       window.location.href = '/results';
-    }, 3000);
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      setIsAnalyzing(false);
+      alert('Analysis failed. Please try again.');
+    }
+  };
+
+  const handleApiKeySave = (apiKey: string) => {
+    localStorage.setItem('openai_api_key', apiKey);
+    performAnalysis(apiKey);
   };
 
   const platforms = [
@@ -229,8 +266,8 @@ const GroupAnalysis = () => {
               </label>
               <textarea
                 placeholder="Paste recent group chat messages here...&#10;&#10;Example:&#10;[10:30] @expert_trader: Big announcement coming! 🚀&#10;[10:31] @expert_trader: This coin will 10x next week guaranteed!&#10;[10:32] Member1: How do you know?&#10;[10:33] @expert_trader: Inside information, but act fast!"
-                value={formData.chatText}
-                onChange={(e) => setFormData(prev => ({ ...prev, chatText: e.target.value }))}
+                value={formData.chatMessages}
+                onChange={(e) => setFormData(prev => ({ ...prev, chatMessages: e.target.value }))}
                 style={{
                   width: '100%',
                   minHeight: '200px',
@@ -273,10 +310,10 @@ const GroupAnalysis = () => {
             {/* Analyze Button */}
             <button 
               onClick={handleAnalyze}
-              disabled={!formData.platform || !formData.groupName || !formData.chatText || isAnalyzing}
+              disabled={!formData.platform || !formData.groupName || !formData.chatMessages || isAnalyzing}
               style={{
                 width: '100%',
-                background: (!formData.platform || !formData.groupName || !formData.chatText || isAnalyzing) 
+                background: (!formData.platform || !formData.groupName || !formData.chatMessages || isAnalyzing)
                   ? '#9ca3af' 
                   : 'linear-gradient(to right, #3b82f6, #1d4ed8)',
                 color: 'white',
@@ -285,7 +322,7 @@ const GroupAnalysis = () => {
                 fontWeight: '500',
                 border: 'none',
                 borderRadius: '8px',
-                cursor: (!formData.platform || !formData.groupName || !formData.chatText || isAnalyzing) ? 'not-allowed' : 'pointer',
+                cursor: (!formData.platform || !formData.groupName || !formData.chatMessages || isAnalyzing) ? 'not-allowed' : 'pointer',
                 marginTop: '2rem',
                 display: 'flex',
                 alignItems: 'center',
@@ -352,6 +389,12 @@ const GroupAnalysis = () => {
         )}
 
       </div>
+
+      <ApiKeyDialog
+        isOpen={showApiKeyDialog}
+        onClose={() => setShowApiKeyDialog(false)}
+        onSave={handleApiKeySave}
+      />
 
       <style>{`
         @keyframes spin {

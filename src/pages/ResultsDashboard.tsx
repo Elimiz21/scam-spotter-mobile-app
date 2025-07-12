@@ -1,29 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArrowLeft, AlertTriangle, Shield, Info, TrendingUp, Users, Database, ExternalLink } from "lucide-react";
 import Navigation from "../components/Navigation";
-
-interface RiskVector {
-  id: string;
-  name: string;
-  icon: any;
-  riskScore: number;
-  status: 'low' | 'medium' | 'high' | 'critical';
-  summary: string;
-  details: string;
-  findings: string[];
-}
+import { AnalysisResult, RiskVector } from '../services/types';
 
 const ResultsDashboard = () => {
   const [selectedVector, setSelectedVector] = useState<RiskVector | null>(null);
-  
+  const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null);
+
+  useEffect(() => {
+    // Load analysis results from localStorage
+    const savedAnalysis = localStorage.getItem('latest_analysis');
+    if (savedAnalysis) {
+      try {
+        const parsedAnalysis = JSON.parse(savedAnalysis);
+        setAnalysisData(parsedAnalysis);
+      } catch (error) {
+        console.error('Failed to parse analysis data:', error);
+        // Fall back to mock data
+        setAnalysisData(getMockAnalysisData());
+      }
+    } else {
+      // Use mock data if no analysis found
+      setAnalysisData(getMockAnalysisData());
+    }
+  }, []);
+
   // Mock analysis results - in real app this would come from API
   const analysisResults: RiskVector[] = [
     {
       id: "scammer-check",
       name: "Scammer Database",
-      icon: Database,
+      icon: "🛡️",
       riskScore: 85,
-      status: "critical",
+      status: "danger",
       summary: "2 members found in scammer databases",
       details: "Cross-referenced 12 group members against known scammer databases and found 2 matches with high confidence.",
       findings: [
@@ -36,9 +45,9 @@ const ResultsDashboard = () => {
     {
       id: "language-analysis", 
       name: "Language Patterns",
-      icon: Users,
+      icon: "💬",
       riskScore: 72,
-      status: "high",
+      status: "danger",
       summary: "High-pressure tactics and manipulation detected",
       details: "AI analysis detected multiple manipulation tactics and scam language patterns in group communications.",
       findings: [
@@ -52,9 +61,9 @@ const ResultsDashboard = () => {
     {
       id: "price-manipulation",
       name: "Price Manipulation", 
-      icon: TrendingUp,
+      icon: "📊",
       riskScore: 45,
-      status: "medium",
+      status: "warning",
       summary: "Moderate price volatility detected",
       details: "Analysis of trading patterns shows some unusual activity but not extreme manipulation indicators.",
       findings: [
@@ -68,9 +77,9 @@ const ResultsDashboard = () => {
     {
       id: "asset-verification",
       name: "Asset Verification",
-      icon: Shield,
+      icon: "🔍",
       riskScore: 15,
-      status: "low", 
+      status: "safe", 
       summary: "Asset verified and legitimate",
       details: "The promoted asset exists and has legitimate trading history on major exchanges.",
       findings: [
@@ -83,9 +92,20 @@ const ResultsDashboard = () => {
     }
   ];
 
-  const overallRiskScore = Math.round(
-    analysisResults.reduce((sum, vector) => sum + vector.riskScore, 0) / analysisResults.length
-  );
+  const getMockAnalysisData = (): AnalysisResult => {
+    return {
+      overallRiskScore: 74,
+      analysisId: 'mock_analysis',
+      timestamp: new Date().toISOString(),
+      riskVectors: analysisResults
+    };
+  };
+
+  if (!analysisData) {
+    return <div>Loading analysis results...</div>;
+  }
+
+  const { overallRiskScore, riskVectors } = analysisData;
 
   const getRiskColor = (score: number) => {
     if (score >= 80) return { bg: '#fef2f2', border: '#f87171', text: '#dc2626' };
@@ -96,10 +116,9 @@ const ResultsDashboard = () => {
 
   const getRiskBadgeColor = (status: string) => {
     switch (status) {
-      case 'critical': return { bg: '#fef2f2', text: '#dc2626' };
-      case 'high': return { bg: '#fff7ed', text: '#ea580c' };
-      case 'medium': return { bg: '#fefce8', text: '#ca8a04' };
-      case 'low': return { bg: '#f0fdf4', text: '#16a34a' };
+      case 'danger': return { bg: '#fef2f2', text: '#dc2626' };
+      case 'warning': return { bg: '#fefce8', text: '#ca8a04' };
+      case 'safe': return { bg: '#f0fdf4', text: '#16a34a' };
       default: return { bg: '#f9fafb', text: '#374151' };
     }
   };
@@ -206,8 +225,7 @@ const ResultsDashboard = () => {
           gap: '1.5rem',
           marginBottom: '2rem'
         }}>
-          {analysisResults.map((vector) => {
-            const IconComponent = vector.icon;
+          {riskVectors.map((vector) => {
             const badgeColors = getRiskBadgeColor(vector.status);
             const iconColors = getRiskColor(vector.riskScore);
             
@@ -235,17 +253,18 @@ const ResultsDashboard = () => {
               >
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                    <div style={{ 
-                      width: '40px', 
-                      height: '40px', 
-                      backgroundColor: iconColors.bg,
-                      borderRadius: '8px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      <IconComponent style={{ width: '20px', height: '20px', color: iconColors.text }} />
-                    </div>
+                     <div style={{ 
+                       width: '40px', 
+                       height: '40px', 
+                       backgroundColor: iconColors.bg,
+                       borderRadius: '8px',
+                       display: 'flex',
+                       alignItems: 'center',
+                       justifyContent: 'center',
+                       fontSize: '20px'
+                     }}>
+                       {vector.icon}
+                     </div>
                     <div style={{ flex: 1 }}>
                       <h3 style={{ fontSize: '1.125rem', fontWeight: '600', margin: '0 0 8px' }}>{vector.name}</h3>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -353,10 +372,10 @@ const ResultsDashboard = () => {
           }}
           onClick={(e) => e.stopPropagation()}
           >
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.5rem', fontWeight: '600', margin: '0 0 8px' }}>
-                <selectedVector.icon style={{ width: '24px', height: '24px' }} />
-                <span>{selectedVector.name} Analysis</span>
+             <div style={{ marginBottom: '1.5rem' }}>
+               <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.5rem', fontWeight: '600', margin: '0 0 8px' }}>
+                 <span style={{ fontSize: '24px' }}>{selectedVector.icon}</span>
+                 <span>{selectedVector.name} Analysis</span>
                 <span style={{ 
                   fontSize: '0.75rem',
                   fontWeight: '600',
