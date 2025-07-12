@@ -91,11 +91,49 @@ serve(async (req) => {
       const subscription = await subscriptionResponse.json();
 
       if (subscription.status === "ACTIVE") {
+        // Get the subscription from our database to get user info
+        const { data: dbSubscription } = await supabase
+          .from("subscriptions")
+          .select("user_id, plan_type, amount")
+          .eq("paypal_subscription_id", subscription_id)
+          .single();
+
         // Update subscription status
         await supabase.from("subscriptions").update({
           status: "active",
           next_billing_date: subscription.billing_info?.next_billing_time
         }).eq("paypal_subscription_id", subscription_id);
+
+        // Get user profile for email
+        if (dbSubscription?.user_id) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('email')
+            .eq('id', dbSubscription.user_id)
+            .single();
+
+          // Send subscription confirmation email
+          if (profile?.email) {
+            try {
+              await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/send-subscription-email`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+                },
+                body: JSON.stringify({
+                  email: profile.email,
+                  planType: dbSubscription.plan_type === 'premium' ? 'Premium' : 'Pro',
+                  amount: dbSubscription.amount,
+                  isNewSubscription: true,
+                }),
+              });
+            } catch (emailError) {
+              console.error('Failed to send subscription email:', emailError);
+              // Don't fail the payment if email fails
+            }
+          }
+        }
 
         return new Response(JSON.stringify({ 
           success: true,
