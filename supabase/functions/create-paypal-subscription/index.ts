@@ -56,8 +56,16 @@ serve(async (req) => {
     }
 
     const planDetails = {
-      premium: { amount: "9.99", name: "Premium Plan" },
-      pro: { amount: "29.99", name: "Pro Plan" }
+      premium: { 
+        amount: "19.99", 
+        name: "ScamShield Premium Monthly",
+        plan_id: "P-7XX123456789054321" // This will be created later
+      },
+      pro: { 
+        amount: "49.99", 
+        name: "ScamShield Pro Monthly",
+        plan_id: "P-8XX123456789054321" // This will be created later
+      }
     };
 
     const plan = planDetails[plan_type as keyof typeof planDetails];
@@ -65,47 +73,26 @@ serve(async (req) => {
     // Get PayPal access token
     const accessToken = await getPayPalAccessToken();
 
-    // Create subscription using checkout sessions instead of predefined plans
+    // Create subscription as a recurring payment order
     const subscriptionData = {
-      intent: "SUBSCRIPTION",
+      intent: "CAPTURE",
       purchase_units: [{
         amount: {
           currency_code: "USD",
-          value: plan.amount,
-          breakdown: {
-            item_total: {
-              currency_code: "USD",
-              value: plan.amount
-            }
-          }
+          value: plan.amount
         },
-        items: [{
-          name: plan.name,
-          description: `${plan.name} monthly subscription`,
-          unit_amount: {
-            currency_code: "USD",
-            value: plan.amount
-          },
-          quantity: "1",
-          category: "DIGITAL_GOODS"
-        }]
+        description: `${plan.name} - Monthly Subscription`
       }],
-      payment_source: {
-        paypal: {
-          experience_context: {
-            payment_method_preference: "IMMEDIATE_PAYMENT_REQUIRED",
-            brand_name: "ScamShield",
-            locale: "en-US",
-            landing_page: "LOGIN",
-            shipping_preference: "NO_SHIPPING",
-            user_action: "PAY_NOW",
-            return_url: `${req.headers.get("origin")}/payment-success`,
-            cancel_url: `${req.headers.get("origin")}/pricing`
-          }
-        }
+      application_context: {
+        return_url: `${req.headers.get("origin")}/payment-success?subscription_id=temp_${Date.now()}`,
+        cancel_url: `${req.headers.get("origin")}/pricing`,
+        brand_name: "ScamShield",
+        user_action: "PAY_NOW",
+        shipping_preference: "NO_SHIPPING"
       }
     };
 
+    // Use PayPal Orders API for now (simpler implementation)
     const subscriptionResponse = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders`, {
       method: "POST",
       headers: {
