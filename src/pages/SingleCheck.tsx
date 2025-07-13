@@ -140,29 +140,29 @@ const SingleCheck = () => {
   const config = getCheckConfig();
 
   return (
-    <div className="min-h-screen bg-financial-light">
+    <div className="min-h-screen bg-slate-50">
       <Navigation />
       
       {/* Header */}
-      <header className="border-b border-border bg-card backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+      <header className="border-b border-gray-200 bg-white shadow-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-6">
           <div className="max-w-4xl mx-auto flex items-center gap-4">
             <Button 
               variant="ghost" 
               size="sm"
               onClick={() => navigate('/')}
-              className="hover:bg-accent transition-colors"
+              className="hover:bg-gray-100 transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Home
             </Button>
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-financial-primary to-primary rounded-xl flex items-center justify-center text-white text-xl shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white text-xl shadow-lg">
                 {config.icon}
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
-                <p className="text-muted-foreground">{config.description}</p>
+                <h1 className="text-2xl font-bold text-gray-900">{config.title}</h1>
+                <p className="text-gray-600">{config.description}</p>
               </div>
             </div>
           </div>
@@ -173,17 +173,17 @@ const SingleCheck = () => {
         <div className="max-w-4xl mx-auto space-y-8">
           
           {/* Security Notice */}
-          <Card className="border-financial-warning/20 bg-financial-warning/5">
+          <Card className="border-amber-200 bg-amber-50">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-financial-warning/10 rounded-lg flex items-center justify-center">
-                  <AlertCircle className="w-5 h-5 text-financial-warning" />
+                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-amber-600" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-financial-warning mb-2">
+                  <h3 className="text-sm font-semibold text-amber-800 mb-2">
                     Security & Privacy Notice
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-600">
                     All data is processed securely and deleted after analysis. We do not store personal information.
                   </p>
                 </div>
@@ -192,10 +192,10 @@ const SingleCheck = () => {
           </Card>
 
           {/* Check Form */}
-          <Card className="shadow-lg">
+          <Card className="shadow-lg border border-gray-200 bg-white">
             <CardHeader>
-              <CardTitle className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center text-white">
+              <CardTitle className="flex items-center gap-3 text-gray-900">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center text-white">
                   {config.icon}
                 </div>
                 Input Data for Analysis
@@ -205,26 +205,26 @@ const SingleCheck = () => {
               <div className="space-y-4">
                 {config.inputType === 'textarea' ? (
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
+                    <label className="text-sm font-medium text-gray-900">
                       Enter text to analyze:
                     </label>
                     <Textarea
                       placeholder={config.placeholder}
                       value={inputData}
                       onChange={(e) => setInputData(e.target.value)}
-                      className="min-h-[200px] font-mono resize-vertical"
+                      className="min-h-[200px] font-mono resize-vertical border-gray-300"
                     />
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">
+                    <label className="text-sm font-medium text-gray-900">
                       Enter asset or identifier:
                     </label>
                     <Input
                       placeholder={config.placeholder}
                       value={inputData}
                       onChange={(e) => setInputData(e.target.value)}
-                      className="text-base"
+                      className="text-base border-gray-300"
                     />
                   </div>
                 )}
