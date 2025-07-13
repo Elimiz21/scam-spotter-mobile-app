@@ -22,19 +22,16 @@ export const LegalDisclaimer = ({ variant = "compact", className = "" }: LegalDi
 
   if (variant === "full") {
     return (
-      <Card className={`border border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800 ${className}`}>
-        <div className="p-4">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+      <Card className={`bg-muted/30 border-border ${className}`}>
+        <div className="p-3">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <h4 className="font-medium text-amber-800 dark:text-amber-200 mb-2">
-                Important Legal Disclaimer
+              <h4 className="text-sm font-medium text-foreground mb-1">
+                Legal Disclaimer
               </h4>
-              <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {disclaimerContent.full}
-              </p>
-              <p className="text-sm text-amber-700 dark:text-amber-300 leading-relaxed mt-2">
-                <strong>No Liability:</strong> ScamShield and its operators accept no responsibility for any investment losses, damages, or consequences arising from the use of our analysis tools. Users acknowledge that all investment decisions are made at their own risk.
               </p>
             </div>
           </div>
@@ -45,19 +42,19 @@ export const LegalDisclaimer = ({ variant = "compact", className = "" }: LegalDi
 
   if (variant === "results") {
     return (
-      <Card className={`border border-red-200 bg-red-50 dark:bg-red-950/20 dark:border-red-800 ${className}`}>
-        <div className="p-4">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+      <Card className={`bg-destructive/5 border-destructive/20 ${className}`}>
+        <div className="p-3">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-destructive mt-0.5 flex-shrink-0" />
             <div className="flex-1">
-              <h4 className="font-medium text-red-800 dark:text-red-200 mb-2">
-                Critical Risk Analysis Disclaimer
+              <h4 className="text-sm font-medium text-destructive mb-1">
+                Risk Analysis Disclaimer
               </h4>
-              <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 {disclaimerContent.results}
               </p>
-              <div className="mt-3 p-3 bg-red-100 dark:bg-red-900/30 rounded-md">
-                <p className="text-xs text-red-700 dark:text-red-300 font-medium">
+              <div className="mt-2 p-2 bg-destructive/10 rounded border border-destructive/20">
+                <p className="text-xs text-destructive font-medium">
                   ⚠️ FALSE POSITIVES AND NEGATIVES: Our analysis may incorrectly flag legitimate opportunities as risky or fail to detect actual scams. Always verify information independently.
                 </p>
               </div>
@@ -70,11 +67,11 @@ export const LegalDisclaimer = ({ variant = "compact", className = "" }: LegalDi
 
   // Compact variant - appears as a small banner
   return (
-    <div className={`bg-slate-100 dark:bg-slate-800 border-l-4 border-blue-500 px-4 py-2 ${className}`}>
+    <div className={`bg-muted/30 border-l-2 border-primary px-3 py-2 ${className}`}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Info className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-          <p className="text-xs text-slate-700 dark:text-slate-300">
+          <Info className="h-3 w-3 text-primary" />
+          <p className="text-xs text-muted-foreground">
             {disclaimerContent.compact}
           </p>
           {!isExpanded && (
@@ -82,9 +79,9 @@ export const LegalDisclaimer = ({ variant = "compact", className = "" }: LegalDi
               variant="ghost"
               size="sm"
               onClick={() => setIsExpanded(true)}
-              className="text-xs p-1 h-auto text-blue-600 hover:text-blue-800 dark:text-blue-400"
+              className="text-xs p-0.5 h-auto text-primary hover:text-primary/80"
             >
-              Read full disclaimer
+              Read more
             </Button>
           )}
         </div>
@@ -92,22 +89,22 @@ export const LegalDisclaimer = ({ variant = "compact", className = "" }: LegalDi
           variant="ghost"
           size="sm"
           onClick={() => setIsDismissed(true)}
-          className="p-1 h-auto text-slate-500 hover:text-slate-700"
+          className="p-0.5 h-auto text-muted-foreground hover:text-foreground"
         >
           <X className="h-3 w-3" />
         </Button>
       </div>
       
       {isExpanded && (
-        <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-          <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+        <div className="mt-2 pt-2 border-t border-border">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             {disclaimerContent.full}
           </p>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsExpanded(false)}
-            className="text-xs p-1 h-auto text-blue-600 hover:text-blue-800 dark:text-blue-400 mt-1"
+            className="text-xs p-0.5 h-auto text-primary hover:text-primary/80 mt-1"
           >
             Collapse
           </Button>

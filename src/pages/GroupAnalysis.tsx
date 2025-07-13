@@ -150,9 +150,6 @@ const GroupAnalysis = () => {
 
       <div style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem 1rem' }}>
         
-        {/* Legal Disclaimer */}
-        <LegalDisclaimer variant="full" className="mb-6" />
-
         {/* Security Notice */}
         <div style={{ 
           backgroundColor: '#fefce8', 
@@ -391,6 +388,12 @@ const GroupAnalysis = () => {
             </div>
           </div>
         )}
+
+        
+        {/* Legal Disclaimer */}
+        <div className="mt-8">
+          <LegalDisclaimer variant="compact" />
+        </div>
 
       </div>
 

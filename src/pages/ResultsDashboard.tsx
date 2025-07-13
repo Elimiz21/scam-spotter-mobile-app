@@ -130,10 +130,6 @@ const ResultsDashboard = () => {
     <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
       <Navigation />
       
-      {/* Critical Disclaimer */}
-      <div style={{ padding: '1rem', maxWidth: '1200px', margin: '0 auto' }}>
-        <LegalDisclaimer variant="results" />
-      </div>
       
       {/* Header */}
       <header style={{ 
@@ -347,6 +343,11 @@ const ResultsDashboard = () => {
           >
             Learn About Our Analysis
           </button>
+        </div>
+
+        {/* Legal Disclaimer */}
+        <div style={{ margin: '2rem 0' }}>
+          <LegalDisclaimer variant="results" />
         </div>
 
       </div>
