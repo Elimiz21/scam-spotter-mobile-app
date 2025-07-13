@@ -1,161 +1,320 @@
 import { Shield } from "lucide-react";
 import Navigation from "../components/Navigation";
 import LegalDisclaimer from "../components/LegalDisclaimer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4">
-        <Navigation />
-        
-        {/* Hero Header */}
-        <header className="text-center py-16">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg">
-              <Shield className="w-8 h-8 text-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                ScamShield
-              </h1>
-              <p className="text-muted-foreground">Investment Protection Platform</p>
-            </div>
+    <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f8fafc' }}>
+      <Navigation />
+      {/* Simple Header */}
+      <header style={{ 
+        borderBottom: '1px solid #e2e8f0', 
+        backgroundColor: 'white', 
+        padding: '1rem',
+        borderRadius: '8px',
+        marginBottom: '2rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
           </div>
+          <div>
+            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>ScamShield</h1>
+            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Investment Protection</p>
+          </div>
+        </div>
+      </header>
+
+      {/* Hero Section */}
+      <section style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+        <h2 style={{ 
+          fontSize: '2.5rem', 
+          fontWeight: 'bold', 
+          marginBottom: '1.5rem',
+          background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text'
+        }}>
+          Protect Your Investments from Financial Scams
+        </h2>
+        <p style={{ fontSize: '1.25rem', color: '#64748b', marginBottom: '2rem', maxWidth: '600px', margin: '0 auto 2rem' }}>
+          Analyze investment groups and opportunities with advanced AI-powered risk assessment. 
+          Get instant alerts for potential scams before it's too late.
+        </p>
+        <button style={{
+          background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+          color: 'white',
+          padding: '1rem 2rem',
+          fontSize: '1.125rem',
+          fontWeight: '500',
+          border: 'none',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+          transition: 'all 0.2s'
+        }}
+        onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
+        onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
+        onClick={() => window.location.href = '/analyze'}
+        >
+          Start Group Analysis
+        </button>
+      </section>
+
+      {/* Features Grid */}
+      <section style={{ padding: '3rem 1rem', backgroundColor: '#f1f5f9', borderRadius: '12px' }}>
+        <h3 style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem' }}>
+          How ScamShield Protects You
+        </h3>
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+          gap: '1.5rem',
+          maxWidth: '1200px',
+          margin: '0 auto'
+        }}>
           
-          <h2 className="text-4xl md:text-6xl font-bold mb-8 bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent leading-tight">
-            Protect Your Investments<br />
-            <span className="text-primary">from Financial Scams</span>
-          </h2>
-          
-          <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
-            Advanced AI-powered risk assessment to analyze investment groups and opportunities. 
-            Get instant alerts for potential scams before it's too late.
-          </p>
-          
-          <Button 
-            size="lg" 
-            className="px-12 py-6 text-xl font-semibold bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-2xl hover:shadow-3xl transition-all duration-300 hover:-translate-y-2 rounded-xl"
-            onClick={() => window.location.href = '/analyze'}
+          <div 
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
+            }}
           >
-            Start Analysis Now
-          </Button>
-        </header>
-
-        {/* Features Section */}
-        <section className="py-20">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">
-              How ScamShield <span className="text-primary">Protects You</span>
-            </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our comprehensive analysis covers multiple risk vectors to keep your investments safe
+            <div style={{ 
+              width: '48px', 
+              height: '48px', 
+              backgroundColor: '#fef2f2', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem'
+            }}>
+              🚨
+            </div>
+            <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Scammer Database</h4>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
+              Cross-reference group members against known scammer databases and blacklists
             </p>
+            <button
+              onClick={() => window.location.href = '/check?type=scammer-database'}
+              style={{
+                background: 'linear-gradient(to right, #dc2626, #b91c1c)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s',
+                marginTop: 'auto'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
-            
-            {/* Scammer Database Card */}
-            <Card className="group relative overflow-hidden border-2 border-destructive/20 hover:border-destructive/40 bg-gradient-to-br from-card to-destructive/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-              <CardContent className="p-8 text-center h-full flex flex-col">
-                <div className="w-16 h-16 bg-gradient-to-br from-destructive to-destructive/80 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  🚨
-                </div>
-                <h4 className="text-xl font-bold mb-4 text-foreground">Scammer Database</h4>
-                <p className="text-muted-foreground mb-8 flex-1 leading-relaxed">
-                  Cross-reference group members against known scammer databases and global blacklists
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/check?type=scammer-database'}
-                  variant="destructive"
-                  className="w-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  Check Database
-                </Button>
-              </CardContent>
-            </Card>
 
-            {/* Language Analysis Card */}
-            <Card className="group relative overflow-hidden border-2 border-primary/20 hover:border-primary/40 bg-gradient-to-br from-card to-primary/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-              <CardContent className="p-8 text-center h-full flex flex-col">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  👥
-                </div>
-                <h4 className="text-xl font-bold mb-4 text-foreground">Language Analysis</h4>
-                <p className="text-muted-foreground mb-8 flex-1 leading-relaxed">
-                  AI analysis of group communications for manipulation tactics and scam language patterns
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/check?type=language-analysis'}
-                  className="w-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  Analyze Language
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Price Manipulation Card */}
-            <Card className="group relative overflow-hidden border-2 border-amber-500/20 hover:border-amber-500/40 bg-gradient-to-br from-card to-amber-500/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-              <CardContent className="p-8 text-center h-full flex flex-col">
-                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  📈
-                </div>
-                <h4 className="text-xl font-bold mb-4 text-foreground">Price Manipulation</h4>
-                <p className="text-muted-foreground mb-8 flex-1 leading-relaxed">
-                  Detection of artificial price pumps and suspicious trading activity patterns
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/check?type=price-manipulation'}
-                  variant="secondary"
-                  className="w-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200 border-amber-500/20 hover:border-amber-500/40"
-                >
-                  Check Prices
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Asset Verification Card */}
-            <Card className="group relative overflow-hidden border-2 border-green-500/20 hover:border-green-500/40 bg-gradient-to-br from-card to-green-500/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
-              <CardContent className="p-8 text-center h-full flex flex-col">
-                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                  🛡️
-                </div>
-                <h4 className="text-xl font-bold mb-4 text-foreground">Asset Verification</h4>
-                <p className="text-muted-foreground mb-8 flex-1 leading-relaxed">
-                  Verify the existence and legitimacy of promoted assets and investment opportunities
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/check?type=asset-verification'}
-                  variant="outline"
-                  className="w-full font-semibold shadow-lg hover:shadow-xl transition-all duration-200 border-green-500/20 hover:border-green-500/40"
-                >
-                  Verify Assets
-                </Button>
-              </CardContent>
-            </Card>
-
+          <div 
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
+            }}
+          >
+            <div style={{ 
+              width: '48px', 
+              height: '48px', 
+              backgroundColor: '#eff6ff', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem'
+            }}>
+              👥
+            </div>
+            <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Language Analysis</h4>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
+              AI analysis of group communications for manipulation tactics and scam language patterns
+            </p>
+            <button
+              onClick={() => window.location.href = '/check?type=language-analysis'}
+              style={{
+                background: 'linear-gradient(to right, #2563eb, #1d4ed8)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s',
+                marginTop: 'auto'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
           </div>
-        </section>
-      </div>
+
+          <div 
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
+            }}
+          >
+            <div style={{ 
+              width: '48px', 
+              height: '48px', 
+              backgroundColor: '#fefce8', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem'
+            }}>
+              📈
+            </div>
+            <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Price Manipulation</h4>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
+              Detection of artificial price pumps and suspicious trading activity patterns
+            </p>
+            <button
+              onClick={() => window.location.href = '/check?type=price-manipulation'}
+              style={{
+                background: 'linear-gradient(to right, #ca8a04, #a16207)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s',
+                marginTop: 'auto'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
+          </div>
+
+          <div 
+            style={{ 
+              backgroundColor: 'white', 
+              padding: '1.5rem', 
+              borderRadius: '12px',
+              textAlign: 'center',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              transition: 'all 0.2s',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%'
+            }}
+          >
+            <div style={{ 
+              width: '48px', 
+              height: '48px', 
+              backgroundColor: '#f0fdf4', 
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1rem'
+            }}>
+              🛡️
+            </div>
+            <h4 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>Asset Verification</h4>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', marginBottom: '1rem', flex: '1' }}>
+              Verify the existence and legitimacy of promoted assets and investment opportunities
+            </p>
+            <button
+              onClick={() => window.location.href = '/check?type=asset-verification'}
+              style={{
+                background: 'linear-gradient(to right, #16a34a, #15803d)',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                width: '100%',
+                transition: 'all 0.2s',
+                marginTop: 'auto'
+              }}
+              onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-1px)')}
+              onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+            >
+              Check Now
+            </button>
+          </div>
+
+        </div>
+      </section>
 
       {/* Legal Disclaimer */}
-      <div className="my-8">
+      <div style={{ margin: '2rem 0' }}>
         <LegalDisclaimer variant="full" />
       </div>
 
       {/* Footer */}
-      <footer className="text-center py-8 px-4 border-t mt-12">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <Shield className="w-4 h-4 text-primary-foreground" />
+      <footer style={{ textAlign: 'center', padding: '2rem 1rem', borderTop: '1px solid #e2e8f0', marginTop: '3rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
+          <div style={{ 
+            width: '32px', 
+            height: '32px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
           </div>
-          <span className="font-semibold text-foreground">ScamShield</span>
+          <span style={{ fontWeight: '600' }}>ScamShield</span>
         </div>
-        <p className="text-sm text-muted-foreground mb-4">
+        <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
           Protecting investors from financial scams with advanced AI analysis
         </p>
-        <LegalDisclaimer variant="compact" />
+        <LegalDisclaimer variant="compact" className="mt-4" />
       </footer>
     </div>
   );
