@@ -25,13 +25,11 @@ const SingleCheck = () => {
   }, []);
 
   const handleCheck = async () => {
-    // Check if OpenAI API key is available for enhanced analysis
     const savedApiKey = localStorage.getItem('openai_api_key');
     if (!savedApiKey && (checkType === 'language-analysis' || checkType === 'price-manipulation')) {
       setShowApiKeyDialog(true);
       return;
     }
-
     performCheck(savedApiKey);
   };
 
@@ -39,7 +37,6 @@ const SingleCheck = () => {
     setIsAnalyzing(true);
     
     try {
-      // Import the specific service based on check type
       let result;
       
       switch (checkType) {
@@ -140,157 +137,185 @@ const SingleCheck = () => {
   const config = getCheckConfig();
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '20px' }}>
       <Navigation />
       
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white shadow-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="max-w-4xl mx-auto flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate('/')}
-              className="hover:bg-gray-100 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl flex items-center justify-center text-white text-xl shadow-lg">
-                {config.icon}
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">{config.title}</h1>
-                <p className="text-gray-600">{config.description}</p>
-              </div>
+      <div style={{ 
+        backgroundColor: 'white', 
+        padding: '20px', 
+        borderRadius: '8px', 
+        marginBottom: '20px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+      }}>
+        <button 
+          onClick={() => navigate('/')}
+          style={{
+            background: '#f3f4f6',
+            border: 'none',
+            padding: '8px 16px',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            marginBottom: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
+          }}
+        >
+          <ArrowLeft size={16} />
+          Back to Home
+        </button>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <div style={{ 
+            width: '48px', 
+            height: '48px', 
+            backgroundColor: '#3b82f6', 
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '20px'
+          }}>
+            {config.icon}
+          </div>
+          <div>
+            <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
+              {config.title}
+            </h1>
+            <p style={{ color: '#64748b', margin: 0 }}>
+              {config.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div style={{ 
+        backgroundColor: 'white', 
+        padding: '24px', 
+        borderRadius: '8px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+      }}>
+        <h2 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '16px' }}>
+          Input Data for Analysis
+        </h2>
+        
+        <div style={{ marginBottom: '16px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
+            {config.inputType === 'textarea' ? 'Enter text to analyze:' : 'Enter asset or identifier:'}
+          </label>
+          
+          {config.inputType === 'textarea' ? (
+            <textarea
+              placeholder={config.placeholder}
+              value={inputData}
+              onChange={(e) => setInputData(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: '200px',
+                padding: '12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontFamily: 'monospace',
+                fontSize: '14px'
+              }}
+            />
+          ) : (
+            <input
+              type="text"
+              placeholder={config.placeholder}
+              value={inputData}
+              onChange={(e) => setInputData(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px',
+                border: '1px solid #d1d5db',
+                borderRadius: '6px',
+                fontSize: '16px'
+              }}
+            />
+          )}
+        </div>
+
+        <button 
+          onClick={handleCheck}
+          disabled={!inputData.trim() || isAnalyzing}
+          style={{
+            width: '100%',
+            backgroundColor: isAnalyzing ? '#9ca3af' : '#3b82f6',
+            color: 'white',
+            padding: '12px',
+            border: 'none',
+            borderRadius: '6px',
+            fontSize: '16px',
+            fontWeight: '600',
+            cursor: isAnalyzing ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
+          }}
+        >
+          {isAnalyzing ? (
+            <>
+              <div style={{
+                width: '16px',
+                height: '16px',
+                border: '2px solid white',
+                borderTop: '2px solid transparent',
+                borderRadius: '50%'
+              }} className="animate-spin" />
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <Shield size={20} />
+              Start Security Check
+            </>
+          )}
+        </button>
+      </div>
+
+      {isAnalyzing && (
+        <div style={{ 
+          backgroundColor: 'white', 
+          padding: '24px', 
+          borderRadius: '8px',
+          marginTop: '20px',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+        }}>
+          <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px' }}>
+            Security Analysis in Progress
+          </h3>
+          <p style={{ color: '#64748b', marginBottom: '16px' }}>
+            Please wait while we perform comprehensive checks...
+          </p>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '8px', height: '8px', backgroundColor: '#3b82f6', borderRadius: '50%' }} />
+              <span>
+                {checkType === 'scammer-database' && 'Checking against known scammer databases...'}
+                {checkType === 'language-analysis' && 'Analyzing text patterns and manipulation tactics...'}
+                {checkType === 'price-manipulation' && 'Detecting price manipulation signals...'}
+                {checkType === 'asset-verification' && 'Verifying asset legitimacy and authenticity...'}
+              </span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '8px', height: '8px', backgroundColor: '#3b82f6', borderRadius: '50%' }} />
+              <span>Generating comprehensive analysis report...</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: '8px', height: '8px', backgroundColor: '#3b82f6', borderRadius: '50%' }} />
+              <span>Calculating risk scores and recommendations...</span>
             </div>
           </div>
         </div>
-      </header>
+      )}
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto space-y-8">
-          
-          {/* Security Notice */}
-          <Card className="border-amber-200 bg-amber-50">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                  <AlertCircle className="w-5 h-5 text-amber-600" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-sm font-semibold text-amber-800 mb-2">
-                    Security & Privacy Notice
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    All data is processed securely and deleted after analysis. We do not store personal information.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Check Form */}
-          <Card className="shadow-lg border border-gray-200 bg-white">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-3 text-gray-900">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center text-white">
-                  {config.icon}
-                </div>
-                Input Data for Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                {config.inputType === 'textarea' ? (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">
-                      Enter text to analyze:
-                    </label>
-                    <Textarea
-                      placeholder={config.placeholder}
-                      value={inputData}
-                      onChange={(e) => setInputData(e.target.value)}
-                      className="min-h-[200px] font-mono resize-vertical border-gray-300"
-                    />
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-900">
-                      Enter asset or identifier:
-                    </label>
-                    <Input
-                      placeholder={config.placeholder}
-                      value={inputData}
-                      onChange={(e) => setInputData(e.target.value)}
-                      className="text-base border-gray-300"
-                    />
-                  </div>
-                )}
-
-                <Button 
-                  onClick={handleCheck}
-                  disabled={!inputData.trim() || isAnalyzing}
-                  className="w-full h-12 text-base font-semibold"
-                  size="lg"
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
-                      Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <Shield className="w-5 h-5 mr-3" />
-                      Start Security Check
-                    </>
-                  )}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Analysis Progress */}
-          {isAnalyzing && (
-            <Card className="border-primary/20 bg-primary/5 animate-fade-in">
-              <CardContent className="p-6">
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <h3 className="font-semibold text-lg mb-2">Security Analysis in Progress</h3>
-                    <p className="text-muted-foreground">Please wait while we perform comprehensive checks...</p>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4 p-3 bg-card rounded-lg">
-                      <div className="w-3 h-3 bg-primary rounded-full animate-pulse" />
-                      <span className="text-sm">
-                        {checkType === 'scammer-database' && 'Checking against known scammer databases...'}
-                        {checkType === 'language-analysis' && 'Analyzing text patterns and manipulation tactics...'}
-                        {checkType === 'price-manipulation' && 'Detecting price manipulation signals...'}
-                        {checkType === 'asset-verification' && 'Verifying asset legitimacy and authenticity...'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-4 p-3 bg-card rounded-lg">
-                      <div className="w-3 h-3 bg-primary rounded-full animate-pulse delay-300" />
-                      <span className="text-sm">Generating comprehensive analysis report...</span>
-                    </div>
-                    <div className="flex items-center gap-4 p-3 bg-card rounded-lg">
-                      <div className="w-3 h-3 bg-primary rounded-full animate-pulse delay-500" />
-                      <span className="text-sm">Calculating risk scores and recommendations...</span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Legal Disclaimer */}
-          <div className="pt-4">
-            <LegalDisclaimer variant="compact" />
-          </div>
-
-        </div>
+      <div style={{ marginTop: '24px' }}>
+        <LegalDisclaimer variant="compact" />
       </div>
 
       <ApiKeyDialog
@@ -298,6 +323,7 @@ const SingleCheck = () => {
         onClose={() => setShowApiKeyDialog(false)}
         onSave={handleApiKeySave}
       />
+
     </div>
   );
 };
