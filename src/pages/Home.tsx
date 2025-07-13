@@ -1,8 +1,11 @@
 import { Shield } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import LegalDisclaimer from "../components/LegalDisclaimer";
 
 const Home = () => {
+  const navigate = useNavigate();
+  
   return (
     <div style={{ minHeight: '100vh', padding: '20px', backgroundColor: '#f8fafc' }}>
       <Navigation />
@@ -64,7 +67,7 @@ const Home = () => {
         }}
         onMouseOver={(e) => (e.target as HTMLElement).style.transform = 'translateY(-2px)'}
         onMouseOut={(e) => (e.target as HTMLElement).style.transform = 'translateY(0)'}
-        onClick={() => window.location.href = '/analyze'}
+        onClick={() => navigate('/analyze')}
         >
           Start Group Analysis
         </button>
@@ -113,7 +116,7 @@ const Home = () => {
               Cross-reference group members against known scammer databases and blacklists
             </p>
             <button
-              onClick={() => window.location.href = '/check?type=scammer-database'}
+              onClick={() => navigate('/check?type=scammer-database')}
               style={{
                 background: 'linear-gradient(to right, #dc2626, #b91c1c)',
                 color: 'white',
@@ -164,7 +167,7 @@ const Home = () => {
               AI analysis of group communications for manipulation tactics and scam language patterns
             </p>
             <button
-              onClick={() => window.location.href = '/check?type=language-analysis'}
+              onClick={() => navigate('/check?type=language-analysis')}
               style={{
                 background: 'linear-gradient(to right, #2563eb, #1d4ed8)',
                 color: 'white',
@@ -215,7 +218,7 @@ const Home = () => {
               Detection of artificial price pumps and suspicious trading activity patterns
             </p>
             <button
-              onClick={() => window.location.href = '/check?type=price-manipulation'}
+              onClick={() => navigate('/check?type=price-manipulation')}
               style={{
                 background: 'linear-gradient(to right, #ca8a04, #a16207)',
                 color: 'white',
@@ -266,7 +269,7 @@ const Home = () => {
               Verify the existence and legitimacy of promoted assets and investment opportunities
             </p>
             <button
-              onClick={() => window.location.href = '/check?type=asset-verification'}
+              onClick={() => navigate('/check?type=asset-verification')}
               style={{
                 background: 'linear-gradient(to right, #16a34a, #15803d)',
                 color: 'white',
