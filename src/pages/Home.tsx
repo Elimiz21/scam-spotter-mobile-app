@@ -22,17 +22,17 @@ const Home = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="text-center py-12 px-4">
-        <h2 className="text-4xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+      <section className="text-center py-16 px-4">
+        <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
           Protect Your Investments from Financial Scams
         </h2>
-        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
           Analyze investment groups and opportunities with advanced AI-powered risk assessment. 
           Get instant alerts for potential scams before it's too late.
         </p>
         <Button 
           size="lg" 
-          className="px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5"
+          className="px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
           onClick={() => window.location.href = '/analyze'}
         >
           Start Group Analysis
@@ -46,9 +46,9 @@ const Home = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           
-          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-destructive/20">
             <CardContent className="p-6 flex flex-col h-full">
-              <div className="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
+              <div className="w-12 h-12 bg-destructive/10 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
                 🚨
               </div>
               <h4 className="text-lg font-semibold mb-2">Scammer Database</h4>
@@ -65,9 +65,9 @@ const Home = () => {
             </CardContent>
           </Card>
 
-          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-primary/20">
             <CardContent className="p-6 flex flex-col h-full">
-              <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
+              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
                 👥
               </div>
               <h4 className="text-lg font-semibold mb-2">Language Analysis</h4>
@@ -83,9 +83,9 @@ const Home = () => {
             </CardContent>
           </Card>
 
-          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-amber-500/20">
             <CardContent className="p-6 flex flex-col h-full">
-              <div className="w-12 h-12 bg-yellow-50 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
+              <div className="w-12 h-12 bg-amber-500/10 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
                 📈
               </div>
               <h4 className="text-lg font-semibold mb-2">Price Manipulation</h4>
@@ -102,9 +102,9 @@ const Home = () => {
             </CardContent>
           </Card>
 
-          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
+          <Card className="text-center h-full flex flex-col hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-green-500/20">
             <CardContent className="p-6 flex flex-col h-full">
-              <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
+              <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center mx-auto mb-4 text-2xl">
                 🛡️
               </div>
               <h4 className="text-lg font-semibold mb-2">Asset Verification</h4>
