@@ -4,6 +4,9 @@ import Navigation from "../components/Navigation";
 import { ApiKeyDialog } from "../components/ApiKeyDialog";
 import LegalDisclaimer from "../components/LegalDisclaimer";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const SingleCheck = () => {
   const [checkType, setCheckType] = useState<string>("");
@@ -139,125 +142,153 @@ const SingleCheck = () => {
       <Navigation />
       
       {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm sticky top-0 z-50 p-4">
-        <div className="max-w-2xl mx-auto flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => window.location.href = '/'}
-            className="rounded-full"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-lg">
-              {config.icon}
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold">{config.title}</h1>
-              <p className="text-sm text-muted-foreground">{config.description}</p>
+      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-6">
+          <div className="max-w-4xl mx-auto flex items-center gap-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => window.location.href = '/'}
+              className="hover:bg-accent"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center text-white text-xl shadow-lg">
+                {config.icon}
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold">{config.title}</h1>
+                <p className="text-muted-foreground">{config.description}</p>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-2xl mx-auto p-4 space-y-6">
-        
-        {/* Security Notice */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-600 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-yellow-800 mb-1">
-                Security Notice
-              </p>
-              <p className="text-sm text-yellow-700">
-                All data is processed securely and deleted after analysis. We do not store personal information.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Check Form */}
-        <div className="bg-card border rounded-xl p-6 space-y-6">
-          <div>
-            <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
-              <span className="text-2xl">{config.icon}</span>
-              Input Data
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              {config.description}
-            </p>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-8">
           
-          <div className="space-y-4">
-            {config.inputType === 'textarea' ? (
-              <textarea
-                placeholder={config.placeholder}
-                value={inputData}
-                onChange={(e) => setInputData(e.target.value)}
-                className="w-full min-h-[200px] p-3 border rounded-lg resize-vertical font-mono text-sm"
-              />
-            ) : (
-              <input
-                type="text"
-                placeholder={config.placeholder}
-                value={inputData}
-                onChange={(e) => setInputData(e.target.value)}
-                className="w-full p-3 border rounded-lg text-sm"
-              />
-            )}
-
-            <Button 
-              onClick={handleCheck}
-              disabled={!inputData.trim() || isAnalyzing}
-              className="w-full"
-              size="lg"
-            >
-              {isAnalyzing ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  <span>Checking...</span>
-                </>
-              ) : (
-                <>
-                  <Shield className="w-5 h-5 mr-2" />
-                  <span>Run Check</span>
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Analysis Progress */}
-        {isAnalyzing && (
-          <div className="bg-card border rounded-xl p-6">
-            <div className="space-y-4">
-              <h3 className="font-medium text-center">Analysis in Progress</h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span className="text-sm text-muted-foreground">
-                    {checkType === 'scammer-database' && 'Checking against scammer databases...'}
-                    {checkType === 'language-analysis' && 'Analyzing language patterns...'}
-                    {checkType === 'price-manipulation' && 'Detecting price manipulation signals...'}
-                    {checkType === 'asset-verification' && 'Verifying asset information...'}
-                  </span>
+          {/* Security Notice */}
+          <Card className="border-financial-warning/20 bg-financial-warning/5">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 bg-financial-warning/10 rounded-lg flex items-center justify-center">
+                  <AlertCircle className="w-5 h-5 text-financial-warning" />
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse delay-300" />
-                  <span className="text-sm text-muted-foreground">Generating analysis report...</span>
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-financial-warning mb-2">
+                    Security & Privacy Notice
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    All data is processed securely and deleted after analysis. We do not store personal information.
+                  </p>
                 </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
+
+          {/* Check Form */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center text-white">
+                  {config.icon}
+                </div>
+                Input Data for Analysis
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                {config.inputType === 'textarea' ? (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">
+                      Enter text to analyze:
+                    </label>
+                    <Textarea
+                      placeholder={config.placeholder}
+                      value={inputData}
+                      onChange={(e) => setInputData(e.target.value)}
+                      className="min-h-[200px] font-mono resize-vertical"
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">
+                      Enter asset or identifier:
+                    </label>
+                    <Input
+                      placeholder={config.placeholder}
+                      value={inputData}
+                      onChange={(e) => setInputData(e.target.value)}
+                      className="text-base"
+                    />
+                  </div>
+                )}
+
+                <Button 
+                  onClick={handleCheck}
+                  disabled={!inputData.trim() || isAnalyzing}
+                  className="w-full h-12 text-base font-semibold"
+                  size="lg"
+                >
+                  {isAnalyzing ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                      Analyzing...
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="w-5 h-5 mr-3" />
+                      Start Security Check
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Analysis Progress */}
+          {isAnalyzing && (
+            <Card className="border-primary/20 bg-primary/5 animate-fade-in">
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <h3 className="font-semibold text-lg mb-2">Security Analysis in Progress</h3>
+                    <p className="text-muted-foreground">Please wait while we perform comprehensive checks...</p>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-4 p-3 bg-card rounded-lg">
+                      <div className="w-3 h-3 bg-primary rounded-full animate-pulse" />
+                      <span className="text-sm">
+                        {checkType === 'scammer-database' && 'Checking against known scammer databases...'}
+                        {checkType === 'language-analysis' && 'Analyzing text patterns and manipulation tactics...'}
+                        {checkType === 'price-manipulation' && 'Detecting price manipulation signals...'}
+                        {checkType === 'asset-verification' && 'Verifying asset legitimacy and authenticity...'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4 p-3 bg-card rounded-lg">
+                      <div className="w-3 h-3 bg-primary rounded-full animate-pulse delay-300" />
+                      <span className="text-sm">Generating comprehensive analysis report...</span>
+                    </div>
+                    <div className="flex items-center gap-4 p-3 bg-card rounded-lg">
+                      <div className="w-3 h-3 bg-primary rounded-full animate-pulse delay-500" />
+                      <span className="text-sm">Calculating risk scores and recommendations...</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Legal Disclaimer */}
+          <div className="pt-4">
+            <LegalDisclaimer variant="compact" />
           </div>
-        )}
 
-        {/* Legal Disclaimer */}
-        <div className="mt-8">
-          <LegalDisclaimer variant="compact" />
         </div>
-
       </div>
 
       <ApiKeyDialog
