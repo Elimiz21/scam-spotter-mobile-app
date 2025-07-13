@@ -1,12 +1,13 @@
 import { Home, Search, BarChart3, HelpCircle, Menu, X, LogIn, LogOut, User, CreditCard } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navItems = [
     { name: "Home", href: "/", icon: Home },
@@ -83,12 +84,12 @@ const Navigation = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', padding: '0 1rem' }}>
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = window.location.pathname === item.href;
+            const isActive = location.pathname === item.href;
             
             return (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 onClick={() => setIsOpen(false)}
                 style={{
                   display: 'flex',
@@ -105,18 +106,18 @@ const Navigation = () => {
                 }}
                 onMouseOver={(e) => {
                   if (!isActive) {
-                    (e.target as HTMLElement).style.backgroundColor = '#f3f4f6';
+                    (e.currentTarget as HTMLElement).style.backgroundColor = '#f3f4f6';
                   }
                 }}
                 onMouseOut={(e) => {
                   if (!isActive) {
-                    (e.target as HTMLElement).style.backgroundColor = 'transparent';
+                    (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
                   }
                 }}
               >
                 <Icon size={18} />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             );
           })}
         </div>

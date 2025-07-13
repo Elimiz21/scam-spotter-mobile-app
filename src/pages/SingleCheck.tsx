@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Shield, AlertCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import { ApiKeyDialog } from "../components/ApiKeyDialog";
 import LegalDisclaimer from "../components/LegalDisclaimer";
@@ -13,6 +14,7 @@ const SingleCheck = () => {
   const [inputData, setInputData] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -77,7 +79,7 @@ const SingleCheck = () => {
       }));
       
       setIsAnalyzing(false);
-      window.location.href = '/results';
+      navigate('/results');
     } catch (error) {
       console.error('Check failed:', error);
       setIsAnalyzing(false);
@@ -148,7 +150,7 @@ const SingleCheck = () => {
             <Button 
               variant="ghost" 
               size="sm"
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/')}
               className="hover:bg-accent transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
