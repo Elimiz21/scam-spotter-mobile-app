@@ -138,28 +138,28 @@ const SingleCheck = () => {
   const config = getCheckConfig();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-financial-light">
       <Navigation />
       
       {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-border bg-card backdrop-blur-sm sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto px-4 py-6">
           <div className="max-w-4xl mx-auto flex items-center gap-4">
             <Button 
               variant="ghost" 
               size="sm"
               onClick={() => window.location.href = '/'}
-              className="hover:bg-accent"
+              className="hover:bg-accent transition-colors"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              Back to Home
             </Button>
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center text-white text-xl shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-br from-financial-primary to-primary rounded-xl flex items-center justify-center text-white text-xl shadow-lg">
                 {config.icon}
               </div>
               <div>
-                <h1 className="text-2xl font-bold">{config.title}</h1>
+                <h1 className="text-2xl font-bold text-foreground">{config.title}</h1>
                 <p className="text-muted-foreground">{config.description}</p>
               </div>
             </div>
