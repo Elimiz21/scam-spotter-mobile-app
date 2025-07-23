@@ -48,16 +48,9 @@ export const ScamDunkBadge: React.FC<ScamDunkBadgeProps> = ({
         className={`${sizeClasses[size]} object-contain`}
       />
       {variant === 'full' && (
-        <div className="flex flex-col leading-tight">
-          <span className={`font-bold text-foreground ${textSizes[size]}`}>
-            Scam Dunk
-          </span>
-          {size !== 'sm' && (
-            <span className="text-xs text-muted-foreground leading-none">
-              Investment Protection
-            </span>
-          )}
-        </div>
+        <span className={`font-bold text-foreground ${textSizes[size]} whitespace-nowrap`}>
+          Scam Dunk Investment Protection
+        </span>
       )}
     </div>
   );
