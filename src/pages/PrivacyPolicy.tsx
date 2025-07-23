@@ -25,10 +25,81 @@ const PrivacyPolicy = () => {
             </Button>
           </div>
           
-          <div className="prose prose-lg max-w-none">
-            <div className="text-muted-foreground">
-              <p>Privacy policy content will be loaded here...</p>
-              <p>Please upload your privacy policy HTML and PDF files to display them on this page.</p>
+          <div className="prose prose-lg max-w-none text-foreground">
+            <div className="space-y-6">
+              <section>
+                <p className="text-sm text-muted-foreground mb-4">
+                  <strong>Effective Date:</strong> [Insert Date]<br />
+                  <strong>Website:</strong> www.scamshiel.com<br />
+                  <strong>Owner:</strong> Scam Dunk
+                </p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">1. Introduction</h2>
+                <p>Scam Dunk ("we," "our," or "us") operates the website www.scamshiel.com, which helps users detect potential pump-and-dump scams in stocks and WhatsApp groups. This Privacy Policy outlines how we collect, use, and protect your information.</p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">2. Information We Collect</h2>
+                <h3 className="text-lg font-medium text-foreground mb-2">a. Personal Information</h3>
+                <p className="mb-3">- Email addresses (submitted via forms or newsletter subscriptions)</p>
+                
+                <h3 className="text-lg font-medium text-foreground mb-2">b. Non-Personal Information</h3>
+                <div className="space-y-1">
+                  <p>- Browser type, IP address, and device information</p>
+                  <p>- User behavior on the site (via analytics tools)</p>
+                  <p>- Cookies and session data</p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">3. How We Use Your Information</h2>
+                <p className="mb-2">We use your information to:</p>
+                <div className="space-y-1">
+                  <p>- Improve our website functionality and content</p>
+                  <p>- Send scam alerts or updates (if you've subscribed)</p>
+                  <p>- Analyze user activity and protect against misuse</p>
+                  <p>- Comply with legal obligations</p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">4. Cookies and Tracking Technologies</h2>
+                <p className="mb-2">We use cookies and similar technologies for:</p>
+                <div className="space-y-1">
+                  <p>- Performance and analytics (e.g., Google Analytics)</p>
+                  <p>- Remembering user preferences</p>
+                  <p>- Enhancing website security</p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">5. Sharing of Information</h2>
+                <p className="mb-2">We do not sell your personal data. We may share information:</p>
+                <div className="space-y-1">
+                  <p>- With trusted service providers for analytics or email campaigns</p>
+                  <p>- To comply with law enforcement or legal processes</p>
+                  <p>- In the event of a business transfer (e.g., acquisition)</p>
+                </div>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">6. Data Retention</h2>
+                <p>We retain your data only for as long as necessary for the purposes stated in this policy or as required by law.</p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">7. Your Rights</h2>
+                <p className="mb-2">You have the right to:</p>
+                <div className="space-y-1">
+                  <p>- Request access or correction of your personal data</p>
+                  <p>- Request deletion of your data (see our Data Deletion Policy)</p>
+                  <p>- Opt out of email communications at any time</p>
+                </div>
+                <p className="mt-3">To exercise these rights, contact us at:</p>
+                <p className="font-semibold text-primary">privacy@scamshiel.com</p>
+              </section>
             </div>
           </div>
         </div>
