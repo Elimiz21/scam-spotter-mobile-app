@@ -2,6 +2,7 @@ import { Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import LegalDisclaimer from "../components/LegalDisclaimer";
+import { ScamDunkBadge } from "../components/ScamDunkBadge";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -17,23 +18,7 @@ const Home = () => {
         borderRadius: '8px',
         marginBottom: '2rem'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            backgroundColor: '#3b82f6', 
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>ScamShield</h1>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Investment Protection</p>
-          </div>
-        </div>
+        <ScamDunkBadge size="md" variant="full" />
       </header>
 
       {/* Hero Section */}
@@ -76,7 +61,7 @@ const Home = () => {
       {/* Features Grid */}
       <section style={{ padding: '3rem 1rem', backgroundColor: '#f1f5f9', borderRadius: '12px' }}>
         <h3 style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem' }}>
-          How ScamShield Protects You
+          How Scam Dunk Protects You
         </h3>
         <div style={{ 
           display: 'grid', 
@@ -301,18 +286,7 @@ const Home = () => {
       {/* Footer */}
       <footer style={{ textAlign: 'center', padding: '2rem 1rem', borderTop: '1px solid #e2e8f0', marginTop: '3rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
-          <div style={{ 
-            width: '32px', 
-            height: '32px', 
-            backgroundColor: '#3b82f6', 
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
-          </div>
-          <span style={{ fontWeight: '600' }}>ScamShield</span>
+          <ScamDunkBadge size="sm" variant="full" />
         </div>
         <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
           Protecting investors from financial scams with advanced AI analysis

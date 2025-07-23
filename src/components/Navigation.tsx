@@ -217,7 +217,7 @@ const Navigation = () => {
             margin: 0,
             lineHeight: '1.4'
           }}>
-            ScamShield v1.0<br />
+            Scam Dunk v1.0<br />
             Investment Protection
           </p>
         </div>

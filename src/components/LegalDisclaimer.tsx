@@ -16,8 +16,8 @@ export const LegalDisclaimer = ({ variant = "compact", className = "" }: LegalDi
 
   const disclaimerContent = {
     compact: "Not investment advice. For informational purposes only.",
-    full: `ScamShield provides risk analysis tools for informational and educational purposes only. This service does not constitute investment advice, financial advice, trading advice, or any other sort of advice. The analysis results should not be relied upon as the sole basis for investment decisions. All investments carry risk, and past performance does not guarantee future results.`,
-    results: `IMPORTANT DISCLAIMER: The risk analysis provided by ScamShield is for informational purposes only and should not be considered as investment advice, financial advice, or a recommendation to buy, sell, or hold any asset. The accuracy of our analysis cannot be guaranteed, and users should conduct their own research and consult with qualified financial advisors before making investment decisions. ScamShield and its operators disclaim all liability for any losses or damages arising from the use of this analysis.`
+    full: `Scam Dunk provides risk analysis tools for informational and educational purposes only. This service does not constitute investment advice, financial advice, trading advice, or any other sort of advice. The analysis results should not be relied upon as the sole basis for investment decisions. All investments carry risk, and past performance does not guarantee future results.`,
+    results: `IMPORTANT DISCLAIMER: The risk analysis provided by Scam Dunk is for informational purposes only and should not be considered as investment advice, financial advice, or a recommendation to buy, sell, or hold any asset. The accuracy of our analysis cannot be guaranteed, and users should conduct their own research and consult with qualified financial advisors before making investment decisions. Scam Dunk and its operators disclaim all liability for any losses or damages arising from the use of this analysis.`
   };
 
   if (variant === "full") {

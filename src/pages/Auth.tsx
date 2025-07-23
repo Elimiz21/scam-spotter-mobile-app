@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, Lock, User } from "lucide-react";
+import { ScamDunkBadge } from "@/components/ScamDunkBadge";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -47,7 +48,7 @@ export default function Auth() {
       }
     } else {
       toast({
-        title: "Welcome to ScamShield",
+        title: "Welcome to Scam Dunk",
         description: "Check your email to confirm your account and start protecting your investments.",
       });
       // Navigate to home after successful signup
@@ -92,23 +93,7 @@ export default function Auth() {
         borderRadius: '8px',
         marginBottom: '2rem'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            backgroundColor: '#3b82f6', 
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>ScamShield</h1>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Secure Account Access</p>
-          </div>
-        </div>
+        <ScamDunkBadge size="md" variant="full" />
       </header>
 
       {/* Main Auth Form */}
@@ -151,7 +136,7 @@ export default function Auth() {
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
             }}>
-              {mode === "signin" ? "Welcome back" : "Join ScamShield"}
+              {mode === "signin" ? "Welcome back" : "Join Scam Dunk"}
             </h2>
             <p style={{ color: '#64748b', fontSize: '1rem' }}>
               {mode === "signin" 

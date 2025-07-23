@@ -4,6 +4,7 @@ import Navigation from "@/components/Navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { ScamDunkBadge } from "@/components/ScamDunkBadge";
 
 const Pricing = () => {
   const { user } = useAuth();
@@ -180,23 +181,7 @@ const Pricing = () => {
         borderRadius: '8px',
         marginBottom: '2rem'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ 
-            width: '40px', 
-            height: '40px', 
-            backgroundColor: '#3b82f6', 
-            borderRadius: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Shield style={{ width: '24px', height: '24px', color: 'white' }} />
-          </div>
-          <div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>ScamShield</h1>
-            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Choose Your Protection Level</p>
-          </div>
-        </div>
+        <ScamDunkBadge size="md" variant="full" />
       </header>
 
       {/* Hero Section */}
