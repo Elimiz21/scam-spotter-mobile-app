@@ -1,4 +1,5 @@
 import React from 'react';
+import shieldLogo from '../assets/scam-dunk-shield.png';
 
 interface ScamDunkBadgeProps {
   size?: 'sm' | 'md' | 'lg';
@@ -10,9 +11,9 @@ export const ScamDunkBadge: React.FC<ScamDunkBadgeProps> = ({
   variant = 'full' 
 }) => {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5', 
-    lg: 'h-6 w-6'
+    sm: 'h-3 w-3',
+    md: 'h-4 w-4', 
+    lg: 'h-5 w-5'
   };
 
   const textSizes = {
@@ -25,9 +26,9 @@ export const ScamDunkBadge: React.FC<ScamDunkBadgeProps> = ({
     return (
       <div className="flex items-center justify-center">
         <img 
-          src="/lovable-uploads/5bf11401-0fb6-490a-8997-44ae038d51cd.png" 
-          alt="Scam Dunk"
-          className={`${sizeClasses[size]} object-contain rounded-lg`}
+          src={shieldLogo} 
+          alt="Scam Dunk Shield"
+          className={`${sizeClasses[size]} object-contain`}
         />
       </div>
     );
@@ -36,9 +37,9 @@ export const ScamDunkBadge: React.FC<ScamDunkBadgeProps> = ({
   return (
     <div className="flex items-center gap-2">
       <img 
-        src="/lovable-uploads/5bf11401-0fb6-490a-8997-44ae038d51cd.png" 
-        alt="Scam Dunk"
-        className={`${sizeClasses[size]} object-contain rounded-lg`}
+        src={shieldLogo} 
+        alt="Scam Dunk Shield"
+        className={`${sizeClasses[size]} object-contain`}
       />
       {variant === 'full' && (
         <div className="flex flex-col">
