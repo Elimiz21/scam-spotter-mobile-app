@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import LegalDisclaimer from "../components/LegalDisclaimer";
 import { ScamDunkBadge } from "../components/ScamDunkBadge";
+import PolicyFooter from "../components/PolicyFooter";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -292,6 +293,9 @@ const Home = () => {
           Protecting investors from financial scams with advanced AI analysis
         </p>
         <LegalDisclaimer variant="compact" className="mt-4" />
+        <div className="mt-6">
+          <PolicyFooter />
+        </div>
       </footer>
     </div>
   );

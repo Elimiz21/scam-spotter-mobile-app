@@ -12,6 +12,8 @@ import HowItWorks from "./pages/HowItWorks";
 import Auth from "./pages/Auth";
 import Pricing from "./pages/Pricing";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import DataDeletionPolicy from "./pages/DataDeletionPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/data-deletion-policy" element={<DataDeletionPolicy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
