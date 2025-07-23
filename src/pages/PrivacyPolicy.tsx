@@ -15,17 +15,58 @@ const PrivacyPolicy = () => {
           </div>
           
           <div className="flex gap-4 mb-8">
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => {
+                const element = document.createElement('a');
+                const content = document.querySelector('.policy-content')?.textContent || '';
+                const file = new Blob([content], { type: 'text/plain' });
+                element.href = URL.createObjectURL(file);
+                element.download = 'privacy-policy.txt';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+              }}
+            >
               <Download className="w-4 h-4" />
               Download PDF
             </Button>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => {
+                const content = document.querySelector('.policy-content')?.innerHTML || '';
+                const newWindow = window.open('', '_blank');
+                if (newWindow) {
+                  newWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                      <title>Privacy Policy - Scam Dunk</title>
+                      <style>
+                        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; }
+                        h1 { color: #333; border-bottom: 2px solid #333; padding-bottom: 10px; }
+                        h2 { color: #555; margin-top: 30px; }
+                        h3 { color: #666; }
+                      </style>
+                    </head>
+                    <body>
+                      <h1>Privacy Policy</h1>
+                      ${content}
+                    </body>
+                    </html>
+                  `);
+                  newWindow.document.close();
+                }
+              }}
+            >
               <FileText className="w-4 h-4" />
               View HTML Version
             </Button>
           </div>
           
-          <div className="prose prose-lg max-w-none text-foreground">
+          <div className="prose prose-lg max-w-none text-foreground policy-content">
             <div className="space-y-6">
               <section>
                 <p className="text-sm text-muted-foreground mb-4">
