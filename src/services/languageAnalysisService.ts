@@ -1,75 +1,33 @@
 import { LanguageAnalysisResult } from './types';
+import { supabase } from '@/integrations/supabase/client';
 
 export class LanguageAnalysisService {
-  private apiKey: string | null = null;
-
-  constructor(apiKey?: string) {
-    this.apiKey = apiKey || null;
-  }
-
-  setApiKey(apiKey: string) {
-    this.apiKey = apiKey;
-  }
-
   async analyzeLanguagePatterns(chatText: string): Promise<LanguageAnalysisResult> {
-    if (!this.apiKey) {
-      // Return mock data if no API key provided
-      return this.getMockLanguageAnalysis(chatText);
-    }
-
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
-          messages: [
-            {
-              role: 'system',
-              content: `You are a scam detection expert. Analyze the following chat messages for manipulation tactics, urgency patterns, and suspicious language. Return a JSON response with:
-              - riskScore (0-100)
-              - manipulationIndicators (array of strings)
-              - sentimentScore (0-1)
-              - suspiciousPhrases (array of strings)
-              
-              Focus on: urgency tactics, too-good-to-be-true promises, pressure to invest quickly, guaranteed returns, FOMO tactics, grammatical inconsistencies, and emotional manipulation.`
-            },
-            {
-              role: 'user',
-              content: chatText
-            }
-          ],
-          temperature: 0.3,
-          max_tokens: 1000,
-        }),
+      const { data, error } = await supabase.functions.invoke('ai-language-analysis', {
+        body: { chatText }
       });
 
-      if (!response.ok) {
-        throw new Error(`OpenAI API error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      const analysisText = data.choices[0].message.content;
-      
-      // Parse the JSON response from OpenAI
-      try {
-        const analysis = JSON.parse(analysisText);
-        return {
-          riskScore: Math.min(100, Math.max(0, analysis.riskScore || 50)),
-          manipulationIndicators: analysis.manipulationIndicators || [],
-          sentimentScore: Math.min(1, Math.max(0, analysis.sentimentScore || 0.5)),
-          suspiciousPhrases: analysis.suspiciousPhrases || []
-        };
-      } catch (parseError) {
-        // Fallback to pattern-based analysis if JSON parsing fails
+      if (error) {
+        console.error('AI analysis function error:', error);
         return this.performBasicLanguageAnalysis(chatText);
       }
+
+      if (data.error) {
+        console.warn('AI analysis unavailable:', data.error);
+        return this.performBasicLanguageAnalysis(chatText);
+      }
+
+      // Convert the response to match our expected format
+      return {
+        riskScore: data.riskScore || 0,
+        manipulationIndicators: data.riskFactors || [],
+        sentimentScore: (data.sentimentScore || 0) / 100, // Convert to 0-1 scale
+        suspiciousPhrases: data.suspiciousPhrases || []
+      };
     } catch (error) {
-      console.error('Language analysis error:', error);
-      return this.getMockLanguageAnalysis(chatText);
+      console.error('Language analysis failed:', error);
+      return this.performBasicLanguageAnalysis(chatText);
     }
   }
 

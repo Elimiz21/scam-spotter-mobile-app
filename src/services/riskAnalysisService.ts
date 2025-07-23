@@ -10,15 +10,11 @@ export class RiskAnalysisService {
   private priceService: PriceAnalysisService;
   private scammerService: ScammerDatabaseService;
 
-  constructor(openAiApiKey?: string) {
-    this.languageService = new LanguageAnalysisService(openAiApiKey);
+  constructor() {
+    this.languageService = new LanguageAnalysisService();
     this.assetService = new AssetVerificationService();
     this.priceService = new PriceAnalysisService();
     this.scammerService = new ScammerDatabaseService();
-  }
-
-  setOpenAiApiKey(apiKey: string) {
-    this.languageService.setApiKey(apiKey);
   }
 
   async analyzeGroup(groupData: GroupData, onProgress?: (progress: number) => void): Promise<AnalysisResult> {

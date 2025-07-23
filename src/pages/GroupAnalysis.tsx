@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { ArrowLeft, Upload, AlertCircle, Shield } from "lucide-react";
 import Navigation from "../components/Navigation";
-import { ApiKeyDialog } from "../components/ApiKeyDialog";
+
 import LegalDisclaimer from "../components/LegalDisclaimer";
 
 const GroupAnalysis = () => {
@@ -14,8 +14,6 @@ const GroupAnalysis = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisType, setAnalysisType] = useState<string>("");
-  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
-
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
@@ -25,25 +23,10 @@ const GroupAnalysis = () => {
   }, []);
 
   const handleAnalyze = async () => {
-    // Check if OpenAI API key is available for enhanced analysis
-    const savedApiKey = localStorage.getItem('openai_api_key');
-    if (!savedApiKey) {
-      setShowApiKeyDialog(true);
-      return;
-    }
-
-    performAnalysis(savedApiKey);
-  };
-
-  const performAnalysis = async (apiKey?: string) => {
     setIsAnalyzing(true);
     
     try {
       const { riskAnalysisService } = await import('../services/riskAnalysisService');
-      
-      if (apiKey) {
-        riskAnalysisService.setOpenAiApiKey(apiKey);
-      }
 
       const analysisResult = await riskAnalysisService.analyzeGroup(
         formData,
@@ -61,11 +44,6 @@ const GroupAnalysis = () => {
       setIsAnalyzing(false);
       alert('Analysis failed. Please try again.');
     }
-  };
-
-  const handleApiKeySave = (apiKey: string) => {
-    localStorage.setItem('openai_api_key', apiKey);
-    performAnalysis(apiKey);
   };
 
   const platforms = [
@@ -397,11 +375,6 @@ const GroupAnalysis = () => {
 
       </div>
 
-      <ApiKeyDialog
-        isOpen={showApiKeyDialog}
-        onClose={() => setShowApiKeyDialog(false)}
-        onSave={handleApiKeySave}
-      />
 
       <style>{`
         @keyframes spin {

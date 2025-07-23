@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { ArrowLeft, Shield, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
-import { ApiKeyDialog } from "../components/ApiKeyDialog";
+
 import LegalDisclaimer from "../components/LegalDisclaimer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ const SingleCheck = () => {
   const [checkType, setCheckType] = useState<string>("");
   const [inputData, setInputData] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showApiKeyDialog, setShowApiKeyDialog] = useState(false);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,15 +25,10 @@ const SingleCheck = () => {
   }, []);
 
   const handleCheck = async () => {
-    const savedApiKey = localStorage.getItem('openai_api_key');
-    if (!savedApiKey && (checkType === 'language-analysis' || checkType === 'price-manipulation')) {
-      setShowApiKeyDialog(true);
-      return;
-    }
-    performCheck(savedApiKey);
+    performCheck();
   };
 
-  const performCheck = async (apiKey?: string) => {
+  const performCheck = async () => {
     setIsAnalyzing(true);
     
     try {
@@ -49,7 +44,7 @@ const SingleCheck = () => {
         }
         case 'language-analysis': {
           const { LanguageAnalysisService } = await import('../services/languageAnalysisService');
-          const service = new LanguageAnalysisService(apiKey);
+          const service = new LanguageAnalysisService();
           result = await service.analyzeLanguagePatterns(inputData);
           break;
         }
@@ -84,10 +79,6 @@ const SingleCheck = () => {
     }
   };
 
-  const handleApiKeySave = (apiKey: string) => {
-    localStorage.setItem('openai_api_key', apiKey);
-    performCheck(apiKey);
-  };
 
   const getCheckConfig = () => {
     switch (checkType) {
@@ -318,11 +309,6 @@ const SingleCheck = () => {
         <LegalDisclaimer variant="compact" />
       </div>
 
-      <ApiKeyDialog
-        isOpen={showApiKeyDialog}
-        onClose={() => setShowApiKeyDialog(false)}
-        onSave={handleApiKeySave}
-      />
 
     </div>
   );
