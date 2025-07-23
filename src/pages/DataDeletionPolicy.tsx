@@ -25,10 +25,36 @@ const DataDeletionPolicy = () => {
             </Button>
           </div>
           
-          <div className="prose prose-lg max-w-none">
-            <div className="text-muted-foreground">
-              <p>Data deletion policy content will be loaded here...</p>
-              <p>Please upload your data deletion policy HTML and PDF files to display them on this page.</p>
+          <div className="prose prose-lg max-w-none text-foreground">
+            <div className="space-y-6">
+              <section>
+                <p className="text-muted-foreground mb-4">
+                  - Opt out of email communications at any time
+                </p>
+                <p>To exercise these rights, contact us at:</p>
+                <p className="font-semibold text-primary">privacy@scamshiel.com</p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">8. Third-Party Services</h2>
+                <p>We may use services like Google Analytics or email marketing platforms that collect anonymized user data. These services are governed by their own privacy policies.</p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">9. Data Security</h2>
+                <p>We implement industry-standard security practices to protect your data. However, no method of transmission is 100% secure.</p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">10. Changes to This Policy</h2>
+                <p>We may update this Privacy Policy at any time. Any changes will be posted on this page with an updated revision date.</p>
+              </section>
+
+              <section>
+                <h2 className="text-xl font-semibold text-foreground mb-3">11. Contact Us</h2>
+                <p>If you have questions or requests about this Privacy Policy or your data, contact:</p>
+                <p className="font-semibold text-primary">privacy@scamshiel.com</p>
+              </section>
             </div>
           </div>
         </div>
