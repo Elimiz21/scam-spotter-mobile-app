@@ -9,19 +9,29 @@ const ResultsDashboard = () => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null);
 
   useEffect(() => {
-    // Load analysis results from localStorage
-    const savedAnalysis = localStorage.getItem('latest_analysis');
-    if (savedAnalysis) {
+    // Check if this is a single check result
+    const singleCheckData = localStorage.getItem('single_check_result');
+    const groupAnalysisData = localStorage.getItem('analysis_result');
+    
+    if (singleCheckData) {
       try {
-        const parsedAnalysis = JSON.parse(savedAnalysis);
-        setAnalysisData(parsedAnalysis);
+        const parsed = JSON.parse(singleCheckData);
+        // Convert single check to analysis format
+        const singleCheckAnalysis = createSingleCheckAnalysis(parsed);
+        setAnalysisData(singleCheckAnalysis);
+      } catch (error) {
+        console.error('Failed to parse single check data:', error);
+        setAnalysisData(getMockAnalysisData());
+      }
+    } else if (groupAnalysisData) {
+      try {
+        const parsed = JSON.parse(groupAnalysisData);
+        setAnalysisData(parsed);
       } catch (error) {
         console.error('Failed to parse analysis data:', error);
-        // Fall back to mock data
         setAnalysisData(getMockAnalysisData());
       }
     } else {
-      // Use mock data if no analysis found
       setAnalysisData(getMockAnalysisData());
     }
   }, []);
@@ -92,6 +102,84 @@ const ResultsDashboard = () => {
       ]
     }
   ];
+
+  const createSingleCheckAnalysis = (singleCheck: any): AnalysisResult => {
+    const checkTypeMap: Record<string, { name: string; icon: string }> = {
+      'scammer-database': { name: 'Scammer Database Check', icon: '🚨' },
+      'language-analysis': { name: 'Language Analysis', icon: '💬' },
+      'price-manipulation': { name: 'Price Manipulation Check', icon: '📈' },
+      'asset-verification': { name: 'Asset Verification', icon: '✅' }
+    };
+
+    const checkInfo = checkTypeMap[singleCheck.type] || { name: 'Unknown Check', icon: '❓' };
+    const riskScore = singleCheck.result?.riskScore || 0;
+    
+    return {
+      overallRiskScore: -1, // Special value to indicate single check
+      riskVectors: [{
+        id: singleCheck.type,
+        name: checkInfo.name,
+        icon: checkInfo.icon,
+        riskScore: riskScore,
+        status: riskScore > 70 ? 'danger' : riskScore > 40 ? 'warning' : 'safe',
+        summary: getSingleCheckSummary(singleCheck.type, singleCheck.result),
+        details: getSingleCheckDetails(singleCheck.type, singleCheck.result),
+        findings: getSingleCheckFindings(singleCheck.type, singleCheck.result)
+      }],
+      analysisId: `single-${singleCheck.type}-${Date.now()}`,
+      timestamp: singleCheck.timestamp,
+      isSingleCheck: true
+    } as any;
+  };
+
+  const getSingleCheckSummary = (type: string, result: any): string => {
+    switch (type) {
+      case 'scammer-database':
+        return result?.flaggedMembers?.length > 0 
+          ? `Found ${result.flaggedMembers.length} flagged members`
+          : 'No known scammers detected';
+      case 'language-analysis':
+        return `Risk score: ${result?.riskScore || 0}/100 based on language patterns`;
+      case 'price-manipulation':
+        return `Market analysis shows ${result?.riskScore > 50 ? 'high' : 'low'} manipulation risk`;
+      case 'asset-verification':
+        return result?.isVerified ? 'Asset verified on exchanges' : 'Asset verification failed';
+      default:
+        return 'Analysis completed';
+    }
+  };
+
+  const getSingleCheckDetails = (type: string, result: any): string => {
+    switch (type) {
+      case 'scammer-database':
+        return result?.flaggedMembers?.length > 0
+          ? `Flagged members: ${result.flaggedMembers.join(', ')}`
+          : 'No matches found in scammer databases';
+      case 'language-analysis':
+        return `Manipulation indicators detected: ${result?.manipulationIndicators?.join(', ') || 'None'}`;
+      case 'price-manipulation':
+        return `Volatility score: ${result?.volatilityScore || 0}`;
+      case 'asset-verification':
+        return `Exchange listings: ${result?.exchangeListings?.join(', ') || 'None found'}`;
+      default:
+        return 'Check completed successfully';
+    }
+  };
+
+  const getSingleCheckFindings = (type: string, result: any): string[] => {
+    switch (type) {
+      case 'scammer-database':
+        return result?.sources || [];
+      case 'language-analysis':
+        return result?.suspiciousPhrases || [];
+      case 'price-manipulation':
+        return [`Trading volume: ${result?.tradingVolume || 'Unknown'}`];
+      case 'asset-verification':
+        return result?.projectDetails ? Object.entries(result.projectDetails).map(([key, value]) => `${key}: ${value}`) : [];
+      default:
+        return [];
+    }
+  };
 
   const getMockAnalysisData = (): AnalysisResult => {
     return {
@@ -180,53 +268,81 @@ const ResultsDashboard = () => {
 
       <div style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' }}>
         
-        {/* Overall Risk Score */}
-        <div style={{ 
-          backgroundColor: overallColors.bg,
-          border: `2px solid ${overallColors.border}`,
-          borderRadius: '12px',
-          padding: '2rem',
-          textAlign: 'center',
-          marginBottom: '2rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
-            {overallRiskScore >= 70 ? (
-              <AlertTriangle style={{ width: '48px', height: '48px', color: overallColors.text }} />
-            ) : (
-              <Shield style={{ width: '48px', height: '48px', color: overallColors.text }} />
-            )}
-          </div>
-          <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: overallColors.text, margin: '0 0 8px' }}>
-            Overall Risk Score: {overallRiskScore}/100
-          </h2>
-          <p style={{ color: overallColors.text, marginBottom: '1rem' }}>
-            {overallRiskScore >= 80 && "CRITICAL RISK - Avoid this group immediately"}
-            {overallRiskScore >= 60 && overallRiskScore < 80 && "HIGH RISK - Exercise extreme caution"}
-            {overallRiskScore >= 40 && overallRiskScore < 60 && "MEDIUM RISK - Proceed with caution"}
-            {overallRiskScore < 40 && "LOW RISK - Group appears relatively safe"}
-          </p>
+        {/* Overall Risk Score or Single Check Notice */}
+        {(analysisData as any)?.isSingleCheck ? (
           <div style={{ 
-            width: '100%', 
-            height: '12px', 
-            backgroundColor: 'rgba(0,0,0,0.1)', 
-            borderRadius: '6px',
-            overflow: 'hidden'
+            backgroundColor: '#f8fafc',
+            border: '2px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '2rem',
+            textAlign: 'center',
+            marginBottom: '2rem'
           }}>
-            <div style={{ 
-              width: `${overallRiskScore}%`, 
-              height: '100%', 
-              backgroundColor: overallColors.text,
-              transition: 'width 1s ease'
-            }} />
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              <Info style={{ width: '48px', height: '48px', color: '#3b82f6' }} />
+            </div>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#1e293b', margin: '0 0 8px' }}>
+              Single Check Results
+            </h2>
+            <p style={{ color: '#64748b', marginBottom: '1rem', fontSize: '1.1rem' }}>
+              Only 1 out of 4 security checks was performed
+            </p>
+            <p style={{ color: '#64748b', fontSize: '0.9rem' }}>
+              For comprehensive analysis, use the "Group Analysis" feature
+            </p>
           </div>
-        </div>
+        ) : (
+          <div style={{ 
+            backgroundColor: overallColors.bg,
+            border: `2px solid ${overallColors.border}`,
+            borderRadius: '12px',
+            padding: '2rem',
+            textAlign: 'center',
+            marginBottom: '2rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem' }}>
+              {overallRiskScore >= 70 ? (
+                <AlertTriangle style={{ width: '48px', height: '48px', color: overallColors.text }} />
+              ) : (
+                <Shield style={{ width: '48px', height: '48px', color: overallColors.text }} />
+              )}
+            </div>
+            <h2 style={{ fontSize: '2rem', fontWeight: 'bold', color: overallColors.text, margin: '0 0 8px' }}>
+              Overall Risk Score: {overallRiskScore}/100
+            </h2>
+            <p style={{ color: overallColors.text, marginBottom: '1rem' }}>
+              {overallRiskScore >= 80 && "CRITICAL RISK - Avoid this group immediately"}
+              {overallRiskScore >= 60 && overallRiskScore < 80 && "HIGH RISK - Exercise extreme caution"}
+              {overallRiskScore >= 40 && overallRiskScore < 60 && "MEDIUM RISK - Proceed with caution"}
+              {overallRiskScore < 40 && "LOW RISK - Group appears relatively safe"}
+            </p>
+            <div style={{ 
+              width: '100%', 
+              height: '12px', 
+              backgroundColor: 'rgba(0,0,0,0.1)', 
+              borderRadius: '6px',
+              overflow: 'hidden'
+            }}>
+              <div style={{ 
+                width: `${overallRiskScore}%`, 
+                height: '100%', 
+                backgroundColor: overallColors.text,
+                transition: 'width 1s ease'
+              }} />
+            </div>
+          </div>
+        )}
 
         {/* Risk Vectors Grid */}
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+          gridTemplateColumns: (analysisData as any)?.isSingleCheck 
+            ? '1fr' 
+            : 'repeat(auto-fit, minmax(300px, 1fr))', 
           gap: '1.5rem',
-          marginBottom: '2rem'
+          marginBottom: '2rem',
+          maxWidth: (analysisData as any)?.isSingleCheck ? '600px' : 'none',
+          margin: (analysisData as any)?.isSingleCheck ? '0 auto 2rem auto' : '0 0 2rem 0'
         }}>
           {riskVectors.map((vector) => {
             const badgeColors = getRiskBadgeColor(vector.status);
