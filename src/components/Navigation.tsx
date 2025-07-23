@@ -17,6 +17,11 @@ const Navigation = () => {
     { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
   ];
 
+  const policyItems = [
+    { name: "Privacy Policy", href: "/privacy-policy" },
+    { name: "Data Deletion", href: "/data-deletion-policy" },
+  ];
+
   const handleSignOut = async () => {
     await signOut();
     setIsOpen(false);
@@ -120,6 +125,61 @@ const Navigation = () => {
               </Link>
             );
           })}
+        </div>
+
+        {/* Policy Links */}
+        <div style={{ 
+          padding: '0 1rem', 
+          borderTop: '1px solid #e2e8f0', 
+          paddingTop: '1rem',
+          marginTop: '1rem'
+        }}>
+          <p style={{ 
+            fontSize: '0.75rem', 
+            color: '#64748b', 
+            fontWeight: '600', 
+            textTransform: 'uppercase', 
+            letterSpacing: '0.05em',
+            marginBottom: '0.5rem'
+          }}>
+            Policies
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+            {policyItems.map((item) => {
+              const isActive = location.pathname === item.href;
+              
+              return (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  onClick={() => setIsOpen(false)}
+                  style={{
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    textDecoration: 'none',
+                    color: isActive ? '#3b82f6' : '#64748b',
+                    backgroundColor: isActive ? '#eff6ff' : 'transparent',
+                    fontSize: '0.8rem',
+                    transition: 'all 0.2s'
+                  }}
+                  onMouseOver={(e) => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.backgroundColor = '#f3f4f6';
+                      (e.currentTarget as HTMLElement).style.color = '#374151';
+                    }
+                  }}
+                  onMouseOut={(e) => {
+                    if (!isActive) {
+                      (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                      (e.currentTarget as HTMLElement).style.color = '#64748b';
+                    }
+                  }}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
+          </div>
         </div>
 
         {/* Auth Section */}
