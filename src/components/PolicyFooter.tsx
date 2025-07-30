@@ -16,6 +16,13 @@ const PolicyFooter = () => {
       >
         Data Deletion Policy
       </Link>
+      <span className="hidden sm:inline">•</span>
+      <Link 
+        to="/terms-of-service" 
+        className="hover:text-primary transition-colors underline"
+      >
+        Terms of Service
+      </Link>
     </div>
   );
 };

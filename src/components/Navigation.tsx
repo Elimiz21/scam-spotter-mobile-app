@@ -20,6 +20,7 @@ const Navigation = () => {
   const policyItems = [
     { name: "Privacy Policy", href: "/privacy-policy" },
     { name: "Data Deletion", href: "/data-deletion-policy" },
+    { name: "Terms of Service", href: "/terms-of-service" },
   ];
 
   const handleSignOut = async () => {
