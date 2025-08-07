@@ -3,8 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, Clock, Zap, Shield, TrendingUp, Database } from 'lucide-react';
-import { rateLimitService, UsageLimits } from '../services/rateLimitService';
+import { AlertCircle, Clock, Zap, Shield, TrendingUp, Database, FileText } from 'lucide-react';
+import { usageTrackingService, UsageStats } from '../services/usageTrackingService';
 import { useAuth } from '../hooks/useAuth';
 
 interface UsageTrackerProps {
@@ -14,7 +14,7 @@ interface UsageTrackerProps {
 
 export default function UsageTracker({ className = '', showUpgradeButton = true }: UsageTrackerProps) {
   const { user, profile } = useAuth();
-  const [usage, setUsage] = useState<UsageLimits | null>(null);
+  const [usage, setUsage] = useState<UsageStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +33,7 @@ export default function UsageTracker({ className = '', showUpgradeButton = true 
   const loadUsage = async () => {
     try {
       setError(null);
-      const currentUsage = await rateLimitService.getCurrentUsage();
+      const currentUsage = await usageTrackingService.getCurrentUsage(user!.id);
       setUsage(currentUsage);
     } catch (err) {
       console.error('Failed to load usage:', err);
@@ -50,20 +50,22 @@ export default function UsageTracker({ className = '', showUpgradeButton = true 
     return 'default';
   };
 
-  const getUsageIcon = (type: 'singleCheck' | 'groupAnalysis' | 'aiAnalysis') => {
+  const getUsageIcon = (type: 'singleChecks' | 'groupAnalyses' | 'aiAnalyses' | 'exportReports') => {
     switch (type) {
-      case 'singleCheck': return <Shield className="h-4 w-4" />;
-      case 'groupAnalysis': return <TrendingUp className="h-4 w-4" />;
-      case 'aiAnalysis': return <Database className="h-4 w-4" />;
+      case 'singleChecks': return <Shield className="h-4 w-4" />;
+      case 'groupAnalyses': return <TrendingUp className="h-4 w-4" />;
+      case 'aiAnalyses': return <Database className="h-4 w-4" />;
+      case 'exportReports': return <FileText className="h-4 w-4" />;
       default: return <Zap className="h-4 w-4" />;
     }
   };
 
-  const getUsageTitle = (type: 'singleCheck' | 'groupAnalysis' | 'aiAnalysis'): string => {
+  const getUsageTitle = (type: 'singleChecks' | 'groupAnalyses' | 'aiAnalyses' | 'exportReports'): string => {
     switch (type) {
-      case 'singleCheck': return 'Single Checks';
-      case 'groupAnalysis': return 'Group Analysis';
-      case 'aiAnalysis': return 'AI Analysis';
+      case 'singleChecks': return 'Single Checks';
+      case 'groupAnalyses': return 'Group Analysis';
+      case 'aiAnalyses': return 'AI Analysis';
+      case 'exportReports': return 'Export Reports';
       default: return 'Unknown';
     }
   };
@@ -79,6 +81,24 @@ export default function UsageTracker({ className = '', showUpgradeButton = true 
       case 'premium': return 'default';
       case 'pro': return 'destructive';
       default: return 'secondary';
+    }
+  };
+
+  const formatTimeUntilReset = (resetTime: number): string => {
+    if (resetTime <= 0) {
+      return 'Available now';
+    }
+
+    const minutes = Math.floor(resetTime / (60 * 1000));
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) {
+      return `${days}d ${hours % 24}h`;
+    } else if (hours > 0) {
+      return `${hours}h ${minutes % 60}m`;
+    } else {
+      return `${minutes}m`;
     }
   };
 
@@ -125,9 +145,38 @@ export default function UsageTracker({ className = '', showUpgradeButton = true 
   }
 
   const usageItems = [
-    { key: 'singleCheck' as const, data: usage.singleCheck },
-    { key: 'groupAnalysis' as const, data: usage.groupAnalysis },
-    { key: 'aiAnalysis' as const, data: usage.aiAnalysis },
+    { 
+      key: 'singleChecks' as const, 
+      data: {
+        used: usage.usage.singleChecks,
+        limit: usage.limits.singleChecks.monthly,
+        resetTime: usage.timeToReset,
+      }
+    },
+    { 
+      key: 'groupAnalyses' as const, 
+      data: {
+        used: usage.usage.groupAnalyses,
+        limit: usage.limits.groupAnalyses.monthly,
+        resetTime: usage.timeToReset,
+      }
+    },
+    { 
+      key: 'aiAnalyses' as const, 
+      data: {
+        used: usage.usage.aiAnalyses,
+        limit: usage.limits.aiAnalyses.monthly,
+        resetTime: usage.timeToReset,
+      }
+    },
+    { 
+      key: 'exportReports' as const, 
+      data: {
+        used: usage.usage.exportReports,
+        limit: usage.limits.exportReports.monthly,
+        resetTime: usage.timeToReset,
+      }
+    },
   ];
 
   return (
@@ -175,7 +224,7 @@ export default function UsageTracker({ className = '', showUpgradeButton = true 
                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
                   <span>
-                    Resets {rateLimitService.formatTimeUntilReset(data.resetTime)}
+                    Resets {formatTimeUntilReset(data.resetTime)}
                   </span>
                 </div>
               )}

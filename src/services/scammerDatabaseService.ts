@@ -1,15 +1,73 @@
 import { ScammerCheckResult } from './types';
+import { externalScammerService, ScammerDatabaseResult } from './externalScammerDatabases';
+import { monitoring } from '../lib/monitoring';
 
 export class ScammerDatabaseService {
   async checkScammerDatabase(members: string[]): Promise<ScammerCheckResult> {
+    const timer = monitoring.startTimer('scammer_database_check');
+    
     try {
-      // This would integrate with real scammer databases in production
-      // For now, we'll use pattern-based detection
-      return this.performPatternBasedCheck(members);
+      monitoring.info('Starting scammer database check', {
+        memberCount: members.length,
+      });
+
+      // Clean and filter member list
+      const memberList = members.map(m => m.trim()).filter(m => m.length > 0);
+      
+      if (memberList.length === 0) {
+        return {
+          riskScore: 0,
+          flaggedMembers: [],
+          sources: [],
+        };
+      }
+
+      // Use external scammer database service
+      const externalResult = await externalScammerService.checkMultipleSources(memberList);
+      
+      // Convert external result to legacy format for backward compatibility
+      const result = this.convertExternalResult(externalResult, memberList);
+      
+      monitoring.info('Scammer database check completed', {
+        riskScore: result.riskScore,
+        flaggedCount: result.flaggedMembers.length,
+        sourcesUsed: result.sources.length,
+      });
+
+      timer();
+      return result;
+
     } catch (error) {
-      console.error('Scammer database check error:', error);
-      return this.getMockScammerCheck(members);
+      monitoring.error('Scammer database check error', error as Error);
+      timer();
+      
+      // Fallback to pattern-based check
+      return this.performPatternBasedCheck(members);
     }
+  }
+
+  private convertExternalResult(
+    externalResult: ScammerDatabaseResult, 
+    originalMembers: string[]
+  ): ScammerCheckResult {
+    const flaggedMembers = Array.from(
+      new Set(externalResult.matches.map(match => match.identifier))
+    );
+
+    // Calculate risk score based on flagged members and confidence
+    let riskScore = 0;
+    if (flaggedMembers.length > 0) {
+      const flaggedRatio = flaggedMembers.length / originalMembers.length;
+      const baseScore = flaggedRatio * 100;
+      const confidenceMultiplier = externalResult.confidence / 100;
+      riskScore = Math.min(95, Math.round(baseScore * confidenceMultiplier));
+    }
+
+    return {
+      riskScore,
+      flaggedMembers,
+      sources: externalResult.sources,
+    };
   }
 
   private performPatternBasedCheck(members: string[]): Promise<ScammerCheckResult> {

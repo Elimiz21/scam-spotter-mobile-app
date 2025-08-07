@@ -4,6 +4,8 @@ import { AssetVerificationService } from './assetVerificationService';
 import { PriceAnalysisService } from './priceAnalysisService';
 import { ScammerDatabaseService } from './scammerDatabaseService';
 import { rateLimitService } from './rateLimitService';
+import { usageTrackingService } from './usageTrackingService';
+import { supabase } from '../integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
 
 export class RiskAnalysisService {
@@ -23,9 +25,25 @@ export class RiskAnalysisService {
     const analysisId = `analysis_${Date.now()}`;
     const timestamp = new Date().toISOString();
     
-    // Check rate limits before starting analysis
-    const rateLimitResult = await rateLimitService.checkRateLimit('group-analysis', true);
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('Authentication required');
+    }
+
+    // Check usage limits first
+    const usageCheck = await usageTrackingService.checkUsageLimit(user.id, 'group_analysis');
+    if (!usageCheck.allowed) {
+      toast({
+        title: "Usage limit reached",
+        description: usageCheck.reason || "You've reached your analysis limit",
+        variant: "destructive",
+      });
+      throw new Error(usageCheck.reason || "Usage limit exceeded");
+    }
     
+    // Check rate limits
+    const rateLimitResult = await rateLimitService.checkRateLimit('group-analysis', true);
     if (!rateLimitResult.allowed) {
       const resetTime = rateLimitService.formatTimeUntilReset(rateLimitResult.resetTime);
       const message = `Rate limit exceeded. Please wait ${resetTime} before trying again.`;
@@ -146,12 +164,22 @@ export class RiskAnalysisService {
         riskVectors.reduce((sum, vector) => sum + vector.riskScore, 0) / riskVectors.length
       );
 
-      return {
+      const result = {
         overallRiskScore,
         riskVectors,
         analysisId,
         timestamp
       };
+
+      // Record successful usage
+      try {
+        await usageTrackingService.recordUsage(user.id, 'group_analysis', 1);
+      } catch (usageError) {
+        // Don't fail the analysis if usage tracking fails, just log it
+        console.error('Failed to record usage:', usageError);
+      }
+
+      return result;
 
     } catch (error) {
       console.error('Risk analysis error:', error);
@@ -160,9 +188,25 @@ export class RiskAnalysisService {
   }
 
   async performSingleCheck(checkType: string, input: string): Promise<any> {
-    // Check rate limits before starting single check
+    // Get current user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      throw new Error('Authentication required');
+    }
+
+    // Check usage limits first
+    const usageCheck = await usageTrackingService.checkUsageLimit(user.id, 'single_check');
+    if (!usageCheck.allowed) {
+      toast({
+        title: "Usage limit reached",
+        description: usageCheck.reason || "You've reached your single check limit",
+        variant: "destructive",
+      });
+      throw new Error(usageCheck.reason || "Usage limit exceeded");
+    }
+
+    // Check rate limits
     const rateLimitResult = await rateLimitService.checkRateLimit('single-check', true);
-    
     if (!rateLimitResult.allowed) {
       const resetTime = rateLimitService.formatTimeUntilReset(rateLimitResult.resetTime);
       const message = `Rate limit exceeded. Please wait ${resetTime} before trying again.`;
@@ -177,22 +221,39 @@ export class RiskAnalysisService {
     }
 
     try {
+      let result;
+      
       switch (checkType) {
         case 'scammer-database':
-          return await this.scammerService.checkScammerDatabase([input]);
+          result = await this.scammerService.checkScammerDatabase([input]);
+          break;
         
         case 'language-analysis':
-          return await this.languageService.analyzeLanguagePatterns(input);
+          result = await this.languageService.analyzeLanguagePatterns(input);
+          break;
         
         case 'price-manipulation':
-          return await this.priceService.detectPriceManipulation(input);
+          result = await this.priceService.detectPriceManipulation(input);
+          break;
         
         case 'asset-verification':
-          return await this.assetService.verifyAsset(input);
+          result = await this.assetService.verifyAsset(input);
+          break;
         
         default:
           throw new Error(`Unknown check type: ${checkType}`);
       }
+
+      // Record successful usage
+      try {
+        await usageTrackingService.recordUsage(user.id, 'single_check', 1);
+      } catch (usageError) {
+        // Don't fail the check if usage tracking fails, just log it
+        console.error('Failed to record usage:', usageError);
+      }
+
+      return result;
+
     } catch (error) {
       console.error(`Single check error for ${checkType}:`, error);
       throw new Error(`Failed to complete ${checkType} check. Please try again.`);
