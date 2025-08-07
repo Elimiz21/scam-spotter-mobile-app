@@ -1,40 +1,74 @@
 import { useState, useEffect } from "react";
-import { ArrowLeft, AlertTriangle, Shield, Info, TrendingUp, Users, Database, ExternalLink } from "lucide-react";
+import { ArrowLeft, AlertTriangle, Shield, Info, TrendingUp, Users, Database, ExternalLink, Download, FileText, ChevronDown, X } from "lucide-react";
 import Navigation from "../components/Navigation";
 import LegalDisclaimer from "../components/LegalDisclaimer";
 import { AnalysisResult, RiskVector } from '../services/types';
+import storageManager from '../lib/storage';
+import { exportService, ExportOptions } from '../lib/exportService';
 
 const ResultsDashboard = () => {
   const [selectedVector, setSelectedVector] = useState<RiskVector | null>(null);
   const [analysisData, setAnalysisData] = useState<AnalysisResult | null>(null);
+  const [showExportOptions, setShowExportOptions] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
-    // Check if this is a single check result
-    const singleCheckData = localStorage.getItem('single_check_result');
-    const groupAnalysisData = localStorage.getItem('analysis_result');
-    
-    if (singleCheckData) {
+    const loadAnalysisData = async () => {
       try {
-        const parsed = JSON.parse(singleCheckData);
-        // Convert single check to analysis format
-        const singleCheckAnalysis = createSingleCheckAnalysis(parsed);
-        setAnalysisData(singleCheckAnalysis);
+        // Check if this is a single check result
+        const singleCheckData = await storageManager.getPreference('single_check_result');
+        const groupAnalysisData = await storageManager.getPreference('analysis_result');
+        
+        if (singleCheckData) {
+          try {
+            // Convert single check to analysis format
+            const singleCheckAnalysis = createSingleCheckAnalysis(singleCheckData);
+            setAnalysisData(singleCheckAnalysis);
+          } catch (error) {
+            console.error('Failed to parse single check data:', error);
+            setAnalysisData(getMockAnalysisData());
+          }
+        } else if (groupAnalysisData) {
+          try {
+            setAnalysisData(groupAnalysisData);
+          } catch (error) {
+            console.error('Failed to parse analysis data:', error);
+            setAnalysisData(getMockAnalysisData());
+          }
+        } else {
+          // Try to get analysis results from the new storage format
+          const analysisResults = await storageManager.getAnalysisResults();
+          if (analysisResults) {
+            setAnalysisData(analysisResults);
+          } else {
+            setAnalysisData(getMockAnalysisData());
+          }
+        }
       } catch (error) {
-        console.error('Failed to parse single check data:', error);
+        console.error('Failed to load analysis data:', error);
         setAnalysisData(getMockAnalysisData());
       }
-    } else if (groupAnalysisData) {
-      try {
-        const parsed = JSON.parse(groupAnalysisData);
-        setAnalysisData(parsed);
-      } catch (error) {
-        console.error('Failed to parse analysis data:', error);
-        setAnalysisData(getMockAnalysisData());
-      }
-    } else {
-      setAnalysisData(getMockAnalysisData());
-    }
+    };
+
+    loadAnalysisData();
   }, []);
+
+  // Close export dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showExportOptions) {
+        const exportButton = document.querySelector('[data-export-dropdown]');
+        if (exportButton && !exportButton.contains(event.target as Node)) {
+          setShowExportOptions(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showExportOptions]);
 
   // Mock analysis results - in real app this would come from API
   const analysisResults: RiskVector[] = [
@@ -190,6 +224,37 @@ const ResultsDashboard = () => {
     };
   };
 
+  const handleExport = async (format: 'pdf' | 'json' | 'csv' | 'html', includeDetails: boolean = true) => {
+    if (!analysisData) return;
+    
+    setIsExporting(true);
+    setShowExportOptions(false);
+    
+    try {
+      const exportOptions: ExportOptions = {
+        format,
+        includeDetails,
+        includeCharts: false,
+        dateRange: 'all_time'
+      };
+      
+      await exportService.exportAnalysisResults(analysisData, exportOptions);
+    } catch (error) {
+      console.error('Export failed:', error);
+      // You might want to add a toast notification here
+      alert('Export failed. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const exportFormats = [
+    { value: 'pdf', label: 'PDF Report', icon: FileText, description: 'Professional formatted report' },
+    { value: 'json', label: 'JSON Data', icon: FileText, description: 'Machine-readable format' },
+    { value: 'csv', label: 'CSV Spreadsheet', icon: FileText, description: 'For analysis in Excel/Sheets' },
+    { value: 'html', label: 'HTML Report', icon: FileText, description: 'Web-viewable format' }
+  ] as const;
+
   if (!analysisData) {
     return <div>Loading analysis results...</div>;
   }
@@ -246,21 +311,150 @@ const ResultsDashboard = () => {
           >
             <ArrowLeft style={{ width: '20px', height: '20px' }} />
           </button>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ 
-              width: '32px', 
-              height: '32px', 
-              backgroundColor: '#3b82f6', 
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ 
+                width: '32px', 
+                height: '32px', 
+                backgroundColor: '#3b82f6', 
+                borderRadius: '8px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
+              </div>
+              <div>
+                <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>Risk Analysis Results</h1>
+                <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Comprehensive scam detection report</p>
+              </div>
             </div>
-            <div>
-              <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>Risk Analysis Results</h1>
-              <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>Comprehensive scam detection report</p>
+            
+            {/* Export Button */}
+            <div style={{ position: 'relative' }} data-export-dropdown>
+              <button
+                onClick={() => setShowExportOptions(!showExportOptions)}
+                disabled={isExporting}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: isExporting ? '#f3f4f6' : 'linear-gradient(to right, #059669, #047857)',
+                  color: isExporting ? '#6b7280' : 'white',
+                  padding: '8px 16px',
+                  fontSize: '0.875rem',
+                  fontWeight: '500',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: isExporting ? 'not-allowed' : 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseOver={(e) => {
+                  if (!isExporting) {
+                    (e.currentTarget as HTMLElement).style.transform = 'translateY(-1px)';
+                    (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (!isExporting) {
+                    (e.currentTarget as HTMLElement).style.transform = 'translateY(0)';
+                    (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+                  }
+                }}
+              >
+                <Download style={{ width: '16px', height: '16px' }} />
+                {isExporting ? 'Exporting...' : 'Export Report'}
+                {!isExporting && <ChevronDown style={{ width: '16px', height: '16px' }} />}
+              </button>
+              
+              {/* Export Options Dropdown */}
+              {showExportOptions && (
+                <div style={{
+                  position: 'absolute',
+                  top: '100%',
+                  right: 0,
+                  marginTop: '8px',
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                  zIndex: 1000,
+                  minWidth: '280px',
+                  padding: '8px 0'
+                }}>
+                  <div style={{ padding: '12px 16px', borderBottom: '1px solid #e2e8f0' }}>
+                    <h3 style={{ fontSize: '0.875rem', fontWeight: '600', margin: '0 0 4px', color: '#1f2937' }}>
+                      Export Format
+                    </h3>
+                    <p style={{ fontSize: '0.75rem', color: '#6b7280', margin: 0 }}>
+                      Choose your preferred export format
+                    </p>
+                  </div>
+                  
+                  {exportFormats.map((format) => {
+                    const IconComponent = format.icon;
+                    return (
+                      <button
+                        key={format.value}
+                        onClick={() => handleExport(format.value as any)}
+                        style={{
+                          width: '100%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          padding: '12px 16px',
+                          border: 'none',
+                          backgroundColor: 'transparent',
+                          cursor: 'pointer',
+                          fontSize: '0.875rem',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseOver={(e) => {
+                          (e.currentTarget as HTMLElement).style.backgroundColor = '#f9fafb';
+                        }}
+                        onMouseOut={(e) => {
+                          (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                        }}
+                      >
+                        <IconComponent style={{ width: '18px', height: '18px', color: '#059669' }} />
+                        <div style={{ textAlign: 'left', flex: 1 }}>
+                          <div style={{ fontWeight: '500', color: '#1f2937' }}>{format.label}</div>
+                          <div style={{ fontSize: '0.75rem', color: '#6b7280' }}>{format.description}</div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                  
+                  <div style={{ marginTop: '8px', borderTop: '1px solid #e2e8f0', paddingTop: '8px' }}>
+                    <button
+                      onClick={() => setShowExportOptions(false)}
+                      style={{
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        padding: '8px 16px',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        cursor: 'pointer',
+                        fontSize: '0.75rem',
+                        color: '#6b7280',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseOver={(e) => {
+                        (e.currentTarget as HTMLElement).style.backgroundColor = '#f9fafb';
+                      }}
+                      onMouseOut={(e) => {
+                        (e.currentTarget as HTMLElement).style.backgroundColor = 'transparent';
+                      }}
+                    >
+                      <X style={{ width: '14px', height: '14px' }} />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -429,21 +623,46 @@ const ResultsDashboard = () => {
 
         {/* Action Buttons */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-          <button 
-            onClick={() => window.location.href = '/analyze'}
-            style={{
-              background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
-              color: 'white',
-              padding: '1rem 2rem',
-              fontSize: '1rem',
-              fontWeight: '500',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer'
-            }}
-          >
-            Analyze Another Group
-          </button>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
+            <button 
+              onClick={() => window.location.href = '/analyze'}
+              style={{
+                background: 'linear-gradient(to right, #3b82f6, #1d4ed8)',
+                color: 'white',
+                padding: '1rem 2rem',
+                fontSize: '1rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer'
+              }}
+            >
+              Analyze Another Group
+            </button>
+            
+            {/* Additional Export Button for Mobile */}
+            <button 
+              onClick={() => handleExport('pdf')}
+              disabled={isExporting}
+              style={{
+                background: isExporting ? '#f3f4f6' : 'linear-gradient(to right, #059669, #047857)',
+                color: isExporting ? '#6b7280' : 'white',
+                padding: '1rem 2rem',
+                fontSize: '1rem',
+                fontWeight: '500',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: isExporting ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              <Download style={{ width: '16px', height: '16px' }} />
+              {isExporting ? 'Exporting PDF...' : 'Quick Export PDF'}
+            </button>
+          </div>
+          
           <button 
             onClick={() => window.location.href = '/how-it-works'}
             style={{

@@ -166,7 +166,30 @@ const GroupAnalysis = () => {
             </p>
           </div>
           
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+          {/* Submit Error Display */}
+          {submitError && (
+            <div style={{ 
+              backgroundColor: '#fef2f2', 
+              border: '1px solid #fca5a5',
+              borderRadius: '8px',
+              padding: '1rem',
+              marginBottom: '1.5rem'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <AlertTriangle style={{ width: '20px', height: '20px', color: '#dc2626', marginTop: '2px' }} />
+                <div>
+                  <p style={{ fontSize: '0.875rem', fontWeight: '500', color: '#7f1d1d', margin: '0 0 4px' }}>
+                    Analysis Failed
+                  </p>
+                  <p style={{ fontSize: '0.875rem', color: '#7f1d1d', margin: 0 }}>
+                    {submitError}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit(handleAnalyze)} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             
             {/* Platform Selection */}
             <div>
@@ -174,24 +197,23 @@ const GroupAnalysis = () => {
                 Platform *
               </label>
               <select 
-                value={formData.platform} 
-                onChange={(e) => setFormData(prev => ({ ...prev, platform: e.target.value }))}
+                {...register('platform')}
                 style={{
                   width: '100%',
                   padding: '8px 12px',
-                  border: '1px solid #d1d5db',
+                  border: errors.platform ? '1px solid #dc2626' : '1px solid #d1d5db',
                   borderRadius: '6px',
                   fontSize: '0.875rem',
                   backgroundColor: 'white'
                 }}
               >
-                <option value="">Select the messaging platform</option>
                 {platforms.map((platform) => (
-                  <option key={platform} value={platform}>
-                    {platform}
+                  <option key={platform.value} value={platform.value}>
+                    {platform.label}
                   </option>
                 ))}
               </select>
+              <FieldError error={errors.platform?.message} />
             </div>
 
             {/* Group Name */}
@@ -326,10 +348,10 @@ const GroupAnalysis = () => {
                   <Shield style={{ width: '20px', height: '20px' }} />
                   <span>Analyze for Scam Indicators</span>
                 </>
-              )}
+              )}  
             </button>
 
-          </div>
+          </form>
         </div>
 
         {/* Analysis Progress */}

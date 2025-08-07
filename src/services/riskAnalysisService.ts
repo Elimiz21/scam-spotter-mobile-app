@@ -3,6 +3,8 @@ import { LanguageAnalysisService } from './languageAnalysisService';
 import { AssetVerificationService } from './assetVerificationService';
 import { PriceAnalysisService } from './priceAnalysisService';
 import { ScammerDatabaseService } from './scammerDatabaseService';
+import { rateLimitService } from './rateLimitService';
+import { toast } from '@/components/ui/use-toast';
 
 export class RiskAnalysisService {
   private languageService: LanguageAnalysisService;
@@ -21,7 +23,25 @@ export class RiskAnalysisService {
     const analysisId = `analysis_${Date.now()}`;
     const timestamp = new Date().toISOString();
     
+    // Check rate limits before starting analysis
+    const rateLimitResult = await rateLimitService.checkRateLimit('group-analysis', true);
+    
+    if (!rateLimitResult.allowed) {
+      const resetTime = rateLimitService.formatTimeUntilReset(rateLimitResult.resetTime);
+      const message = `Rate limit exceeded. Please wait ${resetTime} before trying again.`;
+      
+      toast({
+        title: "Rate limit exceeded",
+        description: message,
+        variant: "destructive",
+      });
+      
+      throw new Error(message);
+    }
+    
     try {
+      onProgress?.(10);
+      
       // Step 1: Scammer Database Check
       onProgress?.(25);
       const scammerCheck = await this.scammerService.checkScammerDatabase(
@@ -136,6 +156,46 @@ export class RiskAnalysisService {
     } catch (error) {
       console.error('Risk analysis error:', error);
       throw new Error('Failed to complete risk analysis. Please try again.');
+    }
+  }
+
+  async performSingleCheck(checkType: string, input: string): Promise<any> {
+    // Check rate limits before starting single check
+    const rateLimitResult = await rateLimitService.checkRateLimit('single-check', true);
+    
+    if (!rateLimitResult.allowed) {
+      const resetTime = rateLimitService.formatTimeUntilReset(rateLimitResult.resetTime);
+      const message = `Rate limit exceeded. Please wait ${resetTime} before trying again.`;
+      
+      toast({
+        title: "Rate limit exceeded",
+        description: message,
+        variant: "destructive",
+      });
+      
+      throw new Error(message);
+    }
+
+    try {
+      switch (checkType) {
+        case 'scammer-database':
+          return await this.scammerService.checkScammerDatabase([input]);
+        
+        case 'language-analysis':
+          return await this.languageService.analyzeLanguagePatterns(input);
+        
+        case 'price-manipulation':
+          return await this.priceService.detectPriceManipulation(input);
+        
+        case 'asset-verification':
+          return await this.assetService.verifyAsset(input);
+        
+        default:
+          throw new Error(`Unknown check type: ${checkType}`);
+      }
+    } catch (error) {
+      console.error(`Single check error for ${checkType}:`, error);
+      throw new Error(`Failed to complete ${checkType} check. Please try again.`);
     }
   }
 
