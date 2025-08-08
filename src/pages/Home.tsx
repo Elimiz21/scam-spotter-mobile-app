@@ -62,7 +62,7 @@ const Home = () => {
       {/* Features Grid */}
       <section style={{ padding: '3rem 1rem', backgroundColor: '#f1f5f9', borderRadius: '12px' }}>
         <h3 style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '3rem' }}>
-          How Scam Dunk Protects You
+          How ScamShield Protects You
         </h3>
         <div style={{ 
           display: 'grid', 
