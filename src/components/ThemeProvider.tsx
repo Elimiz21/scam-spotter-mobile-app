@@ -31,7 +31,7 @@ export function ThemeProvider({
   children, 
   defaultTheme = 'auto' 
 }: ThemeProviderProps) {
-  const { currentTheme, themeMode, setThemeMode, initialize } = useThemeStore();
+  const { currentTheme, themeMode, setThemeMode, initialize, applyTheme } = useThemeStore();
 
   useEffect(() => {
     // Initialize theme system when component mounts
@@ -50,11 +50,13 @@ export function ThemeProvider({
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [defaultTheme, setThemeMode, themeMode]);
+  }, [defaultTheme, setThemeMode, themeMode, initialize]);
 
   useEffect(() => {
     // Apply theme changes
-    applyTheme(currentTheme);
+    if (applyTheme && currentTheme) {
+      applyTheme(currentTheme);
+    }
   }, [currentTheme, applyTheme]);
 
   return <>{children}</>;
