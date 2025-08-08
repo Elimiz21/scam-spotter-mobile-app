@@ -75,14 +75,6 @@
       "NODE_ENV": "production"
     }
   },
-  "functions": {
-    "app/api/**": {
-      "runtime": "nodejs18.x",
-      "regions": ["iad1", "sfo1"],
-      "memory": 1024,
-      "maxDuration": 30
-    }
-  },
   "redirects": [
     {
       "source": "/scam-dunk",
