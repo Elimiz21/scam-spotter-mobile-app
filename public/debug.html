@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Debug ScamShield</title>
+</head>
+<body>
+  <h1>Debug ScamShield Deployment</h1>
+  <iframe id="app" src="/" width="100%" height="400" style="border: 1px solid #ccc;"></iframe>
+  <div id="logs" style="background: #f0f0f0; padding: 10px; margin-top: 20px;">
+    <h2>Console Logs:</h2>
+    <pre id="console"></pre>
+  </div>
+  <script>
+    const iframe = document.getElementById('app');
+    const consoleDiv = document.getElementById('console');
+    
+    // Log messages
+    function log(msg) {
+      consoleDiv.textContent += msg + '\n';
+    }
+    
+    // Wait for iframe to load
+    iframe.onload = function() {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const root = iframeDoc.getElementById('root');
+        
+        log('Page loaded');
+        log('Root element exists: ' + (root ? 'Yes' : 'No'));
+        
+        if (root) {
+          log('Root HTML length: ' + root.innerHTML.length);
+          log('Root text content: ' + root.textContent.substring(0, 100));
+          
+          if (root.innerHTML.length < 10) {
+            log('ERROR: React app is not rendering!');
+            
+            // Check for JavaScript errors
+            const scripts = iframeDoc.getElementsByTagName('script');
+            log('Number of scripts: ' + scripts.length);
+          } else {
+            log('SUCCESS: App appears to be rendering');
+          }
+        }
+      } catch (e) {
+        log('Error accessing iframe: ' + e.message);
+      }
+    };
+    
+    // Listen for errors
+    window.addEventListener('error', function(e) {
+      log('Global error: ' + e.message);
+    });
+  </script>
+</body>
+</html>
