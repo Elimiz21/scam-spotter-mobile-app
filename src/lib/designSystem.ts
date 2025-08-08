@@ -579,6 +579,9 @@ export const useThemeStore = create<ThemeStore>()(
       
       applyTheme: (theme) => {
         // Apply CSS variables
+        if (typeof document === 'undefined' || !document.documentElement) {
+          return;
+        }
         const root = document.documentElement;
         
         // Apply colors
@@ -617,8 +620,10 @@ export const useThemeStore = create<ThemeStore>()(
         });
         
         // Apply theme class
-        document.documentElement.classList.remove('light', 'dark');
-        document.documentElement.classList.add(theme.mode);
+        if (typeof document !== 'undefined' && document.documentElement) {
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(theme.mode);
+        }
       },
       
       toggleTheme: () => {

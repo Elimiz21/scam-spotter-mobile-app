@@ -411,13 +411,17 @@ export function HighContrastToggle() {
   const { announcePolite } = useAccessibility();
 
   useEffect(() => {
-    if (isHighContrast) {
-      document.documentElement.classList.add('high-contrast');
-    } else {
-      document.documentElement.classList.remove('high-contrast');
+    if (typeof document !== 'undefined' && document.documentElement) {
+      if (isHighContrast) {
+        document.documentElement.classList.add('high-contrast');
+      } else {
+        document.documentElement.classList.remove('high-contrast');
+      }
     }
     
-    localStorage.setItem('high-contrast', String(isHighContrast));
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('high-contrast', String(isHighContrast));
+    }
   }, [isHighContrast]);
 
   const toggle = () => {
