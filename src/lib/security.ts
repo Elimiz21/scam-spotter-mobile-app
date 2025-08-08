@@ -831,6 +831,5 @@ export class SecurityManager {
 // Export singleton instance
 export const securityManager = new SecurityManager();
 
-// Export utilities
-export { InputSanitizer };
+// Export default
 export default securityManager;
