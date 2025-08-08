@@ -31,10 +31,13 @@ export function ThemeProvider({
   children, 
   defaultTheme = 'auto' 
 }: ThemeProviderProps) {
-  const { currentTheme, themeMode, setThemeMode, applyTheme } = useThemeStore();
+  const { currentTheme, themeMode, setThemeMode, initialize } = useThemeStore();
 
   useEffect(() => {
-    // Initialize theme on mount
+    // Initialize theme system when component mounts
+    initialize();
+    
+    // Then set the default theme mode
     setThemeMode(defaultTheme);
 
     // Listen for system theme changes
