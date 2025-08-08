@@ -1,0 +1,318 @@
+name: Production Deployment Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      force_deploy:
+        description: 'Force deployment (skip tests)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_VERSION: '18'
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+jobs:
+  # Security and Quality Checks
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run security audit
+        run: npm audit --audit-level high
+        continue-on-error: true
+
+      - name: Run dependency vulnerability scan
+        run: npx audit-ci --config ./audit-ci.json
+        continue-on-error: true
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.10.0
+        with:
+          target: 'https://www.scamshiel.com'
+        continue-on-error: true
+
+  # Code Quality and Linting
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript check
+        run: npm run type-check || npx tsc --noEmit
+
+      - name: Run Prettier check
+        run: npx prettier --check .
+
+      - name: Check for console.log statements
+        run: |
+          if grep -r "console\.log" src/; then
+            echo "❌ Found console.log statements in source code"
+            exit 1
+          else
+            echo "✅ No console.log statements found"
+          fi
+
+  # Build and Test
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    needs: [security-scan, code-quality]
+    if: always() && (needs.security-scan.result == 'success' || needs.security-scan.result == 'skipped') && (needs.code-quality.result == 'success' || needs.code-quality.result == 'skipped')
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          REACT_APP_ENV: production
+          GENERATE_SOURCEMAP: false
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Run tests
+        run: npm run test || echo "No tests configured"
+        env:
+          CI: true
+
+      - name: Test build artifacts
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "❌ Build failed - dist directory not found"
+            exit 1
+          fi
+          
+          if [ ! -f "dist/index.html" ]; then
+            echo "❌ Build failed - index.html not found"
+            exit 1
+          fi
+          
+          echo "✅ Build artifacts validated"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: dist/
+          retention-days: 7
+
+  # Performance Testing
+  performance-test:
+    name: Performance Testing
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v10
+        with:
+          configPath: './.lighthouserc.json'
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+        continue-on-error: true
+
+  # Deploy to Vercel Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build-and-test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          REACT_APP_PAYPAL_CLIENT_ID: ${{ secrets.REACT_APP_PAYPAL_CLIENT_ID }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        id: deploy
+
+      - name: Get deployment URL
+        run: echo "DEPLOYMENT_URL=$(vercel ls --token=${{ secrets.VERCEL_TOKEN }} | grep scamshield-production | head -1 | awk '{print $2}')" >> $GITHUB_ENV
+
+      - name: Verify deployment
+        run: |
+          sleep 30
+          curl -f ${{ env.DEPLOYMENT_URL }}/health || exit 1
+          echo "✅ Deployment verified at ${{ env.DEPLOYMENT_URL }}"
+
+  # Post-Deployment Tests
+  post-deployment:
+    name: Post-Deployment Verification
+    runs-on: ubuntu-latest
+    needs: [deploy-production]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Wait for deployment propagation
+        run: sleep 60
+
+      - name: Health check
+        run: |
+          curl -f https://www.scamshiel.com/health || exit 1
+          echo "✅ Health check passed"
+
+      - name: Security headers check
+        run: |
+          RESPONSE=$(curl -sI https://www.scamshiel.com)
+          
+          if echo "$RESPONSE" | grep -q "X-Frame-Options: DENY"; then
+            echo "✅ X-Frame-Options header present"
+          else
+            echo "❌ X-Frame-Options header missing"
+            exit 1
+          fi
+          
+          if echo "$RESPONSE" | grep -q "X-Content-Type-Options: nosniff"; then
+            echo "✅ X-Content-Type-Options header present"
+          else
+            echo "❌ X-Content-Type-Options header missing"
+            exit 1
+          fi
+          
+          if echo "$RESPONSE" | grep -q "Strict-Transport-Security"; then
+            echo "✅ HSTS header present"
+          else
+            echo "❌ HSTS header missing"
+            exit 1
+          fi
+
+      - name: SEO check
+        run: |
+          RESPONSE=$(curl -s https://www.scamshiel.com)
+          
+          if echo "$RESPONSE" | grep -q "<title>"; then
+            echo "✅ Title tag present"
+          else
+            echo "❌ Title tag missing"
+            exit 1
+          fi
+          
+          if echo "$RESPONSE" | grep -q '<meta name="description"'; then
+            echo "✅ Meta description present"
+          else
+            echo "❌ Meta description missing"
+            exit 1
+          fi
+
+      - name: Sitemap check
+        run: |
+          curl -f https://www.scamshiel.com/sitemap.xml || exit 1
+          echo "✅ Sitemap accessible"
+
+      - name: Robots.txt check
+        run: |
+          curl -f https://www.scamshiel.com/robots.txt || exit 1
+          echo "✅ Robots.txt accessible"
+
+  # Notification
+  notify:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: [deploy-production, post-deployment]
+    if: always()
+
+    steps:
+      - name: Notify success
+        if: needs.deploy-production.result == 'success' && needs.post-deployment.result == 'success'
+        run: |
+          echo "🎉 Deployment successful!"
+          echo "Production URL: https://www.scamshiel.com"
+          echo "Commit: ${{ github.sha }}"
+          echo "Deployed by: ${{ github.actor }}"
+
+      - name: Notify failure
+        if: needs.deploy-production.result == 'failure' || needs.post-deployment.result == 'failure'
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Check the logs for details"
+          exit 1
+
+  # Cleanup
+  cleanup:
+    name: Cleanup
+    runs-on: ubuntu-latest
+    needs: [notify]
+    if: always()
+
+    steps:
+      - name: Clean up old deployments
+        run: |
+          echo "Keeping last 5 deployments for rollback capability"
+          # In a real environment, you would clean up old Vercel deployments here

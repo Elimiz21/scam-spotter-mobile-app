@@ -7,6 +7,10 @@ import { rateLimitService } from './rateLimitService';
 import { usageTrackingService } from './usageTrackingService';
 import { supabase } from '../integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
+import { logger } from '@/lib/logger';
+import { realtimeService, RealtimeEvent } from './realtimeService';
+import { localCache } from '@/lib/cache';
+import { AppError } from '@/lib/errorHandler';
 
 export class RiskAnalysisService {
   private languageService: LanguageAnalysisService;
@@ -29,6 +33,28 @@ export class RiskAnalysisService {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       throw new Error('Authentication required');
+    }
+
+    // Set up real-time updates for this analysis
+    const realtimeChannelId = `analysis_${analysisId}`;
+    
+    try {
+      // Subscribe to real-time updates for this analysis
+      await realtimeService.subscribeToScamDetection(analysisId);
+      
+      // Send initial analysis started event
+      await realtimeService.send(
+        realtimeChannelId,
+        RealtimeEvent.ANALYSIS_COMPLETE,
+        {
+          analysisId,
+          status: 'started',
+          progress: 0,
+          userId: user.id
+        }
+      );
+    } catch (realtimeError) {
+      logger.warn('Failed to set up real-time updates', { error: realtimeError, analysisId });
     }
 
     // Check usage limits first
@@ -58,22 +84,61 @@ export class RiskAnalysisService {
     }
     
     try {
-      onProgress?.(10);
+      const sendRealtimeUpdate = async (progress: number, step: string, data?: any) => {
+        onProgress?.(progress);
+        try {
+          await realtimeService.send(
+            realtimeChannelId,
+            RealtimeEvent.ANALYSIS_COMPLETE,
+            {
+              analysisId,
+              status: 'in_progress',
+              progress,
+              step,
+              userId: user.id,
+              data
+            }
+          );
+        } catch (error) {
+          logger.debug('Failed to send real-time update', { error, step });
+        }
+      };
+
+      await sendRealtimeUpdate(10, 'Initializing analysis...');
       
       // Step 1: Scammer Database Check
-      onProgress?.(25);
+      await sendRealtimeUpdate(25, 'Checking scammer databases...');
       const scammerCheck = await this.scammerService.checkScammerDatabase(
         groupData.members.split('\n')
       );
 
+      // Send real-time scam detection alert if high-risk members found
+      if (scammerCheck.flaggedMembers.length > 0) {
+        try {
+          await realtimeService.send(
+            realtimeChannelId,
+            RealtimeEvent.SCAM_DETECTED,
+            {
+              analysisId,
+              type: 'scammer_database',
+              severity: 'high',
+              flaggedMembers: scammerCheck.flaggedMembers,
+              userId: user.id
+            }
+          );
+        } catch (error) {
+          logger.debug('Failed to send scam detection alert', { error });
+        }
+      }
+
       // Step 2: Language Pattern Analysis
-      onProgress?.(50);
+      await sendRealtimeUpdate(50, 'Analyzing language patterns...');
       const languageAnalysis = await this.languageService.analyzeLanguagePatterns(
         groupData.chatMessages
       );
 
       // Step 3: Price Manipulation Detection (if asset provided)
-      onProgress?.(75);
+      await sendRealtimeUpdate(75, 'Detecting price manipulation...');
       let priceAnalysis = null;
       if (groupData.assetSymbol) {
         priceAnalysis = await this.priceService.detectPriceManipulation(
@@ -82,7 +147,7 @@ export class RiskAnalysisService {
       }
 
       // Step 4: Asset Verification (if asset provided)
-      onProgress?.(90);
+      await sendRealtimeUpdate(90, 'Verifying asset legitimacy...');
       let assetVerification = null;
       if (groupData.assetSymbol) {
         assetVerification = await this.assetService.verifyAsset(
@@ -90,7 +155,7 @@ export class RiskAnalysisService {
         );
       }
 
-      onProgress?.(100);
+      await sendRealtimeUpdate(100, 'Finalizing analysis...');
 
       // Build risk vectors
       const riskVectors: RiskVector[] = [
@@ -171,18 +236,54 @@ export class RiskAnalysisService {
         timestamp
       };
 
+      // Cache the analysis result
+      try {
+        await localCache.set(`analysis_${analysisId}`, result, 24 * 60 * 60 * 1000); // 24 hours
+      } catch (cacheError) {
+        logger.warn('Failed to cache analysis result', { error: cacheError, analysisId });
+      }
+
+      // Send final real-time completion event
+      try {
+        await realtimeService.send(
+          realtimeChannelId,
+          RealtimeEvent.ANALYSIS_COMPLETE,
+          {
+            analysisId,
+            status: 'completed',
+            progress: 100,
+            result: {
+              overallRiskScore,
+              riskVectorCount: riskVectors.length,
+              timestamp
+            },
+            userId: user.id
+          }
+        );
+      } catch (realtimeError) {
+        logger.warn('Failed to send completion event', { error: realtimeError, analysisId });
+      }
+
       // Record successful usage
       try {
         await usageTrackingService.recordUsage(user.id, 'group_analysis', 1);
       } catch (usageError) {
         // Don't fail the analysis if usage tracking fails, just log it
-        console.error('Failed to record usage:', usageError);
+        logger.error('Failed to record usage:', { error: usageError, userId: user.id });
       }
+
+      logger.info('Group analysis completed successfully', {
+        analysisId,
+        userId: user.id,
+        overallRiskScore,
+        riskVectorCount: riskVectors.length,
+        duration: Date.now() - parseInt(analysisId.split('_')[1])
+      });
 
       return result;
 
     } catch (error) {
-      console.error('Risk analysis error:', error);
+      logger.error('Risk analysis error:', { error, userId: user.id, analysisId });
       throw new Error('Failed to complete risk analysis. Please try again.');
     }
   }
@@ -249,13 +350,13 @@ export class RiskAnalysisService {
         await usageTrackingService.recordUsage(user.id, 'single_check', 1);
       } catch (usageError) {
         // Don't fail the check if usage tracking fails, just log it
-        console.error('Failed to record usage:', usageError);
+        logger.error('Failed to record usage:', { error: usageError, userId: user.id, checkType });
       }
 
       return result;
 
     } catch (error) {
-      console.error(`Single check error for ${checkType}:`, error);
+      logger.error(`Single check error for ${checkType}:`, { error, checkType, userId: user.id });
       throw new Error(`Failed to complete ${checkType} check. Please try again.`);
     }
   }

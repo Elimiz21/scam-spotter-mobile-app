@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft, Shield, AlertCircle } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Shield, AlertCircle, Wifi, WifiOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,13 +20,22 @@ import {
 } from "@/components/ui/form";
 import { singleCheckSchema, SingleCheckFormData, sanitizeInput } from "../lib/validations";
 import storageManager from "../lib/storage";
+import { logger } from '@/lib/logger';
+import { useEnhancedAuth } from '../hooks/useEnhancedAuth';
+import { realtimeService, RealtimeEvent } from '../services/realtimeService';
+import { toast } from '@/components/ui/use-toast';
+import { riskAnalysisService } from '../services/riskAnalysisService';
 
 const SingleCheck = () => {
   const [checkType, setCheckType] = useState<string>("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
+  const [checkProgress, setCheckProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState("");
   
   const navigate = useNavigate();
+  const { session, loading } = useEnhancedAuth();
   
   const form = useForm<SingleCheckFormData>({
     resolver: zodResolver(singleCheckSchema),
@@ -36,6 +45,25 @@ const SingleCheck = () => {
     },
   });
 
+  // Real-time event handling
+  const handleRealtimeEvent = useCallback((event: any) => {
+    const { event: eventType, payload } = event;
+    
+    switch (eventType) {
+      case RealtimeEvent.CONNECTED:
+        setRealtimeConnected(true);
+        break;
+        
+      case RealtimeEvent.DISCONNECTED:
+        setRealtimeConnected(false);
+        break;
+        
+      case RealtimeEvent.ERROR:
+        logger.warn('Real-time error:', payload);
+        break;
+    }
+  }, []);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
@@ -43,61 +71,92 @@ const SingleCheck = () => {
       setCheckType(type);
       form.setValue('checkType', type as SingleCheckFormData['checkType']);
     }
-  }, [form]);
+
+    // Set up real-time connection
+    if (session && !loading) {
+      realtimeService.connect().then(() => {
+        setRealtimeConnected(true);
+      }).catch(error => {
+        logger.error('Failed to connect to real-time service', { error });
+      });
+
+      // Set up event listeners
+      realtimeService.on(RealtimeEvent.CONNECTED, handleRealtimeEvent);
+      realtimeService.on(RealtimeEvent.DISCONNECTED, handleRealtimeEvent);
+      realtimeService.on(RealtimeEvent.ERROR, handleRealtimeEvent);
+    }
+
+    // Cleanup
+    return () => {
+      realtimeService.off(RealtimeEvent.CONNECTED, handleRealtimeEvent);
+      realtimeService.off(RealtimeEvent.DISCONNECTED, handleRealtimeEvent);
+      realtimeService.off(RealtimeEvent.ERROR, handleRealtimeEvent);
+    };
+  }, [form, session, loading, handleRealtimeEvent]);
 
   const onSubmit = async (data: SingleCheckFormData) => {
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to perform security checks",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsAnalyzing(true);
     setError(null);
+    setCheckProgress(0);
+    setCurrentStep("Preparing security check...");
     
     try {
       // Sanitize input
       const sanitizedInput = sanitizeInput(data.input);
       
-      let result;
-      
-      switch (data.checkType) {
-        case 'scammer-database': {
-          const { ScammerDatabaseService } = await import('../services/scammerDatabaseService');
-          const service = new ScammerDatabaseService();
-          const members = sanitizedInput.split(',').map(m => m.trim()).filter(Boolean);
-          result = await service.checkScammerDatabase(members);
-          break;
-        }
-        case 'language-analysis': {
-          const { LanguageAnalysisService } = await import('../services/languageAnalysisService');
-          const service = new LanguageAnalysisService();
-          result = await service.analyzeLanguagePatterns(sanitizedInput);
-          break;
-        }
-        case 'price-manipulation': {
-          const { PriceAnalysisService } = await import('../services/priceAnalysisService');
-          const service = new PriceAnalysisService();
-          result = await service.detectPriceManipulation(sanitizedInput);
-          break;
-        }
-        case 'asset-verification': {
-          const { AssetVerificationService } = await import('../services/assetVerificationService');
-          const service = new AssetVerificationService();
-          result = await service.verifyAsset(sanitizedInput);
-          break;
-        }
-        default:
-          throw new Error('Unknown check type');
-      }
+      // Use the enhanced risk analysis service for unified handling
+      const result = await riskAnalysisService.performSingleCheck(data.checkType, sanitizedInput);
 
-      // Use storageManager instead of localStorage
+      // Store result using storageManager
       await storageManager.setPreference('single_check_result', {
         type: data.checkType,
         result: result,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        userId: session.user.id
+      });
+
+      setCheckProgress(100);
+      setCurrentStep("Check completed!");
+      setIsAnalyzing(false);
+      
+      toast({
+        title: "✅ Security Check Complete",
+        description: "Redirecting to results...",
+      });
+
+      setTimeout(() => {
+        navigate('/results');
+      }, 1000);
+
+    } catch (error) {
+      logger.error('Check failed:', { 
+        error, 
+        checkType: data.checkType, 
+        input: sanitizedInput?.substring(0, 50),
+        userId: session?.user?.id 
       });
       
       setIsAnalyzing(false);
-      navigate('/results');
-    } catch (error) {
-      console.error('Check failed:', error);
-      setIsAnalyzing(false);
-      setError(error instanceof Error ? error.message : 'Check failed. Please try again.');
+      setCheckProgress(0);
+      setCurrentStep("");
+      
+      const errorMessage = error instanceof Error ? error.message : 'Check failed. Please try again.';
+      setError(errorMessage);
+      
+      toast({
+        title: "❌ Check Failed",
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
@@ -198,13 +257,37 @@ const SingleCheck = () => {
           }}>
             {config.icon}
           </div>
-          <div>
+          <div style={{ flex: 1 }}>
             <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 4px 0' }}>
               {config.title}
             </h1>
             <p style={{ color: '#64748b', margin: 0 }}>
               {config.description}
             </p>
+          </div>
+          
+          {/* Real-time connection indicator */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '8px',
+            padding: '6px 12px',
+            backgroundColor: realtimeConnected ? '#dcfce7' : '#fee2e2',
+            borderRadius: '20px',
+            border: `1px solid ${realtimeConnected ? '#16a34a' : '#dc2626'}`
+          }}>
+            {realtimeConnected ? (
+              <Wifi style={{ width: '16px', height: '16px', color: '#16a34a' }} />
+            ) : (
+              <WifiOff style={{ width: '16px', height: '16px', color: '#dc2626' }} />
+            )}
+            <span style={{ 
+              fontSize: '0.875rem', 
+              fontWeight: '500',
+              color: realtimeConnected ? '#16a34a' : '#dc2626' 
+            }}>
+              {realtimeConnected ? 'Live' : 'Offline'}
+            </span>
           </div>
         </div>
       </div>
@@ -294,15 +377,52 @@ const SingleCheck = () => {
       {isAnalyzing && (
         <Card className="mt-5">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
-              <h3 className="text-lg font-semibold">
-                Security Analysis in Progress
-              </h3>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin" />
+                <h3 className="text-lg font-semibold">
+                  Security Analysis in Progress
+                </h3>
+              </div>
+              <div style={{
+                padding: '4px 12px',
+                backgroundColor: realtimeConnected ? '#dcfce7' : '#f3f4f6',
+                borderRadius: '16px',
+                fontSize: '0.75rem',
+                fontWeight: '500',
+                color: realtimeConnected ? '#16a34a' : '#6b7280'
+              }}>
+                {realtimeConnected ? 'Live Updates' : 'Standard Mode'}
+              </div>
             </div>
-            <p className="text-muted-foreground mb-4">
-              Please wait while we perform comprehensive checks...
-            </p>
+            
+            {/* Progress Bar */}
+            <div style={{ 
+              width: '100%', 
+              height: '8px', 
+              backgroundColor: '#f3f4f6', 
+              borderRadius: '4px',
+              overflow: 'hidden',
+              marginBottom: '16px'
+            }}>
+              <div style={{
+                width: `${checkProgress}%`,
+                height: '100%',
+                backgroundColor: checkProgress === 100 ? '#16a34a' : '#3b82f6',
+                borderRadius: '4px',
+                transition: 'width 0.3s ease, background-color 0.3s ease'
+              }} />
+            </div>
+            
+            {/* Progress Text */}
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-sm text-muted-foreground">
+                {currentStep || "Performing comprehensive security check..."}
+              </span>
+              <span className="text-sm font-medium text-gray-900">
+                {Math.round(checkProgress)}%
+              </span>
+            </div>
             
             <div className="space-y-3">
               <div className="flex items-center gap-3">

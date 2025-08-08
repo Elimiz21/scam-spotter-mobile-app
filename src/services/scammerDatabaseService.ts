@@ -1,8 +1,15 @@
 import { ScammerCheckResult } from './types';
 import { externalScammerService, ScammerDatabaseResult } from './externalScammerDatabases';
 import { monitoring } from '../lib/monitoring';
+import { supabaseApi } from '@/lib/apiClient';
+import { localCache } from '@/lib/cache';
+import { logger } from '@/lib/logger';
+import { AppError } from '@/lib/errorHandler';
 
 export class ScammerDatabaseService {
+  private cachePrefix = 'scammer_check_';
+  private cacheTTL = 2 * 60 * 60 * 1000; // 2 hours
+
   async checkScammerDatabase(members: string[]): Promise<ScammerCheckResult> {
     const timer = monitoring.startTimer('scammer_database_check');
     
@@ -22,11 +29,42 @@ export class ScammerDatabaseService {
         };
       }
 
-      // Use external scammer database service
-      const externalResult = await externalScammerService.checkMultipleSources(memberList);
+      // Generate cache key based on member list
+      const cacheKey = `${this.cachePrefix}${this.generateMemberHash(memberList)}`;
       
-      // Convert external result to legacy format for backward compatibility
-      const result = this.convertExternalResult(externalResult, memberList);
+      // Try cache first
+      const cached = await localCache.get<ScammerCheckResult>(cacheKey);
+      if (cached) {
+        logger.debug('Scammer database cache hit', { memberCount: memberList.length });
+        timer();
+        return cached;
+      }
+
+      // First try internal Supabase database
+      let result = await this.checkInternalDatabase(memberList);
+      
+      // If no results from internal database, use external services
+      if (result.flaggedMembers.length === 0) {
+        try {
+          const externalResult = await externalScammerService.checkMultipleSources(memberList);
+          const externalConverted = this.convertExternalResult(externalResult, memberList);
+          
+          // Merge results (prefer internal but add external findings)
+          result = {
+            riskScore: Math.max(result.riskScore, externalConverted.riskScore),
+            flaggedMembers: [...new Set([...result.flaggedMembers, ...externalConverted.flaggedMembers])],
+            sources: [...new Set([...result.sources, ...externalConverted.sources])]
+          };
+        } catch (externalError) {
+          logger.warn('External scammer services failed, using internal only', { 
+            error: externalError, 
+            internalFlagged: result.flaggedMembers.length 
+          });
+        }
+      }
+
+      // Cache the result
+      await localCache.set(cacheKey, result, this.cacheTTL);
       
       monitoring.info('Scammer database check completed', {
         riskScore: result.riskScore,
@@ -43,6 +81,46 @@ export class ScammerDatabaseService {
       
       // Fallback to pattern-based check
       return this.performPatternBasedCheck(members);
+    }
+  }
+
+  private async checkInternalDatabase(memberList: string[]): Promise<ScammerCheckResult> {
+    try {
+      // Use enhanced Supabase API client to check internal scammer database
+      const response = await supabaseApi.callFunction('scammer-database-check', {
+        members: memberList,
+        checkTypes: ['username', 'email', 'phone', 'telegram_id']
+      }, {
+        timeout: 15000,
+        retries: 2,
+        cache: false // Don't cache the API call itself, we cache the final result
+      });
+
+      if (response.error) {
+        logger.warn('Internal scammer database check failed', { 
+          error: response.error, 
+          memberCount: memberList.length 
+        });
+        return {
+          riskScore: 0,
+          flaggedMembers: [],
+          sources: []
+        };
+      }
+
+      const data = response.data;
+      return {
+        riskScore: Math.min(100, data?.riskScore || 0),
+        flaggedMembers: Array.isArray(data?.flaggedMembers) ? data.flaggedMembers : [],
+        sources: ['Internal Database', ...(Array.isArray(data?.sources) ? data.sources : [])]
+      };
+    } catch (error) {
+      logger.warn('Internal scammer database error', { error, memberCount: memberList.length });
+      return {
+        riskScore: 0,
+        flaggedMembers: [],
+        sources: []
+      };
     }
   }
 
@@ -112,5 +190,17 @@ export class ScammerDatabaseService {
       flaggedMembers: memberList.slice(0, flaggedCount),
       sources: ['Mock Database', 'Pattern Analysis']
     };
+  }
+
+  private generateMemberHash(memberList: string[]): string {
+    // Create a consistent hash based on sorted member list
+    const sortedMembers = [...memberList].sort().join('|').toLowerCase();
+    let hash = 0;
+    for (let i = 0; i < sortedMembers.length; i++) {
+      const char = sortedMembers.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash).toString(36);
   }
 }

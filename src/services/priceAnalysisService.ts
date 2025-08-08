@@ -1,21 +1,77 @@
 import { PriceAnalysisResult } from './types';
+import { logger } from '@/lib/logger';
+import { externalApiClient } from '@/lib/apiClient';
+import { localCache } from '@/lib/cache';
+import { AppError, createExternalApiError } from '@/lib/errorHandler';
 
 export class PriceAnalysisService {
+  private cachePrefix = 'price_analysis_';
+  private cacheTTL = 15 * 60 * 1000; // 15 minutes
+
   async detectPriceManipulation(assetSymbol: string): Promise<PriceAnalysisResult> {
     try {
-      // Use CoinGecko API for price data
-      const priceResponse = await fetch(
-        `https://api.coingecko.com/api/v3/coins/${assetSymbol.toLowerCase()}/market_chart?vs_currency=usd&days=30`
-      );
+      const normalizedSymbol = assetSymbol.toLowerCase().trim();
+      const cacheKey = `${this.cachePrefix}${normalizedSymbol}`;
 
-      if (priceResponse.ok) {
-        const priceData = await priceResponse.json();
-        return this.analyzePriceData(priceData);
+      // Try cache first
+      const cached = await localCache.get<PriceAnalysisResult>(cacheKey);
+      if (cached) {
+        logger.debug('Price analysis cache hit', { assetSymbol: normalizedSymbol });
+        return cached;
       }
 
-      return this.getMockPriceAnalysis(assetSymbol);
+      // Use enhanced API client for external calls
+      const response = await externalApiClient.get(
+        `https://api.coingecko.com/api/v3/coins/${normalizedSymbol}/market_chart`,
+        {
+          vs_currency: 'usd',
+          days: '30',
+          interval: 'hourly'
+        },
+        {
+          timeout: 15000,
+          retries: 2,
+          cache: true,
+          cacheTTL: this.cacheTTL,
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'ScamShield-App/1.0'
+          }
+        }
+      );
+
+      if (response.error) {
+        logger.warn('CoinGecko API error, using fallback', { 
+          error: response.error, 
+          assetSymbol: normalizedSymbol 
+        });
+        return this.getMockPriceAnalysis(assetSymbol);
+      }
+
+      if (!response.data || !response.data.prices) {
+        logger.warn('Invalid price data received', { assetSymbol: normalizedSymbol });
+        return this.getMockPriceAnalysis(assetSymbol);
+      }
+
+      const result = this.analyzePriceData(response.data);
+
+      // Cache the result
+      await localCache.set(cacheKey, result, this.cacheTTL);
+
+      logger.info('Price analysis completed', {
+        assetSymbol: normalizedSymbol,
+        riskScore: result.riskScore,
+        volatility: result.volatilityScore,
+        dataPoints: result.priceHistory.length
+      });
+
+      return result;
     } catch (error) {
-      console.error('Price analysis error:', error);
+      logger.error('Price analysis failed:', { 
+        error, 
+        assetSymbol,
+        errorType: error instanceof AppError ? error.type : 'unknown'
+      });
       return this.getMockPriceAnalysis(assetSymbol);
     }
   }

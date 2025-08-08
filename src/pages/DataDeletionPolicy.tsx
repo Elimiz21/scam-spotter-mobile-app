@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import { Download, FileText, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { downloadPolicyAsText, viewPolicyAsHTML } from "@/lib/policyExport";
 
 const DataDeletionPolicy = () => {
   return (
@@ -18,55 +19,22 @@ const DataDeletionPolicy = () => {
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => {
-                const element = document.createElement('a');
-                const content = document.querySelector('.policy-content')?.textContent || '';
-                const file = new Blob([content], { type: 'text/plain' });
-                element.href = URL.createObjectURL(file);
-                element.download = 'data-deletion-policy.txt';
-                document.body.appendChild(element);
-                element.click();
-                document.body.removeChild(element);
-              }}
+              onClick={() => downloadPolicyAsText('data-deletion-policy-content', 'scam_dunk_data_deletion_policy.txt')}
             >
               <Download className="w-4 h-4" />
-              Download PDF
+              Download Text
             </Button>
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => {
-                const content = document.querySelector('.policy-content')?.innerHTML || '';
-                const newWindow = window.open('', '_blank');
-                if (newWindow) {
-                  newWindow.document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                      <title>Data Deletion Policy - Scam Dunk</title>
-                      <style>
-                        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; }
-                        h1 { color: #333; border-bottom: 2px solid #333; padding-bottom: 10px; }
-                        h2 { color: #555; margin-top: 30px; }
-                        h3 { color: #666; }
-                      </style>
-                    </head>
-                    <body>
-                      <h1>Data Deletion Policy</h1>
-                      ${content}
-                    </body>
-                    </html>
-                  `);
-                  newWindow.document.close();
-                }
-              }}
+              onClick={() => viewPolicyAsHTML('data-deletion-policy-content', 'Data Deletion Policy - Scam Dunk')}
             >
               <FileText className="w-4 h-4" />
               View HTML Version
             </Button>
           </div>
           
-          <div className="prose prose-lg max-w-none text-foreground policy-content">
+          <div id="data-deletion-policy-content" className="prose prose-lg max-w-none text-foreground policy-content">
             <div className="space-y-6">
               <section>
                 <p className="text-muted-foreground mb-4">

@@ -1,16 +1,35 @@
 import { jsPDF } from 'jspdf';
 import { AnalysisResult } from '../services/types';
+import { logger } from './logger';
+import { localCache } from './cache';
+import { authService } from '../services/authService';
 
 export interface ExportOptions {
-  format: 'pdf' | 'json' | 'csv' | 'html';
+  format: 'pdf' | 'json' | 'csv' | 'html' | 'xlsx';
   includeDetails: boolean;
   includeCharts: boolean;
   dateRange: string;
+  includeMetadata?: boolean;
+  passwordProtect?: boolean;
+  watermark?: string;
+  customLogo?: string;
+  language?: 'en' | 'es' | 'fr' | 'de';
+}
+
+export interface ExportMetadata {
+  exportId: string;
+  timestamp: Date;
+  userId?: string;
+  userEmail?: string;
+  version: string;
+  source: string;
 }
 
 class ExportService {
+  private version = '1.0.0';
+
   async exportAnalysisResults(
-    results: AnalysisResult, 
+    results: AnalysisResult | AnalysisResult[], 
     options: ExportOptions = {
       format: 'pdf',
       includeDetails: true,
@@ -18,34 +37,94 @@ class ExportService {
       dateRange: 'all_time'
     }
   ): Promise<void> {
-    switch (options.format) {
-      case 'pdf':
-        return this.exportToPDF(results, options);
-      case 'json':
-        return this.exportToJSON(results, options);
-      case 'csv':
-        return this.exportToCSV(results, options);
-      case 'html':
-        return this.exportToHTML(results, options);
-      default:
-        throw new Error(`Unsupported export format: ${options.format}`);
+    try {
+      // Get user info for metadata
+      const session = await authService.getSession();
+      const metadata: ExportMetadata = {
+        exportId: `export_${Date.now()}`,
+        timestamp: new Date(),
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        version: this.version,
+        source: 'ScamShield-WebApp'
+      };
+
+      // Log export attempt
+      logger.info('Starting export', {
+        format: options.format,
+        resultCount: Array.isArray(results) ? results.length : 1,
+        userId: session?.user?.id
+      });
+
+      // Handle single vs multiple results
+      const resultsArray = Array.isArray(results) ? results : [results];
+
+      switch (options.format) {
+        case 'pdf':
+          await this.exportToPDF(resultsArray, options, metadata);
+          break;
+        case 'json':
+          await this.exportToJSON(resultsArray, options, metadata);
+          break;
+        case 'csv':
+          await this.exportToCSV(resultsArray, options, metadata);
+          break;
+        case 'html':
+          await this.exportToHTML(resultsArray, options, metadata);
+          break;
+        case 'xlsx':
+          await this.exportToXLSX(resultsArray, options, metadata);
+          break;
+        default:
+          throw new Error(`Unsupported export format: ${options.format}`);
+      }
+
+      // Cache export for re-download
+      await localCache.set(
+        `export_${metadata.exportId}`,
+        { results: resultsArray, options, metadata },
+        24 * 60 * 60 * 1000 // 24 hours
+      );
+
+      logger.info('Export completed successfully', {
+        format: options.format,
+        exportId: metadata.exportId,
+        userId: session?.user?.id
+      });
+
+    } catch (error) {
+      logger.error('Export failed', { error, options });
+      throw new Error(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
-  private async exportToPDF(results: AnalysisResult, options: ExportOptions): Promise<void> {
+  private async exportToPDF(results: AnalysisResult[], options: ExportOptions, metadata: ExportMetadata): Promise<void> {
     const doc = new jsPDF();
     let yPosition = 20;
 
+    // Add header with logo/watermark if specified
+    if (options.watermark) {
+      doc.setTextColor(200, 200, 200);
+      doc.setFontSize(40);
+      doc.text(options.watermark, 20, 100, { angle: 45 });
+      doc.setTextColor(0, 0, 0);
+    }
+
     // Title
     doc.setFontSize(20);
-    doc.text('Scam Dunk Analysis Report', 20, yPosition);
+    doc.text('ScamShield Analysis Report', 20, yPosition);
     yPosition += 15;
 
-    // Timestamp
+    // Metadata
     doc.setFontSize(10);
-    doc.text(`Generated: ${new Date().toLocaleString()}`, 20, yPosition);
-    doc.text(`Analysis ID: ${results.analysisId}`, 20, yPosition + 5);
-    yPosition += 20;
+    doc.text(`Generated: ${metadata.timestamp.toLocaleString()}`, 20, yPosition);
+    doc.text(`Export ID: ${metadata.exportId}`, 20, yPosition + 5);
+    doc.text(`Total Analyses: ${results.length}`, 20, yPosition + 10);
+    if (options.includeMetadata && metadata.userEmail) {
+      doc.text(`User: ${metadata.userEmail}`, 20, yPosition + 15);
+      yPosition += 5;
+    }
+    yPosition += 25;
 
     // Overall Risk Score
     doc.setFontSize(16);
@@ -114,40 +193,107 @@ class ExportService {
       );
     }
 
-    doc.save(`scam-analysis-${results.analysisId}.pdf`);
+    const filename = results.length === 1 
+      ? `scam-analysis-${results[0].analysisId}.pdf`
+      : `scam-analysis-batch-${metadata.exportId}.pdf`;
+    
+    doc.save(filename);
   }
 
-  private async exportToJSON(results: AnalysisResult, options: ExportOptions): Promise<void> {
+  private async exportToXLSX(results: AnalysisResult[], options: ExportOptions, metadata: ExportMetadata): Promise<void> {
+    // Note: For XLSX export, we would use a library like SheetJS
+    // For now, we'll create a comprehensive CSV with Excel-compatible formatting
+    const csvData = this.generateExcelCompatibleCSV(results, options, metadata);
+    const filename = results.length === 1 
+      ? `scam-analysis-${results[0].analysisId}.csv`
+      : `scam-analysis-batch-${metadata.exportId}.csv`;
+    
+    this.downloadFile(csvData, filename, 'text/csv');
+  }
+
+  private generateExcelCompatibleCSV(results: AnalysisResult[], options: ExportOptions, metadata: ExportMetadata): string {
+    const rows: string[] = [];
+    
+    // Add metadata header
+    rows.push('ScamShield Analysis Export');
+    rows.push(`Generated: ${metadata.timestamp.toISOString()}`);
+    rows.push(`Export ID: ${metadata.exportId}`);
+    rows.push(`Total Analyses: ${results.length}`);
+    rows.push(''); // Empty row
+    
+    // Headers
+    const headers = [
+      'Analysis ID',
+      'Timestamp',
+      'Overall Risk Score',
+      'Risk Level',
+      'Risk Vectors Count'
+    ];
+    
+    if (options.includeDetails) {
+      headers.push('Vector Name', 'Vector Score', 'Vector Status', 'Vector Summary', 'Vector Details', 'Key Findings');
+    }
+    
+    rows.push(headers.join(','));
+    
+    // Data rows
+    results.forEach(result => {
+      const baseRow = [
+        result.analysisId,
+        result.timestamp,
+        result.overallRiskScore.toString(),
+        this.getRiskLevel(result.overallRiskScore),
+        result.riskVectors.length.toString()
+      ];
+      
+      if (options.includeDetails) {
+        result.riskVectors.forEach(vector => {
+          const vectorRow = [
+            ...baseRow,
+            `"${vector.name}"`,
+            vector.riskScore.toString(),
+            vector.status,
+            `"${vector.summary}"`,
+            `"${vector.details || ''}"`,
+            `"${vector.findings?.join('; ') || ''}"`
+          ];
+          rows.push(vectorRow.join(','));
+        });
+      } else {
+        rows.push(baseRow.join(','));
+      }
+    });
+    
+    return rows.join('\n');
+  }
+
+  private async exportToJSON(results: AnalysisResult[], options: ExportOptions, metadata: ExportMetadata): Promise<void> {
     const exportData = {
       exportInfo: {
+        ...metadata,
         format: 'json',
-        generatedAt: new Date().toISOString(),
         exportOptions: options,
+        totalResults: results.length
       },
-      analysisResults: results,
+      analysisResults: options.includeDetails ? results : results.map(result => ({
+        ...result,
+        riskVectors: result.riskVectors.map(vector => ({
+          ...vector,
+          findings: undefined,
+          details: undefined,
+        }))
+      }))
     };
 
-    if (!options.includeDetails) {
-      // Remove detailed findings if not requested
-      exportData.analysisResults.riskVectors = results.riskVectors.map(vector => ({
-        ...vector,
-        findings: undefined,
-        details: undefined,
-      }));
-    }
-
     const dataStr = JSON.stringify(exportData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const filename = results.length === 1 
+      ? `scam-analysis-${results[0].analysisId}.json`
+      : `scam-analysis-batch-${metadata.exportId}.json`;
     
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(dataBlob);
-    link.download = `scam-analysis-${results.analysisId}.json`;
-    link.click();
-    
-    URL.revokeObjectURL(link.href);
+    this.downloadFile(dataStr, filename, 'application/json');
   }
 
-  private async exportToCSV(results: AnalysisResult, options: ExportOptions): Promise<void> {
+  private async exportToCSV(results: AnalysisResult[], options: ExportOptions, metadata: ExportMetadata): Promise<void> {
     const csvHeader = [
       'Risk Vector',
       'Risk Score',
@@ -195,7 +341,7 @@ class ExportService {
     URL.revokeObjectURL(link.href);
   }
 
-  private async exportToHTML(results: AnalysisResult, options: ExportOptions): Promise<void> {
+  private async exportToHTML(results: AnalysisResult[], options: ExportOptions, metadata: ExportMetadata): Promise<void> {
     const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -331,6 +477,52 @@ class ExportService {
     if (score < 30) return 'risk-low';
     if (score < 70) return 'risk-medium';
     return 'risk-high';
+  }
+
+  private downloadFile(content: string, filename: string, mimeType: string): void {
+    const dataBlob = new Blob([content], { type: mimeType });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  }
+
+  // Re-download cached export
+  async redownloadExport(exportId: string): Promise<void> {
+    try {
+      const cachedExport = await localCache.get<any>(`export_${exportId}`);
+      if (!cachedExport) {
+        throw new Error('Export not found or expired');
+      }
+
+      await this.exportAnalysisResults(
+        cachedExport.results,
+        cachedExport.options
+      );
+    } catch (error) {
+      logger.error('Failed to redownload export', { error, exportId });
+      throw error;
+    }
+  }
+
+  // Get export history
+  async getExportHistory(): Promise<ExportMetadata[]> {
+    try {
+      const session = await authService.getSession();
+      if (!session) return [];
+
+      // Get all cached exports for current user
+      const exports: ExportMetadata[] = [];
+      // Note: This would require a more sophisticated cache query mechanism
+      // For now, we return empty array
+      return exports;
+    } catch (error) {
+      logger.error('Failed to get export history', { error });
+      return [];
+    }
   }
 
   // Batch export multiple analyses

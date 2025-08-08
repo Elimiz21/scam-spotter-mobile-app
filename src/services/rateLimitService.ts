@@ -1,4 +1,5 @@
 import { supabase } from '../integrations/supabase/client';
+import { logger } from '@/lib/logger';
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -58,7 +59,7 @@ class RateLimitService {
       });
 
       if (error) {
-        console.error('Rate limit check failed:', error);
+        logger.error('Rate limit check failed:', { error, endpoint });
         
         // Fallback to client-side rate limiting
         return this.clientSideRateLimit(endpoint, consumeRequest);
@@ -77,7 +78,7 @@ class RateLimitService {
       return result;
 
     } catch (error) {
-      console.error('Rate limit service error:', error);
+      logger.error('Rate limit service error:', { error, endpoint });
       return this.clientSideRateLimit(endpoint, consumeRequest);
     }
   }
@@ -187,7 +188,7 @@ class RateLimitService {
         },
       };
     } catch (error) {
-      console.error('Failed to get current usage:', error);
+      logger.error('Failed to get current usage:', { error });
       return null;
     }
   }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { AlertCircle, Clock, Zap, Shield, TrendingUp, Database, FileText } from 'lucide-react';
 import { usageTrackingService, UsageStats } from '../services/usageTrackingService';
 import { useAuth } from '../hooks/useAuth';
+import { logger } from '@/lib/logger';
 
 interface UsageTrackerProps {
   className?: string;
@@ -36,7 +37,7 @@ export default function UsageTracker({ className = '', showUpgradeButton = true 
       const currentUsage = await usageTrackingService.getCurrentUsage(user!.id);
       setUsage(currentUsage);
     } catch (err) {
-      console.error('Failed to load usage:', err);
+      logger.error('Failed to load usage:', { error: err, userId: user!.id });
       setError('Failed to load usage data');
     } finally {
       setLoading(false);

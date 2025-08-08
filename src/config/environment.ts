@@ -74,14 +74,12 @@ export const createAppConfig = (): AppConfig => {
     environment,
     
     supabase: {
-      url: getEnvVar('SUPABASE_URL', 'https://nhqmyapyqjwzxsqwgbvd.supabase.co'),
-      anonKey: getEnvVar('SUPABASE_ANON_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5ocW15YXB5cWp3enhzcXdnYnZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzYxODAzNzEsImV4cCI6MjA1MTc1NjM3MX0.q2pz4xeJwKU4BhUa1ydUJbUVGlrOphNONY9AYKrjCdE'),
+      url: getEnvVar('SUPABASE_URL', ''),
+      anonKey: getEnvVar('SUPABASE_ANON_KEY', ''),
     },
 
     paypal: {
-      clientId: isProduction 
-        ? getEnvVar('PAYPAL_CLIENT_ID_PROD', '') 
-        : getEnvVar('PAYPAL_CLIENT_ID', 'AaZ9M2j7n6MCkQx0Oi8X0dpVeZkvDeiVhyyY7Iumx4CpWAUhCe56ULt-Tdtxab0xakVzONSMQ2ICz74N'),
+      clientId: getEnvVar('PAYPAL_CLIENT_ID', ''),
       environment: isProduction ? 'production' : 'sandbox',
     },
 
@@ -159,8 +157,8 @@ export const isDevelopment = () => appConfig.environment === 'development';
 export const isStaging = () => appConfig.environment === 'staging';
 export const isProduction = () => appConfig.environment === 'production';
 
-// Debug logging for configuration (only in development)
-if (isDevelopment()) {
+// Debug logging for configuration (only in development with explicit flag)
+if (isDevelopment() && getEnvBoolean('ENABLE_DEBUG_LOGGING', false)) {
   console.group('🔧 App Configuration');
   console.log('Environment:', appConfig.environment);
   console.log('PayPal Mode:', appConfig.paypal.environment);

@@ -1,50 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Download, FileText } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import { downloadPolicyAsText, viewPolicyAsHTML } from "@/lib/policyExport";
 
 const TermsOfService = () => {
   const downloadAsText = () => {
-    const element = document.getElementById('terms-content');
-    if (element) {
-      const text = element.innerText;
-      const blob = new Blob([text], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'scam_dunk_terms_of_service.txt';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
+    downloadPolicyAsText('terms-content', 'scam_dunk_terms_of_service.txt');
   };
 
   const viewAsHTML = () => {
-    const element = document.getElementById('terms-content');
-    if (element) {
-      const html = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Scam Dunk Terms of Service</title>
-          <style>
-            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; line-height: 1.6; }
-            h1 { color: #333; border-bottom: 2px solid #333; padding-bottom: 10px; }
-            h2 { color: #555; margin-top: 30px; }
-            p { margin-bottom: 15px; }
-          </style>
-        </head>
-        <body>
-          ${element.innerHTML}
-        </body>
-        </html>
-      `;
-      const newWindow = window.open();
-      if (newWindow) {
-        newWindow.document.write(html);
-        newWindow.document.close();
-      }
-    }
+    viewPolicyAsHTML('terms-content', 'Scam Dunk Terms of Service');
   };
 
   return (

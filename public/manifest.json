@@ -1,0 +1,191 @@
+{
+  "name": "ScamShield - Scam Detection & Prevention",
+  "short_name": "ScamShield",
+  "description": "Advanced AI-powered scam detection and prevention platform",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#3b82f6",
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "lang": "en-US",
+  "scope": "/",
+  "id": "com.scamshield.app",
+  "categories": ["finance", "security", "utilities"],
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Dashboard view showing scam detection results"
+    },
+    {
+      "src": "/screenshots/analysis.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "label": "Real-time group analysis"
+    },
+    {
+      "src": "/screenshots/mobile.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "label": "Mobile app interface"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Scan",
+      "short_name": "Scan",
+      "description": "Start a new scam detection scan",
+      "url": "/check",
+      "icons": [
+        {
+          "src": "/icons/scan-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Group Analysis",
+      "short_name": "Analyze",
+      "description": "Analyze WhatsApp or Telegram groups",
+      "url": "/analyze",
+      "icons": [
+        {
+          "src": "/icons/group-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your analysis dashboard",
+      "url": "/results",
+      "icons": [
+        {
+          "src": "/icons/dashboard-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": ["image/*", "text/*", "application/pdf"]
+        }
+      ]
+    }
+  },
+  "related_applications": [
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=com.scamshield.app"
+    },
+    {
+      "platform": "itunes",
+      "url": "https://apps.apple.com/app/scamshield/id123456789"
+    }
+  ],
+  "prefer_related_applications": false,
+  "protocol_handlers": [
+    {
+      "protocol": "web+scamcheck",
+      "url": "/check?url=%s"
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  },
+  "handle_links": "preferred",
+  "file_handlers": [
+    {
+      "action": "/import",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/json": [".json"],
+        "text/plain": [".txt"]
+      }
+    }
+  ],
+  "permissions": [
+    "clipboard-read",
+    "clipboard-write",
+    "notifications"
+  ],
+  "features": [
+    "badging",
+    "background-sync",
+    "periodic-background-sync",
+    "push",
+    "screen-wake-lock",
+    "share"
+  ]
+}

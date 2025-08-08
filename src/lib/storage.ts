@@ -1,4 +1,5 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import { logger } from '@/lib/logger';
 
 interface ScamDunkDB extends DBSchema {
   analysisResults: {
@@ -70,7 +71,7 @@ class StorageManager {
       // Migrate existing localStorage data
       await this.migrateFromLocalStorage();
     } catch (error) {
-      console.error('Failed to initialize IndexedDB:', error);
+      logger.error('Failed to initialize IndexedDB:', { error });
       // Fall back to localStorage if IndexedDB fails
       this.db = null;
     }
@@ -102,7 +103,7 @@ class StorageManager {
         }
       }
     } catch (error) {
-      console.error('Migration from localStorage failed:', error);
+      logger.error('Migration from localStorage failed:', { error });
     }
   }
 
@@ -129,7 +130,7 @@ class StorageManager {
       // Clean up expired records
       await this.cleanupExpiredResults();
     } catch (error) {
-      console.error('Failed to save analysis results:', error);
+      logger.error('Failed to save analysis results:', { error, resultsId: id });
       // Fallback to localStorage
       localStorage.setItem('analysisResults', JSON.stringify(results));
     }
@@ -160,7 +161,7 @@ class StorageManager {
 
       return null;
     } catch (error) {
-      console.error('Failed to get analysis results:', error);
+      logger.error('Failed to get analysis results:', { error, id });
       const stored = localStorage.getItem('analysisResults');
       return stored ? JSON.parse(stored) : null;
     }
@@ -179,7 +180,7 @@ class StorageManager {
         .sort((a, b) => b.timestamp - a.timestamp)
         .map(r => r.results);
     } catch (error) {
-      console.error('Failed to get all analysis results:', error);
+      logger.error('Failed to get all analysis results:', { error });
       return [];
     }
   }
@@ -193,7 +194,7 @@ class StorageManager {
     try {
       await this.db.put('userPreferences', { key, value });
     } catch (error) {
-      console.error('Failed to set preference:', error);
+      logger.error('Failed to set preference:', { error, key });
       localStorage.setItem(key, JSON.stringify(value));
     }
   }
@@ -208,7 +209,7 @@ class StorageManager {
       const result = await this.db.get('userPreferences', key);
       return result?.value || null;
     } catch (error) {
-      console.error('Failed to get preference:', error);
+      logger.error('Failed to get preference:', { error, key });
       const stored = localStorage.getItem(key);
       return stored ? JSON.parse(stored) : null;
     }
@@ -233,7 +234,7 @@ class StorageManager {
         ttl: ttlMinutes * 60 * 1000,
       });
     } catch (error) {
-      console.error('Failed to set cached data:', error);
+      logger.error('Failed to set cached data:', { error, key });
     }
   }
 
@@ -263,7 +264,7 @@ class StorageManager {
       
       return null;
     } catch (error) {
-      console.error('Failed to get cached data:', error);
+      logger.error('Failed to get cached data:', { error, key });
       return null;
     }
   }
@@ -281,7 +282,7 @@ class StorageManager {
         }
       }
     } catch (error) {
-      console.error('Failed to cleanup expired results:', error);
+      logger.error('Failed to cleanup expired results:', { error });
     }
   }
 
@@ -315,7 +316,7 @@ class StorageManager {
       await this.db.clear('userPreferences');
       await this.db.clear('cachedData');
     } catch (error) {
-      console.error('Failed to clear storage:', error);
+      logger.error('Failed to clear storage:', { error });
     }
   }
 
@@ -360,7 +361,7 @@ class StorageManager {
       
       return data;
     } catch (error) {
-      console.error('Failed to export data:', error);
+      logger.error('Failed to export data:', { error });
       return data;
     }
   }

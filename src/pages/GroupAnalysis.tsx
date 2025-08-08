@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
-import { ArrowLeft, Upload, AlertCircle, Shield } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { ArrowLeft, Upload, AlertCircle, Shield, Wifi, WifiOff } from "lucide-react";
 import Navigation from "../components/Navigation";
-
 import LegalDisclaimer from "../components/LegalDisclaimer";
+import { logger } from '@/lib/logger';
+import { realtimeService, RealtimeEvent } from '../services/realtimeService';
+import { useEnhancedAuth } from '../hooks/useEnhancedAuth';
+import { toast } from '@/components/ui/use-toast';
 
 const GroupAnalysis = () => {
   const [formData, setFormData] = useState({
@@ -14,35 +17,170 @@ const GroupAnalysis = () => {
   });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisType, setAnalysisType] = useState<string>("");
+  const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [currentStep, setCurrentStep] = useState("");
+  const [realtimeConnected, setRealtimeConnected] = useState(false);
+  const [analysisId, setAnalysisId] = useState<string | null>(null);
+
+  const { session, loading } = useEnhancedAuth();
+  // Set up real-time event handling
+  const handleRealtimeEvent = useCallback((event: any) => {
+    const { event: eventType, payload } = event;
+    
+    switch (eventType) {
+      case RealtimeEvent.ANALYSIS_COMPLETE:
+        if (payload.status === 'in_progress') {
+          setAnalysisProgress(payload.progress);
+          setCurrentStep(payload.step);
+        } else if (payload.status === 'completed') {
+          setAnalysisProgress(100);
+          setCurrentStep('Analysis completed!');
+          setTimeout(() => {
+            window.location.href = '/results';
+          }, 1000);
+        }
+        break;
+        
+      case RealtimeEvent.SCAM_DETECTED:
+        toast({
+          title: "⚠️ Scam Alert",
+          description: `Detected ${payload.type}: ${payload.flaggedMembers?.length || 0} suspicious members found`,
+          variant: "destructive",
+        });
+        break;
+        
+      case RealtimeEvent.CONNECTED:
+        setRealtimeConnected(true);
+        toast({
+          title: "🔗 Connected",
+          description: "Real-time updates enabled",
+        });
+        break;
+        
+      case RealtimeEvent.DISCONNECTED:
+        setRealtimeConnected(false);
+        toast({
+          title: "📡 Disconnected",
+          description: "Real-time updates disabled",
+          variant: "destructive",
+        });
+        break;
+        
+      case RealtimeEvent.ERROR:
+        logger.warn('Real-time error:', payload);
+        break;
+    }
+  }, []);
+
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
     if (type) {
       setAnalysisType(type);
     }
-  }, []);
+
+    // Set up real-time connection
+    if (session && !loading) {
+      // Connect to real-time service
+      realtimeService.connect().then(() => {
+        setRealtimeConnected(true);
+      }).catch(error => {
+        logger.error('Failed to connect to real-time service', { error });
+      });
+
+      // Set up event listeners
+      realtimeService.on(RealtimeEvent.CONNECTED, handleRealtimeEvent);
+      realtimeService.on(RealtimeEvent.DISCONNECTED, handleRealtimeEvent);
+      realtimeService.on(RealtimeEvent.ANALYSIS_COMPLETE, handleRealtimeEvent);
+      realtimeService.on(RealtimeEvent.SCAM_DETECTED, handleRealtimeEvent);
+      realtimeService.on(RealtimeEvent.ERROR, handleRealtimeEvent);
+    }
+
+    // Cleanup
+    return () => {
+      realtimeService.off(RealtimeEvent.CONNECTED, handleRealtimeEvent);
+      realtimeService.off(RealtimeEvent.DISCONNECTED, handleRealtimeEvent);
+      realtimeService.off(RealtimeEvent.ANALYSIS_COMPLETE, handleRealtimeEvent);
+      realtimeService.off(RealtimeEvent.SCAM_DETECTED, handleRealtimeEvent);
+      realtimeService.off(RealtimeEvent.ERROR, handleRealtimeEvent);
+    };
+  }, [session, loading, handleRealtimeEvent]);
 
   const handleAnalyze = async () => {
+    if (!session) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to perform analysis",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsAnalyzing(true);
+    setAnalysisProgress(0);
+    setCurrentStep("Preparing analysis...");
     
     try {
       const { riskAnalysisService } = await import('../services/riskAnalysisService');
 
+      // Generate analysis ID for tracking
+      const newAnalysisId = `analysis_${Date.now()}`;
+      setAnalysisId(newAnalysisId);
+
+      // Subscribe to real-time updates for this specific analysis
+      if (realtimeConnected) {
+        await realtimeService.subscribeToScamDetection(newAnalysisId);
+      }
+
       const analysisResult = await riskAnalysisService.analyzeGroup(
         formData,
         (progress) => {
-          console.log(`Analysis progress: ${progress}%`);
+          // Local progress updates (fallback if real-time fails)
+          if (!realtimeConnected) {
+            setAnalysisProgress(progress);
+            
+            // Update step based on progress
+            if (progress <= 25) setCurrentStep("Checking scammer databases...");
+            else if (progress <= 50) setCurrentStep("Analyzing language patterns...");
+            else if (progress <= 75) setCurrentStep("Detecting price manipulation...");
+            else if (progress <= 90) setCurrentStep("Verifying assets...");
+            else setCurrentStep("Finalizing analysis...");
+          }
         }
       );
 
+      // Store result
       localStorage.setItem('latest_analysis', JSON.stringify(analysisResult));
       
-      setIsAnalyzing(false);
-      window.location.href = '/results';
+      // If real-time didn't handle completion, redirect manually
+      if (!realtimeConnected) {
+        setIsAnalyzing(false);
+        setAnalysisProgress(100);
+        setCurrentStep("Analysis completed!");
+        setTimeout(() => {
+          window.location.href = '/results';
+        }, 1000);
+      }
+
     } catch (error) {
-      console.error('Analysis failed:', error);
+      logger.error('Analysis failed:', { 
+        error, 
+        formData: { 
+          platform: formData.platform, 
+          groupName: formData.groupName 
+        },
+        analysisId 
+      });
+      
       setIsAnalyzing(false);
-      alert('Analysis failed. Please try again.');
+      setAnalysisProgress(0);
+      setCurrentStep("");
+      
+      toast({
+        title: "Analysis Failed",
+        description: error instanceof Error ? error.message : "Please try again later",
+        variant: "destructive",
+      });
     }
   };
 
@@ -118,9 +256,33 @@ const GroupAnalysis = () => {
             }}>
               <Shield style={{ width: '16px', height: '16px', color: 'white' }} />
             </div>
-            <div>
+            <div style={{ flex: 1 }}>
               <h1 style={{ fontSize: '1.125rem', fontWeight: '600', margin: 0 }}>{getAnalysisTitle()}</h1>
               <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>{getAnalysisDescription()}</p>
+            </div>
+            
+            {/* Real-time connection indicator */}
+            <div style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '8px',
+              padding: '4px 8px',
+              backgroundColor: realtimeConnected ? '#dcfce7' : '#fee2e2',
+              borderRadius: '20px',
+              border: `1px solid ${realtimeConnected ? '#16a34a' : '#dc2626'}`
+            }}>
+              {realtimeConnected ? (
+                <Wifi style={{ width: '14px', height: '14px', color: '#16a34a' }} />
+              ) : (
+                <WifiOff style={{ width: '14px', height: '14px', color: '#dc2626' }} />
+              )}
+              <span style={{ 
+                fontSize: '0.75rem', 
+                fontWeight: '500',
+                color: realtimeConnected ? '#16a34a' : '#dc2626' 
+              }}>
+                {realtimeConnected ? 'Live' : 'Offline'}
+              </span>
             </div>
           </div>
         </div>
@@ -364,27 +526,59 @@ const GroupAnalysis = () => {
             marginTop: '1.5rem'
           }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <h3 style={{ fontWeight: '500', textAlign: 'center', margin: 0 }}>Analysis in Progress</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {[
-                  "Checking members against scammer databases...",
-                  "Analyzing language patterns for manipulation...",
-                  "Verifying asset information...",
-                  "Detecting price manipulation signals...",
-                  "Generating risk assessment report..."
-                ].map((step, index) => (
-                  <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{
-                      width: '8px',
-                      height: '8px',
-                      backgroundColor: '#3b82f6',
-                      borderRadius: '50%',
-                      animation: 'pulse 2s infinite'
-                    }} />
-                    <span style={{ fontSize: '0.875rem', color: '#64748b' }}>{step}</span>
-                  </div>
-                ))}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <h3 style={{ fontWeight: '500', margin: 0 }}>Analysis in Progress</h3>
+                <div style={{
+                  padding: '2px 8px',
+                  backgroundColor: realtimeConnected ? '#dcfce7' : '#f3f4f6',
+                  borderRadius: '12px',
+                  fontSize: '0.75rem',
+                  color: realtimeConnected ? '#16a34a' : '#6b7280'
+                }}>
+                  {realtimeConnected ? 'Live Updates' : 'Standard Mode'}
+                </div>
               </div>
+              
+              {/* Progress Bar */}
+              <div style={{ 
+                width: '100%', 
+                height: '8px', 
+                backgroundColor: '#f3f4f6', 
+                borderRadius: '4px',
+                overflow: 'hidden'
+              }}>
+                <div style={{
+                  width: `${analysisProgress}%`,
+                  height: '100%',
+                  backgroundColor: analysisProgress === 100 ? '#16a34a' : '#3b82f6',
+                  borderRadius: '4px',
+                  transition: 'width 0.3s ease, background-color 0.3s ease'
+                }} />
+              </div>
+              
+              {/* Progress Text */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.875rem', color: '#64748b' }}>
+                  {currentStep || "Preparing analysis..."}
+                </span>
+                <span style={{ fontSize: '0.875rem', fontWeight: '500', color: '#374151' }}>
+                  {Math.round(analysisProgress)}%
+                </span>
+              </div>
+              
+              {/* Analysis ID */}
+              {analysisId && (
+                <div style={{ 
+                  padding: '8px', 
+                  backgroundColor: '#f9fafb', 
+                  borderRadius: '4px', 
+                  fontSize: '0.75rem', 
+                  color: '#6b7280',
+                  fontFamily: 'monospace'
+                }}>
+                  Analysis ID: {analysisId}
+                </div>
+              )}
             </div>
           </div>
         )}

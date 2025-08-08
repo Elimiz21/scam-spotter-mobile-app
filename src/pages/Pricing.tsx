@@ -5,6 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { ScamDunkBadge } from "@/components/ScamDunkBadge";
+import { logger } from '@/lib/logger';
 
 const Pricing = () => {
   const { user } = useAuth();
@@ -34,7 +35,7 @@ const Pricing = () => {
         window.open(data.approveUrl, "_blank");
       }
     } catch (error) {
-      console.error("Payment error:", error);
+      logger.error("Payment error:", { error, userId: user.id });
       toast({
         title: "Payment Error", 
         description: "Failed to create payment. Please try again.",
@@ -46,10 +47,10 @@ const Pricing = () => {
   };
 
   const handleSubscription = async (planType: "premium" | "pro") => {
-    console.log("handleSubscription called with planType:", planType);
+    logger.debug("handleSubscription called with planType:", { planType });
     
     if (!user) {
-      console.log("No user found, redirecting to auth");
+      logger.info("No user found, redirecting to auth");
       toast({
         title: "Authentication Required",
         description: "Please log in to subscribe.",
@@ -59,38 +60,38 @@ const Pricing = () => {
       return;
     }
 
-    console.log("User found, proceeding with subscription:", user.id);
+    logger.info("User found, proceeding with subscription:", { userId: user.id, planType });
     setLoading(true);
     
     try {
-      console.log("Calling create-paypal-subscription edge function...");
+      logger.debug("Calling create-paypal-subscription edge function...", { planType });
       const { data, error } = await supabase.functions.invoke("create-paypal-subscription", {
         body: { plan_type: planType },
       });
 
-      console.log("Edge function response:", { data, error });
+      logger.debug("Edge function response:", { hasData: !!data, hasError: !!error, planType });
 
       if (error) {
-        console.error("Edge function error:", error);
+        logger.error("Edge function error:", { error, planType });
         throw error;
       }
 
       if (data && data.approveUrl) {
-        console.log("Opening PayPal approval URL:", data.approveUrl);
+        logger.info("Opening PayPal approval URL:", { approveUrl: data.approveUrl, planType });
         window.open(data.approveUrl, "_blank");
       } else {
-        console.error("No approval URL received:", data);
+        logger.error("No approval URL received:", { data, planType });
         throw new Error("No approval URL received from PayPal");
       }
     } catch (error) {
-      console.error("Subscription error:", error);
+      logger.error("Subscription error:", { error, planType, userId: user.id });
       toast({
         title: "Subscription Error",
         description: "Failed to create subscription. Please try again.",
         variant: "destructive",
       });
     } finally {
-      console.log("Setting loading to false");
+      logger.debug("Setting loading to false", { planType });
       setLoading(false);
     }
   };

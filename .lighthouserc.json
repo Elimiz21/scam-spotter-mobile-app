@@ -1,0 +1,34 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "https://www.scamshiel.com/",
+        "https://www.scamshiel.com/dashboard",
+        "https://www.scamshiel.com/scan",
+        "https://www.scamshiel.com/pricing"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "chromeFlags": "--no-sandbox --headless",
+        "preset": "desktop",
+        "onlyCategories": ["performance", "accessibility", "best-practices", "seo"],
+        "skipAudits": ["uses-http2"]
+      }
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["warn", {"minScore": 0.8}],
+        "categories:accessibility": ["error", {"minScore": 0.95}],
+        "categories:best-practices": ["warn", {"minScore": 0.9}],
+        "categories:seo": ["error", {"minScore": 0.95}],
+        "first-contentful-paint": ["warn", {"maxNumericValue": 2000}],
+        "largest-contentful-paint": ["warn", {"maxNumericValue": 2500}],
+        "cumulative-layout-shift": ["error", {"maxNumericValue": 0.1}],
+        "first-input-delay": ["warn", {"maxNumericValue": 100}]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

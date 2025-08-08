@@ -1,5 +1,130 @@
 {
+  "version": 2,
+  "name": "scamshield-production",
+  "alias": ["scamshiel.com", "www.scamshiel.com"],
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://www.scamshiel.com",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.scamshiel.com https://secure.gravatar.com; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://api.scamshiel.com https://analytics.scamshiel.com wss://ws.scamshiel.com; media-src 'self'; object-src 'none'; child-src 'none'; worker-src 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests; block-all-mixed-content"
+      }
+    },
+    {
+      "src": "/sitemap.xml",
+      "dest": "/api/sitemap",
+      "headers": {
+        "Content-Type": "application/xml",
+        "Cache-Control": "public, max-age=86400"
+      }
+    },
+    {
+      "src": "/robots.txt",
+      "dest": "/api/robots",
+      "headers": {
+        "Content-Type": "text/plain",
+        "Cache-Control": "public, max-age=86400"
+      }
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|webp|svg|woff|woff2|ttf|eot|ico))",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "X-Content-Type-Options": "nosniff"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "X-XSS-Protection": "1; mode=block",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "REACT_APP_ENV": "production",
+    "REACT_APP_VERSION": "1.0.0",
+    "REACT_APP_BUILD_DATE": "@vercel-build-date"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production"
+    }
+  },
+  "functions": {
+    "app/api/**": {
+      "runtime": "nodejs18.x",
+      "regions": ["iad1", "sfo1"],
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  },
+  "redirects": [
+    {
+      "source": "/scam-dunk",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/scam-dunk/(.*)",
+      "destination": "/$1",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://www.scamshiel.com/$1",
+      "permanent": true,
+      "has": [
+        {
+          "type": "host",
+          "value": "scamshiel.com"
+        }
+      ]
+    }
+  ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/health",
+      "destination": "/api/health"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "index, follow"
+        },
+        {
+          "key": "X-Powered-By",
+          "value": "ScamShield Security Platform"
+        }
+      ]
+    }
   ]
 }

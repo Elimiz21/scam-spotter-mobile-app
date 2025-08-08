@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { monitoring } from '@/lib/monitoring';
+import { logger } from '@/lib/logger';
 
 interface Props {
   children: ReactNode;
@@ -37,7 +38,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error to monitoring service
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    logger.error('ErrorBoundary caught an error:', { error, errorInfo });
     
     // Send error to comprehensive monitoring system
     monitoring.reportError(error, errorInfo);
@@ -73,7 +74,7 @@ class ErrorBoundary extends Component<Props, State> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(errorData),
-    }).catch(console.error);
+    }).catch((err) => logger.error('Failed to send error to monitoring endpoint:', { error: err }));
   };
 
   handleReset = () => {

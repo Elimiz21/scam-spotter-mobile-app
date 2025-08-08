@@ -5,6 +5,7 @@ import LegalDisclaimer from "../components/LegalDisclaimer";
 import { AnalysisResult, RiskVector } from '../services/types';
 import storageManager from '../lib/storage';
 import { exportService, ExportOptions } from '../lib/exportService';
+import { logger } from '@/lib/logger';
 
 const ResultsDashboard = () => {
   const [selectedVector, setSelectedVector] = useState<RiskVector | null>(null);
@@ -25,14 +26,14 @@ const ResultsDashboard = () => {
             const singleCheckAnalysis = createSingleCheckAnalysis(singleCheckData);
             setAnalysisData(singleCheckAnalysis);
           } catch (error) {
-            console.error('Failed to parse single check data:', error);
+            logger.error('Failed to parse single check data:', { error });
             setAnalysisData(getMockAnalysisData());
           }
         } else if (groupAnalysisData) {
           try {
             setAnalysisData(groupAnalysisData);
           } catch (error) {
-            console.error('Failed to parse analysis data:', error);
+            logger.error('Failed to parse analysis data:', { error });
             setAnalysisData(getMockAnalysisData());
           }
         } else {
@@ -45,7 +46,7 @@ const ResultsDashboard = () => {
           }
         }
       } catch (error) {
-        console.error('Failed to load analysis data:', error);
+        logger.error('Failed to load analysis data:', { error });
         setAnalysisData(getMockAnalysisData());
       }
     };
@@ -240,7 +241,7 @@ const ResultsDashboard = () => {
       
       await exportService.exportAnalysisResults(analysisData, exportOptions);
     } catch (error) {
-      console.error('Export failed:', error);
+      logger.error('Export failed:', { error, format });
       // You might want to add a toast notification here
       alert('Export failed. Please try again.');
     } finally {
