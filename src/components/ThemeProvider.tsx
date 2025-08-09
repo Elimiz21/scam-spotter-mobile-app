@@ -31,19 +31,28 @@ export function ThemeProvider({
   children, 
   defaultTheme = 'auto' 
 }: ThemeProviderProps) {
-  const { currentTheme, themeMode, setThemeMode, initialize, applyTheme } = useThemeStore();
+  const store = useThemeStore();
+  const currentTheme = store?.currentTheme;
+  const themeMode = store?.themeMode;
+  const setThemeMode = store?.setThemeMode;
+  const initialize = store?.initialize;
+  const applyTheme = store?.applyTheme;
 
   useEffect(() => {
     // Initialize theme system when component mounts
-    initialize();
+    if (initialize) {
+      initialize();
+    }
     
     // Then set the default theme mode
-    setThemeMode(defaultTheme);
+    if (setThemeMode) {
+      setThemeMode(defaultTheme);
+    }
 
     // Listen for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => {
-      if (themeMode === 'auto') {
+      if (themeMode === 'auto' && setThemeMode) {
         setThemeMode('auto');
       }
     };
@@ -74,7 +83,11 @@ export function ThemeSwitcher({
   variant?: 'ghost' | 'outline' | 'default';
   size?: 'icon' | 'sm' | 'default';
 }) {
-  const { currentTheme, themeMode, setThemeMode, toggleTheme } = useThemeStore();
+  const store = useThemeStore();
+  const currentTheme = store?.currentTheme;
+  const themeMode = store?.themeMode;  
+  const setThemeMode = store?.setThemeMode;
+  const toggleTheme = store?.toggleTheme;
 
   const themes = [
     { 

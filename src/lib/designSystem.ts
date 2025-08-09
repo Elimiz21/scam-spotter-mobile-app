@@ -430,9 +430,7 @@ interface ThemeStore {
   initialize: () => void;
 }
 
-export const useThemeStore = create<ThemeStore>()(
-  persist(
-    (set, get) => ({
+export const useThemeStore = create<ThemeStore>((set, get) => ({
       currentTheme: lightTheme,
       themeMode: 'auto',
       customThemes: [],
@@ -484,7 +482,8 @@ export const useThemeStore = create<ThemeStore>()(
         if (!root) return;
         
         // Apply colors
-        Object.entries(theme.colors).forEach(([key, value]) => {
+        if (theme.colors) {
+          Object.entries(theme.colors).forEach(([key, value]) => {
           if (typeof value === 'object') {
             Object.entries(value).forEach(([subKey, subValue]) => {
               root.style.setProperty(`--color-${key}-${subKey}`, subValue);
@@ -493,30 +492,41 @@ export const useThemeStore = create<ThemeStore>()(
             root.style.setProperty(`--color-${key}`, value);
           }
         });
+        }
         
         // Apply spacing
-        Object.entries(theme.spacing).forEach(([key, value]) => {
+        if (theme.spacing) {
+          Object.entries(theme.spacing).forEach(([key, value]) => {
           root.style.setProperty(`--spacing-${key}`, value);
         });
+        }
         
         // Apply typography
-        Object.entries(theme.typography.fonts).forEach(([key, value]) => {
+        if (theme.typography?.fonts) {
+          Object.entries(theme.typography.fonts).forEach(([key, value]) => {
           root.style.setProperty(`--font-${key}`, value);
         });
+        }
         
-        Object.entries(theme.typography.sizes).forEach(([key, value]) => {
+        if (theme.typography?.sizes) {
+          Object.entries(theme.typography.sizes).forEach(([key, value]) => {
           root.style.setProperty(`--text-${key}`, value);
         });
+        }
         
         // Apply borders
-        Object.entries(theme.borderRadius).forEach(([key, value]) => {
+        if (theme.borderRadius) {
+          Object.entries(theme.borderRadius).forEach(([key, value]) => {
           root.style.setProperty(`--radius-${key}`, value);
         });
+        }
         
         // Apply shadows
-        Object.entries(theme.shadows).forEach(([key, value]) => {
+        if (theme.shadows) {
+          Object.entries(theme.shadows).forEach(([key, value]) => {
           root.style.setProperty(`--shadow-${key}`, value);
         });
+        }
         
         // Apply theme class
         if (root && root.classList && theme.mode) {
@@ -543,16 +553,7 @@ export const useThemeStore = create<ThemeStore>()(
         // Set initial theme mode
         state.setThemeMode(state.themeMode);
       },
-    }),
-    {
-      name: 'theme-storage',
-      partialize: (state) => ({
-        themeMode: state.themeMode,
-        customThemes: state.customThemes,
-      }),
-    }
-  )
-);
+}));
 
 // Utility functions
 export const getContrastColor = (backgroundColor: string): string => {

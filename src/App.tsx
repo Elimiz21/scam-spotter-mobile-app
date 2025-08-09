@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { SimpleThemeProvider } from "./components/SimpleThemeProvider";
+import { ThemeProvider } from "./components/ThemeProvider";
 import { AuthProvider } from "./hooks/useAuth";
 import SEOHead from "./components/SEOHead";
 
@@ -34,7 +34,7 @@ const queryClient = new QueryClient({
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <SimpleThemeProvider>
+      <ThemeProvider>
         <AuthProvider>
           <SEOHead
             title="ScamShield - Advanced Scam Detection & Protection"
@@ -60,7 +60,7 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </AuthProvider>
-      </SimpleThemeProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );
