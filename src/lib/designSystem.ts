@@ -475,7 +475,7 @@ export const useThemeStore = create<ThemeStore>()(
       
       applyTheme: (theme) => {
         // Only apply theme if we're in a browser environment
-        if (typeof window === 'undefined' || typeof document === 'undefined') {
+        if (typeof window === 'undefined' || typeof document === 'undefined' || !theme) {
           return;
         }
         
@@ -519,7 +519,7 @@ export const useThemeStore = create<ThemeStore>()(
         });
         
         // Apply theme class
-        if (root.classList) {
+        if (root && root.classList) {
           root.classList.remove('light', 'dark');
           root.classList.add(theme.mode);
         }
@@ -527,7 +527,7 @@ export const useThemeStore = create<ThemeStore>()(
       
       toggleTheme: () => {
         const current = get().currentTheme;
-        const newTheme = current.mode === 'light' ? darkTheme : lightTheme;
+        const newTheme = current?.mode === 'light' ? darkTheme : lightTheme;
         get().setTheme(newTheme);
       },
       

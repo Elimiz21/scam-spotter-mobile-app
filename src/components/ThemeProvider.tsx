@@ -184,7 +184,7 @@ export function AnimatedThemeToggle({
   className?: string 
 }) {
   const { currentTheme, toggleTheme } = useThemeStore();
-  const isDark = currentTheme.mode === 'dark';
+  const isDark = currentTheme?.mode === 'dark';
 
   return (
     <motion.button
