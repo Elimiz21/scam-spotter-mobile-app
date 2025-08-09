@@ -21,9 +21,11 @@ export interface SitemapConfig {
 
 export class SitemapGenerator {
   private config: SitemapConfig;
-  private urls: Map<string, SitemapUrl> = new Map();
+  private urls: Map<string, SitemapUrl>;
 
   constructor(config: SitemapConfig) {
+    // Initialize Map in constructor to avoid module-level execution
+    this.urls = new Map();
     this.config = config;
     this.initializeDefaultUrls();
   }

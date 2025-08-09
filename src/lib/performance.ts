@@ -107,10 +107,12 @@ export class PerformanceMonitor {
     navigationStart: null
   };
   private sessionId: string;
-  private observers: Map<string, PerformanceObserver> = new Map();
+  private observers: Map<string, PerformanceObserver>;
   private isReportingSent = false;
 
   constructor(config: Partial<PerformanceConfig> = {}) {
+    // Initialize Map in constructor to avoid module-level execution
+    this.observers = new Map();
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.sessionId = this.generateSessionId();
     

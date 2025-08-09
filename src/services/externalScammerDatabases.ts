@@ -81,8 +81,13 @@ const EXTERNAL_SOURCES: ExternalScammerSource[] = [
 ];
 
 class ExternalScammerDatabaseService {
-  private cache: Map<string, { result: ScammerMatch[]; timestamp: number }> = new Map();
+  private cache: Map<string, { result: ScammerMatch[]; timestamp: number }>;
   private cacheTimeout = 60 * 60 * 1000; // 1 hour cache
+
+  constructor() {
+    // Initialize Map in constructor to avoid module-level execution
+    this.cache = new Map();
+  }
 
   async checkMultipleSources(
     identifiers: string[],

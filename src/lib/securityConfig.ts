@@ -90,11 +90,14 @@ export interface SecurityConfigValidation {
 
 // Security Configuration Manager
 export class SecurityConfigManager {
-  private testSuites: Map<string, SecurityTestSuite> = new Map();
-  private testResults: Map<string, SecurityTestResult[]> = new Map();
+  private testSuites: Map<string, SecurityTestSuite>;
+  private testResults: Map<string, SecurityTestResult[]>;
   private isRunningTests = false;
 
   constructor() {
+    // Initialize Maps in constructor to avoid module-level execution
+    this.testSuites = new Map();
+    this.testResults = new Map();
     this.initializeDefaultTestSuites();
   }
 

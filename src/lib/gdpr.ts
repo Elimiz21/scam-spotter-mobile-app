@@ -132,13 +132,17 @@ export type BreachType =
 
 // GDPR Compliance Manager
 export class GDPRManager {
-  private personalDataStore: Map<string, PersonalData[]> = new Map();
-  private consentRecords: Map<string, ConsentRecord[]> = new Map();
+  private personalDataStore: Map<string, PersonalData[]>;
+  private consentRecords: Map<string, ConsentRecord[]>;
   private dataSubjectRequests: DataSubjectRight[] = [];
   private breachIncidents: DataBreachIncident[] = [];
-  private retentionPolicies: Map<DataType, number> = new Map();
+  private retentionPolicies: Map<DataType, number>;
 
   constructor() {
+    // Initialize Maps in constructor to avoid module-level execution
+    this.personalDataStore = new Map();
+    this.consentRecords = new Map();
+    this.retentionPolicies = new Map();
     this.initializeRetentionPolicies();
     this.startRetentionScheduler();
     this.setupBreachMonitoring();

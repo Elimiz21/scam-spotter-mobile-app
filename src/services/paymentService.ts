@@ -105,9 +105,11 @@ export interface UsageRecord {
 class PaymentService {
   private paypalClient: any = null;
   private stripeClient: any = null;
-  private plans: Map<string, PricingPlan> = new Map();
+  private plans: Map<string, PricingPlan>;
 
   constructor() {
+    // Initialize Map in constructor to avoid module-level execution
+    this.plans = new Map();
     this.initializePlans();
   }
 

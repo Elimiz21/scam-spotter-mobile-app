@@ -282,10 +282,11 @@ export class CSPManager {
 
 // Rate Limiting Manager
 export class RateLimiter {
-  private requests: Map<string, number[]> = new Map();
+  private requests: Map<string, number[]>;
   private config: SecurityConfig['rateLimit'];
 
   constructor(config: SecurityConfig['rateLimit']) {
+    this.requests = new Map();
     this.config = config;
     this.startCleanupInterval();
   }

@@ -28,8 +28,13 @@ export interface UsageLimits {
 }
 
 class RateLimitService {
-  private cache: Map<string, { result: RateLimitResult; timestamp: number }> = new Map();
+  private cache: Map<string, { result: RateLimitResult; timestamp: number }>;
   private cacheTimeout = 60000; // 1 minute cache
+
+  constructor() {
+    // Initialize Map in constructor to avoid module-level execution
+    this.cache = new Map();
+  }
 
   async checkRateLimit(endpoint: string, consumeRequest: boolean = true): Promise<RateLimitResult> {
     const cacheKey = `${endpoint}-${consumeRequest}`;
