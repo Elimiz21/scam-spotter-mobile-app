@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { monitoring } from '@/lib/monitoring';
 import { logger } from '@/lib/logger';
+import { isDevelopment } from '@/lib/env';
 
 interface Props {
   children: ReactNode;
@@ -49,7 +50,7 @@ class ErrorBoundary extends Component<Props, State> {
     });
 
     // Legacy logging (still useful for external services)
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && !isDevelopment()) {
       this.logErrorToService(error, errorInfo);
     }
 
@@ -100,7 +101,7 @@ class ErrorBoundary extends Component<Props, State> {
         return <>{this.props.fallback}</>;
       }
 
-      const isDevelopment = process.env.NODE_ENV === 'development';
+      const showDetails = isDevelopment();
 
       return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
