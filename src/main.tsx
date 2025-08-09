@@ -1,9 +1,16 @@
-mport { createRoot } from 'react-dom/client'
+import { createRoot } from 'react-dom/client';
+import App from './App.tsx';
+import './index.css';
+import ErrorBoundary from './components/ErrorBoundary';
+import AppMinimal from './AppMinimal';
 
-import App from './App.tsx'
-import './index.css'
+const root = document.getElementById('root');
 
-const root = document.getElementById("root");
 if (root) {
-  createRoot(root).render(<App />);
+  // Render the full app, but if it crashes, show the minimal app instead
+  createRoot(root).render(
+    <ErrorBoundary fallback={<AppMinimal />}>
+      <App />
+    </ErrorBoundary>
+  );
 }
