@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test React</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="module">
+        console.log('Script loaded');
+        const root = document.getElementById('root');
+        if (root) {
+            root.innerHTML = '<h1>Testing - JS is working</h1>';
+            console.log('Root element found and updated');
+        } else {
+            console.error('Root element not found');
+        }
+    </script>
+</body>
+</html>
