@@ -173,14 +173,30 @@ class MonitoringService {
     if (typeof window !== 'undefined' && 'performance' in window) {
       window.addEventListener('load', () => {
         setTimeout(() => {
-          const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-          
-          this.info('Page load performance', {
-            loadTime: perfData.loadEventEnd - perfData.fetchStart,
-            domContentLoaded: perfData.domContentLoadedEventEnd - perfData.fetchStart,
-            firstPaint: this.getFirstPaint(),
-            memoryUsage: this.getMemoryUsage(),
-          });
+          try {
+            // Check if getEntriesByType is available
+            if (typeof performance.getEntriesByType !== 'function') {
+              this.debug('Performance.getEntriesByType not available');
+              return;
+            }
+            
+            const entries = performance.getEntriesByType('navigation');
+            if (!entries || entries.length === 0) {
+              this.debug('No navigation performance entries available');
+              return;
+            }
+            
+            const perfData = entries[0] as PerformanceNavigationTiming;
+            
+            this.info('Page load performance', {
+              loadTime: perfData.loadEventEnd - perfData.fetchStart,
+              domContentLoaded: perfData.domContentLoadedEventEnd - perfData.fetchStart,
+              firstPaint: this.getFirstPaint(),
+              memoryUsage: this.getMemoryUsage(),
+            });
+          } catch (error) {
+            this.debug('Could not collect performance metrics', { error: String(error) });
+          }
         }, 0);
       });
 
@@ -207,10 +223,14 @@ class MonitoringService {
   }
 
   private getFirstPaint(): number | undefined {
-    if (typeof window !== 'undefined' && 'performance' in window) {
-      const paintEntries = performance.getEntriesByType('paint');
-      const firstPaint = paintEntries.find(entry => entry.name === 'first-paint');
-      return firstPaint?.startTime;
+    try {
+      if (typeof window !== 'undefined' && 'performance' in window && typeof performance.getEntriesByType === 'function') {
+        const paintEntries = performance.getEntriesByType('paint');
+        const firstPaint = paintEntries.find(entry => entry.name === 'first-paint');
+        return firstPaint?.startTime;
+      }
+    } catch (error) {
+      // Silently fail if not supported
     }
     return undefined;
   }
