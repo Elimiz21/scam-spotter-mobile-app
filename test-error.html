@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Error</title>
+</head>
+<body>
+    <div id="test">Testing...</div>
+    <script>
+        console.log('Test page loaded');
+        
+        // Test if Map and Set work
+        try {
+            const testMap = new Map();
+            testMap.set('test', 'value');
+            console.log('✅ Map works');
+        } catch (e) {
+            console.error('❌ Map failed:', e);
+        }
+        
+        try {
+            const testSet = new Set();
+            testSet.add('test');
+            console.log('✅ Set works');
+        } catch (e) {
+            console.error('❌ Set failed:', e);
+        }
+        
+        // Test undefined.add()
+        try {
+            const x = undefined;
+            x.add('test');
+        } catch (e) {
+            console.log('✅ Caught expected undefined.add() error:', e.message);
+        }
+        
+        // Show results on page
+        document.getElementById('test').innerHTML = 'Check console for results';
+    </script>
+</body>
+</html>

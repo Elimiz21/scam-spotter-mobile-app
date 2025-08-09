@@ -10,8 +10,12 @@ console.log('%c🎯 Main.tsx starting...', 'color: purple; font-weight: bold');
 const root = document.getElementById('root');
 if (root) {
   console.log('%c🎯 Rendering App...', 'color: purple; font-weight: bold');
-  createRoot(root).render(<App />);
-  console.log('%c✅ App rendered successfully', 'color: green; font-weight: bold');
+  try {
+    createRoot(root).render(<App />);
+    console.log('%c✅ App rendered successfully', 'color: green; font-weight: bold');
+  } catch (error) {
+    console.error('❌ Failed to render App:', error);
+  }
 } else {
   console.error('Root element not found');
 }

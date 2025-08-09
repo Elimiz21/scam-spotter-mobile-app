@@ -1,7 +1,7 @@
 // Advanced Threat Intelligence System
 import { logger } from '@/lib/logger';
 import { apiClient } from '@/lib/apiClient';
-import { cache } from '@/lib/cache';
+import { localCache as cache } from '@/lib/cache';
 
 // Threat Intelligence Interfaces
 export interface ThreatIndicator {

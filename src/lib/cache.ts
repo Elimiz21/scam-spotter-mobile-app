@@ -58,13 +58,15 @@ export abstract class CacheProvider {
 
 // Memory cache implementation
 export class MemoryCache extends CacheProvider {
-  private cache = new Map<string, CacheEntry>();
+  private cache: Map<string, CacheEntry>;
   private maxEntries: number;
   private maxSize: number;
   private currentSize = 0;
 
   constructor(options: CacheOptions = {}) {
     super();
+    // Initialize Map in constructor to avoid module-level execution
+    this.cache = new Map<string, CacheEntry>();
     this.maxEntries = options.maxEntries || 1000;
     this.maxSize = options.maxSize || 50 * 1024 * 1024; // 50MB default
   }
@@ -577,10 +579,75 @@ export class CacheFactory {
 
 // Global cache instances
 export const memoryCache = new MemoryCache();
-export const sessionCache = new StorageCache({ storage: CacheStorage.SESSION });
-export const localCache = new StorageCache({ storage: CacheStorage.LOCAL });
-export const indexedDBCache = new IndexedDBCache();
-export const multiTierCache = CacheFactory.createMultiTier();
+// Lazy initialization to avoid module-level execution
+let _sessionCache: StorageCache | null = null;
+let _localCache: StorageCache | null = null;
+let _indexedDBCache: IndexedDBCache | null = null;
+let _multiTierCache: MultiTierCache | null = null;
+
+// Use getters for lazy initialization
+export const getSessionCache = (): StorageCache => {
+  if (!_sessionCache) {
+    _sessionCache = new StorageCache({ storage: CacheStorage.SESSION });
+  }
+  return _sessionCache;
+};
+
+export const getLocalCache = (): StorageCache => {
+  if (!_localCache) {
+    _localCache = new StorageCache({ storage: CacheStorage.LOCAL });
+  }
+  return _localCache;
+};
+
+export const getIndexedDBCache = (): IndexedDBCache => {
+  if (!_indexedDBCache) {
+    _indexedDBCache = new IndexedDBCache();
+  }
+  return _indexedDBCache;
+};
+
+export const getMultiTierCache = (): MultiTierCache => {
+  if (!_multiTierCache) {
+    _multiTierCache = CacheFactory.createMultiTier();
+  }
+  return _multiTierCache;
+};
+
+// Export proxy objects that lazy-initialize on first use
+class LazyCache {
+  private cache: any = null;
+  private factory: () => any;
+  
+  constructor(factory: () => any) {
+    this.factory = factory;
+  }
+  
+  private getCache() {
+    if (!this.cache) {
+      this.cache = this.factory();
+    }
+    return this.cache;
+  }
+  
+  // Proxy all method calls to the lazy-loaded cache
+  async get(key: string) { return this.getCache().get(key); }
+  async set(key: string, value: any, ttl?: number, metadata?: any) { 
+    return this.getCache().set(key, value, ttl, metadata); 
+  }
+  async delete(key: string) { return this.getCache().delete(key); }
+  async clear() { return this.getCache().clear(); }
+  async keys() { return this.getCache().keys(); }
+  async has(key: string) { return this.getCache().has(key); }
+  async size() { return this.getCache().size(); }
+  async cleanup() { return this.getCache().cleanup(); }
+}
+
+// Export lazy proxies that will only create instances when used
+export const sessionCache = new LazyCache(() => new StorageCache({ storage: CacheStorage.SESSION }));
+export const localCache = new LazyCache(() => new StorageCache({ storage: CacheStorage.LOCAL }));
+export const indexedDBCache = new LazyCache(() => new IndexedDBCache());
+export const multiTierCache = new LazyCache(() => CacheFactory.createMultiTier());
 
 // Cache decorator for methods
 export function Cacheable(options: {

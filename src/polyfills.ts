@@ -3,8 +3,8 @@
 
 console.log('%c⚡ Polyfills loading...', 'color: blue; font-weight: bold');
 
-// Import debug error handler first
-import './debug-error';
+// Import error catcher first
+import './error-catcher';
 
 // Check if Map and Set are available
 if (typeof Map === 'undefined') {
