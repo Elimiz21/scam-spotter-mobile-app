@@ -1,43 +1,38 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react-swc";
-import path from "path";
-import { componentTagger } from "lovable-tagger";
+import { defineConfig, loadEnv } from 'vite'
+import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  base: "/",
-  define: {
-    'process.env.NODE_ENV': JSON.stringify(mode),
-    'process.env': {}
-  },
-  build: {
-    outDir: "dist",
-    assetsDir: "assets",
-    sourcemap: false,
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-      },
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-toast'],
+export default defineConfig(({ mode }) => {
+  // Load env so Vite injects VITE_* into import.meta.env
+  loadEnv(mode, process.cwd(), '')
+
+  return {
+    plugins: [react()],
+    define: {
+      // Prevent third-party libs from crashing when touching process.env in the browser
+      'process.env': {},
+      'process.env.NODE_ENV': JSON.stringify(mode),
+    },
+    server: {
+      port: 5173,
+      strictPort: false,
+      host: true,
+    },
+    preview: {
+      port: 4173,
+      strictPort: false,
+      host: true,
+    },
+    build: {
+      outDir: 'dist',
+      sourcemap: true,
+      target: 'es2020',
+    },
+    optimizeDeps: {
+      esbuildOptions: {
+        define: {
+          'process.env.NODE_ENV': JSON.stringify(mode),
         },
       },
     },
-  },
-  server: {
-    host: "::",
-    port: 8080,
-  },
-  plugins: [
-    react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-}));
+  }
+})
