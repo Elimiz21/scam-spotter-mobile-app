@@ -124,7 +124,7 @@ class ErrorBoundary extends Component<Props, State> {
                 </AlertDescription>
               </Alert>
 
-      this.state.error && (
+              {this.state.error && (
                 <div className="space-y-2">
                   <details className="cursor-pointer">
                     <summary className="font-medium text-sm">Stack Trace (Development Only)</summary>
@@ -144,10 +144,8 @@ class ErrorBoundary extends Component<Props, State> {
                 </div>
               )}
 
-     
               {this.state.errorCount > 2 && (
-       
-          <Alert variant="destructive">
+                <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>Multiple Errors Detected</AlertTitle>
                   <AlertDescription>
