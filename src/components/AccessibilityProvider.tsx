@@ -411,7 +411,7 @@ export function HighContrastToggle() {
   const { announcePolite } = useAccessibility();
 
   useEffect(() => {
-    if (typeof document !== 'undefined' && document.documentElement) {
+    if (typeof document !== 'undefined' && document.documentElement && document.documentElement.classList) {
       if (isHighContrast) {
         document.documentElement.classList.add('high-contrast');
       } else {

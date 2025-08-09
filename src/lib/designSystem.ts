@@ -519,7 +519,7 @@ export const useThemeStore = create<ThemeStore>()(
         });
         
         // Apply theme class
-        if (root && root.classList) {
+        if (root && root.classList && theme.mode) {
           root.classList.remove('light', 'dark');
           root.classList.add(theme.mode);
         }
