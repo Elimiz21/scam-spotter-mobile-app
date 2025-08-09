@@ -148,7 +148,7 @@ const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
     referrerPolicy: 'strict-origin-when-cross-origin'
   },
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
+    origin: import.meta?.env?.MODE === 'production' 
       ? ['https://www.scamshiel.com', 'https://api.scamshiel.com']
       : true,
     credentials: true,

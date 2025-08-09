@@ -902,8 +902,8 @@ export class AuditLogger {
 
 // Create singleton instance
 export const auditLogger = new AuditLogger(
-  process.env.NODE_ENV || 'development',
-  process.env.REACT_APP_VERSION || '1.0.0'
+  import.meta?.env?.MODE || 'development',
+  import.meta?.env?.VITE_APP_VERSION || '1.0.0'
 );
 
 export default auditLogger;

@@ -63,7 +63,14 @@ class MonitoringService {
   }
 
   private setLogLevel(): void {
-    const envLevel = process.env.NODE_ENV === 'development' ? 'DEBUG' : 'INFO';
+    // Use import.meta.env for Vite
+    let isDev = false;
+    try {
+      isDev = import.meta?.env?.MODE === 'development';
+    } catch {
+      isDev = false;
+    }
+    const envLevel = isDev ? 'DEBUG' : 'INFO';
     this.logLevel = envLevel as keyof LogLevel;
   }
 
@@ -303,7 +310,7 @@ class MonitoringService {
       // In a real application, you would send to your logging service
       // For now, we'll send to a Supabase edge function
       
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta?.env?.MODE === 'development') {
         console.group('📊 Monitoring Logs');
         logs.forEach(log => {
           console.log(`[${log.level}] ${log.message}`, log);
@@ -346,7 +353,7 @@ class MonitoringService {
 
   private async sendAnalyticsEvent(event: AnalyticsEvent): Promise<void> {
     try {
-      if (process.env.NODE_ENV === 'development') {
+      if (import.meta?.env?.MODE === 'development') {
         console.log('📈 Analytics Event:', event);
         return;
       }

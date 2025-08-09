@@ -55,7 +55,7 @@ export const sanitizeUrl = (url: string): string | null => {
     }
     
     // Prevent localhost and private IPs in production
-    if (process.env.NODE_ENV === 'production') {
+    if (import.meta?.env?.MODE === 'production') {
       const hostname = parsed.hostname.toLowerCase();
       if (
         hostname === 'localhost' ||
