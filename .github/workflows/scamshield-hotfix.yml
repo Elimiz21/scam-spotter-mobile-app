@@ -1,0 +1,177 @@
+name: ScamShield Hotfix (App Not Loading)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  hotfix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect Next.js app root
+        id: detect
+        run: |
+          ROOT="."
+          if [ -d "apps/web" ]; then ROOT="apps/web"; fi
+          echo "root=$ROOT" >> $GITHUB_OUTPUT
+
+      - name: Add /api/health (App Router)
+        run: |
+          set -e
+          ROOT="${{ steps.detect.outputs.root }}"
+          API_DIR="$ROOT/app/api/health"
+          if [ -d "$ROOT/app" ]; then
+            mkdir -p "$API_DIR"
+            cat > "$API_DIR/route.ts" << 'EOF'
+export async function GET() {
+  return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
+    headers: { 'content-type': 'application/json' },
+    status: 200,
+  });
+}
+EOF
+          fi
+
+      - name: Add /api/health (Pages Router)
+        run: |
+          set -e
+          ROOT="${{ steps.detect.outputs.root }}"
+          API_DIR="$ROOT/pages/api"
+          if [ -d "$ROOT/pages" ]; then
+            mkdir -p "$API_DIR"
+            cat > "$API_DIR/health.ts" << 'EOF'
+import type { NextApiRequest, NextApiResponse } from 'next';
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  res.status(200).json({ ok: true, ts: Date.now() });
+}
+EOF
+          fi
+
+      - name: Safe middleware to prevent redirect loops
+        run: |
+          set -e
+          ROOT="${{ steps.detect.outputs.root }}"
+          cat > "$ROOT/middleware.ts" << 'EOF'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+export const config = {
+  matcher: [
+    '/((?!_next|favicon.ico|robots.txt|sitemap.xml|public|api/health|api/auth|images|fonts).*)',
+  ],
+};
+
+export default function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const isPublic =
+    pathname === '/' ||
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/public') ||
+    pathname.startsWith('/api/health');
+
+  const token = req.cookies.get('app_token')?.value;
+  if (!token && !isPublic) {
+    const url = req.nextUrl.clone();
+    url.pathname = '/login';
+    return NextResponse.redirect(url);
+  }
+
+  return NextResponse.next();
+}
+EOF
+
+      - name: Ensure next.config.js sane defaults
+        run: |
+          set -e
+          ROOT="${{ steps.detect.outputs.root }}"
+          CFG="$ROOT/next.config.js"
+          if [ ! -f "$CFG" ]; then
+            cat > "$CFG" << 'EOF'
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '**.supabase.co' },
+      { protocol: 'https', hostname: '**' },
+    ],
+  },
+};
+module.exports = nextConfig;
+EOF
+          else
+            # append safe image patterns if missing
+            if ! grep -q "supabase.co" "$CFG"; then
+              echo "// added by hotfix: allow supabase images" >> "$CFG"
+              echo "module.exports.images = module.exports.images || {};" >> "$CFG"
+              echo "module.exports.images.remotePatterns = (module.exports.images.remotePatterns || []).concat([{ protocol: 'https', hostname: '**.supabase.co' }]);" >> "$CFG"
+            fi
+          fi
+
+      - name: Add vercel.json (avoid accidental rewrites)
+        run: |
+          set -e
+          if [ ! -f "vercel.json" ]; then
+            cat > vercel.json << 'EOF'
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/$1" }
+  ],
+  "redirects": []
+}
+EOF
+          fi
+
+      - name: Create hotfix branch and commit
+        run: |
+          set -e
+          BR="hotfix/app-not-loading-$(date +%s)"
+          git checkout -b "$BR"
+          git add -A
+          git -c user.name="scamshield-bot" -c user.email="bot@example.com" commit -m "Hotfix: add health endpoint, safe middleware, next config, vercel.json"
+          git push --set-upstream origin "$BR"
+          echo "branch=$BR" >> $GITHUB_OUTPUT
+
+      - name: Open PR
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const branch = process.env.BRANCH || '${{ steps.create_hotfix_branch.outputs.branch || '' }}';
+            const { data: pr } = await github.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: "Hotfix: baseline fixes for app not loading",
+              head: branch || '${{ steps.create_hotfix_branch.outputs.branch }}',
+              base: "main",
+              body: [
+                "- Adds /api/health (pages + app router)",
+                "- Adds safe middleware to prevent redirect loops",
+                "- Ensures next.config.js sane defaults (images)",
+                "- Adds vercel.json rewrites guard",
+                "",
+                "Merging will trigger Vercel to redeploy (if repo is connected)."
+              ].join('\n')
+            });
+            core.setOutput('number', pr.number);
+      - name: Try auto-merge PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            try {
+              await github.pulls.merge({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: ${{ steps.pr.outputs.number }},
+                merge_method: "squash"
+              });
+              core.info("PR merged.");
+            } catch (e) {
+              core.warning("Auto-merge failed (branch protection?). Merge the PR manually.");
+            }
