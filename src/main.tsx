@@ -1,21 +1,28 @@
-import './polyfills';
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import RootShell from './boot/RootShell'
 
-console.log('%c🎯 Main.tsx starting...', 'color: purple; font-weight: bold');
-
-// Direct render - no double mounting
-const root = document.getElementById('root');
-if (root) {
-  console.log('%c🎯 Rendering App...', 'color: purple; font-weight: bold');
-  try {
-    createRoot(root).render(<App />);
-    console.log('%c✅ App rendered successfully', 'color: green; font-weight: bold');
-  } catch (error) {
-    console.error('❌ Failed to render App:', error);
-  }
-} else {
-  console.error('Root element not found');
+// Ensure #root exists
+let container = document.getElementById('root')
+if (!container) {
+  container = document.createElement('div')
+  container.id = 'root'
+  document.body.appendChild(container)
 }
+
+const root = ReactDOM.createRoot(container as HTMLElement)
+root.render(
+  <React.StrictMode>
+    <RootShell />
+  </React.StrictMode>
+)
+
+// Log mount in prod for sanity check
+if (import.meta.env?.MODE !== 'development') {
+  console.log('✅ App mounted')
+}
+
+// Catch any unhandled runtime errors
+window.addEventListener('error', (e) => {
+  console.error('Global error:', e.error || e.message || e)
+})
