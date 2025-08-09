@@ -10,12 +10,17 @@ const WorkingApp = () => {
   const loadFullApp = async () => {
     setLoading(true);
     try {
-      // Try loading safe version first
-      const { default: AppSafe } = await import('./App-Safe');
+      // Load the full app with fixed ThemeProvider
+      const { default: App } = await import('./App');
+      const { default: ErrorBoundary } = await import('./components/ErrorBoundary');
       
       const root = document.getElementById('root');
       if (root) {
-        createRoot(root).render(<AppSafe />);
+        createRoot(root).render(
+          <ErrorBoundary fallback={<WorkingApp />}>
+            <App />
+          </ErrorBoundary>
+        );
       }
     } catch (err) {
       setError(`Failed to load app: ${err}`);
