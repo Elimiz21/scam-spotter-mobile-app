@@ -39,6 +39,12 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    // CRITICAL: Log the ACTUAL error to console for debugging
+    console.error('%c🚨 ERROR BOUNDARY CAUGHT:', 'color: red; font-size: 20px; font-weight: bold');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Component stack:', errorInfo.componentStack);
+    
     // Log error to monitoring service
     logger.error('ErrorBoundary caught an error:', { error, errorInfo });
     

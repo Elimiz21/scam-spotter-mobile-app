@@ -3,7 +3,9 @@
 
 console.log('%c⚡ Polyfills loading...', 'color: blue; font-weight: bold');
 
-// Import error catcher first
+// Import trace error first to catch everything
+import './trace-error';
+// Import error catcher for global errors
 import './error-catcher';
 
 // Check if Map and Set are available
