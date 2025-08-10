@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => downloadPolicyAsText('privacy-policy-content', 'scam_dunk_privacy_policy.txt')}
+              onClick={() => downloadPolicyAsText('privacy-policy-content', 'scamshield_privacy_policy.txt')}
             >
               <Download className="w-4 h-4" />
               Download Text
@@ -27,7 +27,7 @@ const PrivacyPolicy = () => {
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => viewPolicyAsHTML('privacy-policy-content', 'Privacy Policy - Scam Dunk')}
+              onClick={() => viewPolicyAsHTML('privacy-policy-content', 'Privacy Policy - ScamShield')}
             >
               <FileText className="w-4 h-4" />
               View HTML Version
@@ -40,13 +40,13 @@ const PrivacyPolicy = () => {
                 <p className="text-sm text-muted-foreground mb-4">
                   <strong>Effective Date:</strong> [Insert Date]<br />
                   <strong>Website:</strong> www.scamshiel.com<br />
-                  <strong>Owner:</strong> Scam Dunk
+                  <strong>Owner:</strong> ScamShield
                 </p>
               </section>
 
               <section>
                 <h2 className="text-xl font-semibold text-foreground mb-3">1. Introduction</h2>
-                <p>Scam Dunk ("we," "our," or "us") operates the website www.scamshiel.com, which helps users detect potential pump-and-dump scams in stocks and WhatsApp groups. This Privacy Policy outlines how we collect, use, and protect your information.</p>
+                <p>ScamShield ("we," "our," or "us") operates the website www.scamshiel.com, which helps users detect potential pump-and-dump scams in stocks and WhatsApp groups. This Privacy Policy outlines how we collect, use, and protect your information.</p>
               </section>
 
               <section>

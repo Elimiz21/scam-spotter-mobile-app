@@ -10,7 +10,7 @@ const STATIC_ASSETS = [
   '/manifest.json',
   '/favicon.ico',
   '/offline.html',
-  '/assets/scam-dunk-shield.png',
+  '/assets/scamshield-logo.png',
 ];
 
 // API endpoints to cache

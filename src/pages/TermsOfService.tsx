@@ -5,11 +5,11 @@ import { downloadPolicyAsText, viewPolicyAsHTML } from "@/lib/policyExport";
 
 const TermsOfService = () => {
   const downloadAsText = () => {
-    downloadPolicyAsText('terms-content', 'scam_dunk_terms_of_service.txt');
+    downloadPolicyAsText('terms-content', 'scamshield_terms_of_service.txt');
   };
 
   const viewAsHTML = () => {
-    viewPolicyAsHTML('terms-content', 'Scam Dunk Terms of Service');
+    viewPolicyAsHTML('terms-content', 'ScamShield Terms of Service');
   };
 
   return (
@@ -35,7 +35,7 @@ const TermsOfService = () => {
             <p className="text-lg font-semibold mb-6">Effective Date: July 30, 2025</p>
             
             <p className="mb-6">
-              Welcome to Scam Dunk ("we", "our", or "us"). These Terms of Service ("Terms") govern your access to and use of our website and application that assess the risk of stocks being involved in pump-and-dump scams ("Service"). By accessing or using our Service, you agree to be bound by these Terms.
+              Welcome to ScamShield ("we", "our", or "us"). These Terms of Service ("Terms") govern your access to and use of our website and application that assess the risk of stocks being involved in pump-and-dump scams ("Service"). By accessing or using our Service, you agree to be bound by these Terms.
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">1. Use of the Service</h2>
@@ -60,7 +60,7 @@ const TermsOfService = () => {
 
             <h2 className="text-xl font-semibold mt-8 mb-4">5. Intellectual Property</h2>
             <p className="mb-4">
-              All content and software on the Service are the property of Scam Dunk and are protected by copyright and other intellectual property laws. You may not copy, modify, distribute, or reverse-engineer any part of the Service without prior written consent.
+              All content and software on the Service are the property of ScamShield and are protected by copyright and other intellectual property laws. You may not copy, modify, distribute, or reverse-engineer any part of the Service without prior written consent.
             </p>
 
             <h2 className="text-xl font-semibold mt-8 mb-4">6. Limitation of Liability</h2>
@@ -80,7 +80,7 @@ const TermsOfService = () => {
 
             <h2 className="text-xl font-semibold mt-8 mb-4">9. Contact Us</h2>
             <p className="mb-4">
-              If you have any questions about these Terms, please contact us at support@scamdunk.com.
+              If you have any questions about these Terms, please contact us at support@scamshield.com.
             </p>
           </div>
         </div>

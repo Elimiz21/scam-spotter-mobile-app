@@ -4,7 +4,7 @@ import Navigation from "@/components/Navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { ScamDunkBadge } from "@/components/ScamDunkBadge";
+import { ScamShieldBadge } from "@/components/ScamShieldBadge";
 import { logger } from '@/lib/logger';
 
 const Pricing = () => {
@@ -182,7 +182,7 @@ const Pricing = () => {
         borderRadius: '8px',
         marginBottom: '2rem'
       }}>
-        <ScamDunkBadge size="md" variant="full" />
+        <ScamShieldBadge size="md" variant="full" />
       </header>
 
       {/* Hero Section */}

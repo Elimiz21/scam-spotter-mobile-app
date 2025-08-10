@@ -119,7 +119,7 @@ async function sendToExternalMonitoring(logs: any[]): Promise<void> {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          service: 'scam-dunk',
+          service: 'scamshield',
           environment: Deno.env.get('ENVIRONMENT') || 'production',
           logs: logs,
         }),

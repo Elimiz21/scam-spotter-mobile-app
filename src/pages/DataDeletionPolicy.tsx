@@ -19,7 +19,7 @@ const DataDeletionPolicy = () => {
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => downloadPolicyAsText('data-deletion-policy-content', 'scam_dunk_data_deletion_policy.txt')}
+              onClick={() => downloadPolicyAsText('data-deletion-policy-content', 'scamshield_data_deletion_policy.txt')}
             >
               <Download className="w-4 h-4" />
               Download Text
@@ -27,7 +27,7 @@ const DataDeletionPolicy = () => {
             <Button 
               variant="outline" 
               className="flex items-center gap-2"
-              onClick={() => viewPolicyAsHTML('data-deletion-policy-content', 'Data Deletion Policy - Scam Dunk')}
+              onClick={() => viewPolicyAsHTML('data-deletion-policy-content', 'Data Deletion Policy - ScamShield')}
             >
               <FileText className="w-4 h-4" />
               View HTML Version

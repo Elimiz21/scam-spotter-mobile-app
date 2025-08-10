@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import RootShell from './boot/RootShell'
+import './index.css'
 
 // Ensure #root exists
 let container = document.getElementById('root')

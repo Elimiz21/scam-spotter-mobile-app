@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Shield, Mail, Lock, User } from "lucide-react";
-import { ScamDunkBadge } from "@/components/ScamDunkBadge";
+import { ScamShieldBadge } from "@/components/ScamShieldBadge";
 
 export default function Auth() {
   const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ export default function Auth() {
       }
     } else {
       toast({
-        title: "Welcome to Scam Dunk",
+        title: "Welcome to ScamShield",
         description: "Check your email to confirm your account and start protecting your investments.",
       });
       // Navigate to home after successful signup
@@ -93,7 +93,7 @@ export default function Auth() {
         borderRadius: '8px',
         marginBottom: '2rem'
       }}>
-        <ScamDunkBadge size="md" variant="full" />
+        <ScamShieldBadge size="md" variant="full" />
       </header>
 
       {/* Main Auth Form */}
@@ -136,7 +136,7 @@ export default function Auth() {
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text'
             }}>
-              {mode === "signin" ? "Welcome back" : "Join Scam Dunk"}
+              {mode === "signin" ? "Welcome back" : "Join ScamShield"}
             </h2>
             <p style={{ color: '#64748b', fontSize: '1rem' }}>
               {mode === "signin" 

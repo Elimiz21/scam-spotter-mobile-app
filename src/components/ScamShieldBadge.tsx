@@ -1,12 +1,12 @@
 import React from 'react';
-import shieldLogo from '../assets/scam-dunk-shield.png';
+import shieldLogo from '../assets/scamshield-logo.png';
 
-interface ScamDunkBadgeProps {
+interface ScamShieldBadgeProps {
   size?: 'sm' | 'md' | 'lg';
   variant?: 'full' | 'icon-only';
 }
 
-export const ScamDunkBadge: React.FC<ScamDunkBadgeProps> = ({ 
+export const ScamShieldBadge: React.FC<ScamShieldBadgeProps> = ({ 
   size = 'md', 
   variant = 'full' 
 }) => {
@@ -33,7 +33,7 @@ export const ScamDunkBadge: React.FC<ScamDunkBadgeProps> = ({
       <div className="flex items-center justify-center">
         <img 
           src={shieldLogo} 
-          alt="Scam Dunk Shield"
+          alt="ScamShield Logo"
           className={`${sizeClasses[size]} object-contain`}
         />
       </div>
@@ -44,12 +44,12 @@ export const ScamDunkBadge: React.FC<ScamDunkBadgeProps> = ({
     <div className={`flex items-center ${containerSizes[size]}`}>
       <img 
         src={shieldLogo} 
-        alt="Scam Dunk Shield"
+        alt="ScamShield Logo"
         className={`${sizeClasses[size]} object-contain`}
       />
       {variant === 'full' && (
         <span className={`font-bold text-foreground ${textSizes[size]} whitespace-nowrap`}>
-          Scam Dunk Investment Protection
+          ScamShield Protection
         </span>
       )}
     </div>

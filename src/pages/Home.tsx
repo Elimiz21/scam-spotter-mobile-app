@@ -2,7 +2,7 @@ import { Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import LegalDisclaimer from "../components/LegalDisclaimer";
-import { ScamDunkBadge } from "../components/ScamDunkBadge";
+import { ScamShieldBadge } from "../components/ScamShieldBadge";
 import PolicyFooter from "../components/PolicyFooter";
 
 const Home = () => {
@@ -19,7 +19,7 @@ const Home = () => {
         borderRadius: '8px',
         marginBottom: '2rem'
       }}>
-        <ScamDunkBadge size="md" variant="full" />
+        <ScamShieldBadge size="md" variant="full" />
       </header>
 
       {/* Hero Section */}
@@ -287,7 +287,7 @@ const Home = () => {
       {/* Footer */}
       <footer style={{ textAlign: 'center', padding: '2rem 1rem', borderTop: '1px solid #e2e8f0', marginTop: '3rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
-          <ScamDunkBadge size="sm" variant="full" />
+          <ScamShieldBadge size="sm" variant="full" />
         </div>
         <p style={{ fontSize: '0.875rem', color: '#64748b' }}>
           Protecting investors from financial scams with advanced AI analysis

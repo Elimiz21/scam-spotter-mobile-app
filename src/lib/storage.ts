@@ -1,7 +1,7 @@
 import { openDB, DBSchema, IDBPDatabase } from 'idb';
 import { logger } from '@/lib/logger';
 
-interface ScamDunkDB extends DBSchema {
+interface ScamShieldDB extends DBSchema {
   analysisResults: {
     key: string;
     value: {
@@ -33,15 +33,15 @@ interface ScamDunkDB extends DBSchema {
 }
 
 class StorageManager {
-  private db: IDBPDatabase<ScamDunkDB> | null = null;
-  private dbName = 'scam-dunk-storage';
+  private db: IDBPDatabase<ScamShieldDB> | null = null;
+  private dbName = 'scamshield-storage';
   private version = 1;
 
   async initialize(): Promise<void> {
     if (this.db) return;
 
     try {
-      this.db = await openDB<ScamDunkDB>(this.dbName, this.version, {
+      this.db = await openDB<ScamShieldDB>(this.dbName, this.version, {
         upgrade(db) {
           // Analysis results store
           if (!db.objectStoreNames.contains('analysisResults')) {
