@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { ErrorBoundary } from '../lib/ErrorBoundary'
+import ErrorBoundary from '../components/ErrorBoundary'
 
 const App = React.lazy(() => import('../App'))
 
